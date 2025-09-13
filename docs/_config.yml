@@ -1,0 +1,18 @@
+title: Cursor Starter Docs
+description: Installation and documentation for Cursor Starter
+url: https://ngeshlew.github.io
+baseurl: /cursorstarter
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+minima:
+  skin: auto
+  social_links:
+    - platform: github
+      user_url: https://github.com/ngeshlew/cursorstarter
+header_pages:
+  - index.md
+  - installation.md

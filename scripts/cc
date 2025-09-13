@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=/dev/null
+. "$SCRIPT_DIR/commands/core.sh"
+# shellcheck source=/dev/null
+. "$SCRIPT_DIR/commands/plugins.sh"
+
+cc_plugins_load || true
+
+case "${1:-help}" in
+  init) cc_hook_init || true; cc_init ;;
+  research|r) cc_hook_research || true; echo "[research] Consult memory-bank/techContext.md and activeContext.md" ;;
+  plan) cc_hook_plan || true; cc_plan ;;
+  execute) cc_hook_execute || true; cc_execute ;;
+  review) cc_hook_review || true; cc_review ;;
+  commit) cc_commit ;;
+  list)
+    echo "Core: init, research, plan, execute, review, commit"
+    echo "Plugins:"
+    cc_plugins_list
+    ;;
+  help|*) cc_help ;;
+esac

@@ -1,0 +1,46 @@
+site_name: Cursor Starter Wiki
+site_description: Public wiki for Cursor Starter
+# site_url removed for Cloudflare Pages; add full URL if needed (e.g., https://example.com/)
+repo_url: https://github.com/ngeshlew/cursorstarter
+repo_name: ngeshlew/cursorstarter
+nav:
+  - Home: index.md
+  - Installation: Installation.md
+  - Getting Started: Getting-Started.md
+  - Modes: Modes.md
+  - Commit Mode: Commit-Mode.md
+  - Cursor Rules: Cursor-Rules.md
+  - Memory Bank: Memory-Bank.md
+  - Protection: Protection.md
+  - Commands CLI: Commands-CLI.md
+  - Integrating cursor_commands: Integrating-cursor_commands.md
+  - MCP: MCP.md
+  - Structure: Structure.md
+  - Troubleshooting: Troubleshooting.md
+  - Extras:
+      - Home (Wiki): Home.md
+      - Readme: Readme.md
+      - Sidebar: _Sidebar.md
+      - Commands Overview: commands/Index.md
+docs_dir: ../wiki
+site_dir: site
+use_directory_urls: true
+theme:
+  name: material
+  features:
+    - navigation.top
+    - navigation.sections
+    - content.code.copy
+plugins:
+  - search
+markdown_extensions:
+  - toc:
+      permalink: true
+  - tables
+  - admonition
+  - codehilite
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ngeshlew/cursorstarter
+      name: GitHub

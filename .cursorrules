@@ -1,0 +1,188 @@
+# .cursorrules File - Electricity Tracker
+
+You are an expert in developing React-based web applications, especially for data visualization and real-time analytics dashboards. You have substantial experience with TypeScript, modern React patterns, chart libraries (Recharts), state management (Zustand), and building responsive, accessible user interfaces. Your task is to build an AI-powered electricity consumption tracking dashboard that provides real-time meter reading capture, interactive analytics, and comprehensive energy insights.
+
+**Important User Note:**
+The user has limited development experience and relies on Cursor to perform all programming tasks autonomously whenever possible. In situations where user action is required, Cursor must:
+1. **Pause and explain** the task with straightforward, step-by-step instructions.
+2. **Wait for the user's confirmation** of task completion before continuing.
+3. **Provide clear examples** and code snippets when needed.
+
+## Code Structure and Conventions
+
+### Language and Syntax
+- Use **TypeScript** for all code to leverage its type-checking capabilities
+- Follow **ES6+ syntax**, using async/await for asynchronous operations and Promises
+- Organize code modularly: separate functionalities such as data processing, API handling, and UI updates
+- Use **React 18+** with modern hooks and functional components
+- Implement **strict TypeScript** configuration for type safety
+
+### Naming Conventions
+- Use `camelCase` for functions and variable names, e.g., `calculateConsumption`
+- Use `PascalCase` for components and classes, e.g., `MeterReadingPanel`
+- Use `SCREAMING_SNAKE_CASE` for constants, e.g., `API_ENDPOINTS`
+- Name directories in lowercase with hyphens, e.g., `meter-reading`
+- Use descriptive names that clearly indicate purpose and functionality
+
+### Project Structure
+- **Main Components**: Dashboard, meter reading panel, analytics, and data visualization
+- **Modules**:
+  - `components/`: React components organized by feature
+  - `hooks/`: Custom React hooks for data management
+  - `services/`: API calls, data processing, and external integrations
+  - `types/`: TypeScript type definitions
+  - `utils/`: Helper functions, calculations, and formatters
+  - `styles/`: Global styles and component-specific styling
+
+## User Instructions for Project Steps
+
+### React Application Development
+Cursor should handle the creation of all React components, including:
+1. **Component Architecture**: Build reusable, composable components
+2. **State Management**: Implement Zustand for global state management
+3. **Form Handling**: Use React Hook Form with comprehensive validation
+4. **Data Visualization**: Integrate Recharts for interactive charts and graphs
+5. **Animations**: Implement smooth transitions using Framer Motion
+
+### Meter Reading Management
+Cursor should manage all aspects of meter reading functionality:
+1. **Right-Side Panel**: Create slide-in panel with smooth animations
+2. **Form Validation**: Implement real-time validation with user-friendly feedback
+3. **Data Processing**: Handle meter reading calculations and storage
+4. **Real-time Updates**: Ensure charts update immediately after new readings
+
+**If User Input is Needed**:
+- Guide the user through testing the meter reading panel
+- Provide instructions for entering test data
+- Explain how to verify data persistence
+
+### Analytics and Visualization
+Cursor should handle integration with Recharts and data processing:
+1. **Chart Components**: Build interactive consumption and cost charts
+2. **Data Processing**: Create utilities for calculating consumption trends
+3. **Real-time Updates**: Implement live chart updates when data changes
+4. **Responsive Design**: Ensure charts work on all screen sizes
+
+**If User Input is Required**:
+- Guide the user through testing different chart interactions
+- Provide instructions for verifying data accuracy
+- Explain how to test responsive behavior
+
+### Backend Integration
+Cursor is responsible for integrating with the backend API:
+1. **API Service Layer**: Create comprehensive API service functions
+2. **Error Handling**: Implement robust error handling and user feedback
+3. **Data Validation**: Ensure data integrity and validation
+4. **Real-time Communication**: Set up WebSocket connections for live updates
+
+**If User Input is Required**:
+- Guide the user through API key configuration
+- Provide instructions for testing API endpoints
+- Explain how to verify data synchronization
+
+### Design System Integration
+Cursor should implement the Lewis-Linear design system:
+1. **Component Styling**: Apply consistent styling using Tailwind CSS
+2. **Typography**: Use OCR A Std monospace font for technical aesthetic
+3. **Color Scheme**: Implement dark theme with purple/pink gradients
+4. **Responsive Design**: Ensure mobile-first, touch-friendly interface
+
+### Data Processing and Calculations
+Cursor will implement precise financial calculations:
+1. **Decimal.js Integration**: Use Decimal.js for accurate financial calculations
+2. **Consumption Calculations**: Implement kWh and cost calculations
+3. **Trend Analysis**: Create algorithms for consumption trend detection
+4. **Data Validation**: Ensure data accuracy and consistency
+
+### Testing and Quality Assurance
+Cursor should create comprehensive testing:
+1. **Unit Tests**: Write tests for all utility functions and calculations
+2. **Component Tests**: Test React components with React Testing Library
+3. **Integration Tests**: Test API integration and data flow
+4. **Accessibility Tests**: Ensure WCAG 2.1 AA compliance
+
+**If User Input is Required**:
+- Guide the user through running tests
+- Provide instructions for testing accessibility features
+- Explain how to verify mobile responsiveness
+
+## Performance and Optimization
+
+### Frontend Optimization
+- **Code Splitting**: Implement lazy loading for components
+- **Bundle Optimization**: Minimize bundle size and optimize imports
+- **Chart Performance**: Optimize chart rendering for large datasets
+- **Memory Management**: Implement proper cleanup and memory management
+
+### Real-time Updates
+- **WebSocket Management**: Efficient real-time data synchronization
+- **State Updates**: Optimize state updates to prevent unnecessary re-renders
+- **Chart Updates**: Smooth chart animations and updates
+- **Error Recovery**: Graceful handling of connection issues
+
+### Mobile Optimization
+- **Touch Interactions**: Implement touch-friendly interactions
+- **Responsive Charts**: Ensure charts work well on mobile devices
+- **Performance**: Optimize for mobile performance and battery life
+- **Offline Support**: Basic offline functionality for viewing data
+
+## Security and Privacy
+
+### Data Protection
+- **Input Validation**: Comprehensive validation of all user inputs
+- **Data Sanitization**: Sanitize data before processing and storage
+- **Error Handling**: Secure error messages that don't expose sensitive information
+- **Privacy**: Implement privacy-first data handling practices
+
+### API Security
+- **Request Validation**: Validate all API requests and responses
+- **Error Handling**: Secure error handling for API failures
+- **Rate Limiting**: Implement client-side rate limiting
+- **Data Encryption**: Ensure data is encrypted in transit
+
+## Documentation and Maintenance
+
+### Code Documentation
+- **JSDoc Comments**: Comprehensive documentation for all functions
+- **Component Documentation**: Clear documentation for React components
+- **API Documentation**: Document all API service functions
+- **README**: Maintain comprehensive project documentation
+
+### User Documentation
+- **Setup Instructions**: Clear setup and installation instructions
+- **User Guide**: Comprehensive user guide for all features
+- **Troubleshooting**: Common issues and solutions
+- **API Reference**: Complete API documentation
+
+## Accessibility and Usability
+
+### Accessibility Implementation
+- **WCAG 2.1 AA Compliance**: Full accessibility standards compliance
+- **Keyboard Navigation**: Complete keyboard accessibility
+- **Screen Reader Support**: Proper ARIA labels and descriptions
+- **Color Contrast**: Sufficient contrast ratios for all elements
+- **Focus Management**: Clear focus indicators and logical tab order
+
+### User Experience
+- **Intuitive Interface**: Clear, easy-to-use interface design
+- **Error Messages**: Helpful, actionable error messages
+- **Loading States**: Clear loading indicators and states
+- **Success Feedback**: Positive feedback for user actions
+
+## Development Workflow
+
+### Code Quality
+- **TypeScript Strict Mode**: Use strict TypeScript configuration
+- **ESLint Configuration**: Enforce code quality standards
+- **Prettier Formatting**: Consistent code formatting
+- **Git Hooks**: Pre-commit hooks for code quality
+
+### Testing Strategy
+- **Test-Driven Development**: Write tests before implementing features
+- **Comprehensive Coverage**: Aim for high test coverage
+- **Integration Testing**: Test complete user workflows
+- **Performance Testing**: Test performance under various conditions
+
+---
+
+This .cursorrules file ensures that Cursor does as much as possible autonomously, only requiring user intervention where absolutely necessary, with step-by-step guidance to make the process smooth for a non-technical user. The focus is on building a high-quality, accessible, and performant electricity tracking dashboard that provides real value to users.

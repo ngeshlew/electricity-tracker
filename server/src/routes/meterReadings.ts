@@ -181,19 +181,34 @@ router.get('/analytics/consumption', async (req, res, next) => {
     });
 
     // Calculate consumption between consecutive readings
-    const consumptionData = [];
+    const consumptionData: Array<{ date: string; kwh: number; cost: number; readingId: string }> = [];
     for (let i = 1; i < readings.length; i++) {
       const prevReading = readings[i - 1];
       const currentReading = readings[i];
-      
-      const consumption = currentReading.reading.toNumber() - prevReading.reading.toNumber();
-      
+
+      if (!prevReading || !currentReading) {
+        continue;
+      }
+
+      const prevValue = typeof (prevReading.reading as any).toNumber === 'function'
+        ? (prevReading.reading as any).toNumber()
+        : Number(prevReading.reading as unknown as number);
+      const currentValue = typeof (currentReading!.reading as any).toNumber === 'function'
+        ? (currentReading!.reading as any).toNumber()
+        : Number(currentReading!.reading as unknown as number);
+
+      const consumption = currentValue - prevValue;
+
       if (consumption > 0) {
+        const isoString = currentReading!.date.toISOString();
+        const dateParts = isoString.split('T');
+        const dateOnly = dateParts[0] ?? isoString;
+
         consumptionData.push({
-          date: currentReading.date.toISOString().split('T')[0],
+          date: dateOnly,
           kwh: consumption,
           cost: consumption * 0.30, // Default unit rate
-          readingId: currentReading.id
+          readingId: currentReading!.id
         });
       }
     }

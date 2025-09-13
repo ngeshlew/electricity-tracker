@@ -1,0 +1,36 @@
+# Analytics Rules: Microsoft Clarity
+
+Apply these expectations per RIPER mode so analytics is consistently planned, implemented, and verified.
+
+## Ω₁ RESEARCH
+- Read Clarity docs and prior analytics to inform the plan
+- Produce a "Telemetry Research" note in `memory-bank/activeContext.md` with:
+  - candidate event taxonomy, session tags, masking rules, consent approach
+
+## Ω₂ INNOVATE
+- Propose event names and acceptance criteria (no code changes)
+- Decide which events rely on Smart Events vs. custom `clarity("event", ...)`
+
+## Ω₃ PLAN
+- The plan MUST include analytics acceptance checks:
+  - Clarity snippet location and initialization strategy
+  - SPA route hook with `clarity("page")` if applicable
+  - Identify policy: `clarity("identify", userId)` (pseudonymous where possible)
+  - Consent gating: `clarity("consent", true)` after consent
+  - Event list and session/page tags using `clarity("set", key, value)`
+  - Masking list using `data-clarity-mask="true"`
+  - Verification steps (dashboard live sessions, network `clarity.ms/collect`)
+
+## Ω₄ EXECUTE
+- Implement the plan exactly:
+  - Add snippet with project id
+  - Wire SPA `clarity("page")` on route change
+  - Emit events with stable names and tag sessions/pages
+  - Apply masking and honor consent
+
+## Ω₅ REVIEW
+- Verify: snippet present, events emitted, Smart Events enabled
+- Validate in dashboard and export a sample via Data Export API
+- Record findings in `memory-bank/progress.md`
+
+See `docs/analytics/Clarity.md` for code snippets and deeper guidance.

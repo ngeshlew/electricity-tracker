@@ -1,0 +1,9 @@
+Use references to keep track of critical context:
+- @Files: important files
+- @Folders: important directories
+- @Code: key functions/classes/snippets
+- @Docs: specs and external docs
+- @Rules: rule files
+
+Pin frequently used files in the conversation using backticks and clear names.
+Prefer citing code with file paths and minimal necessary excerpts.

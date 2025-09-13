@@ -1,0 +1,17 @@
+When entering Commit Mode:
+1) Restate the goal and constraints in 2-3 lines
+2) Plan a minimal viable change set
+   - list target files only
+   - define acceptance checks (tests, build, behavior)
+3) Execute edits exactly as planned
+   - do not modify files not listed unless safety-critical
+   - keep edits readable and localized
+4) Validate
+   - run build/tests when available; note results
+   - summarize diffs at a high level
+5) Compose the commit message (Conventional Commits)
+   - type(scope?): concise description
+   - body: what changed and why; key impacts
+   - footer: issue/refs/breaking changes if any
+
+If unexpected work appears, pause and return to /plan before continuing.

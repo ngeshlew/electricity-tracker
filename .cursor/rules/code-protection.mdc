@@ -1,0 +1,17 @@
+Protection levels (advisory):
+- PROTECTED: do not change without explicit approval
+- GUARDED: ask before altering signatures or logic shape
+- INFO: context-only notes
+- TEST: test-only code
+- DEBUG: temporary diagnostics
+- CRITICAL: business logic; keep edits minimal and well-tested
+
+Commands (advisory markers you can add to comments):
+- !cp (PROTECTED)
+- !cg (GUARDED)
+- !ci (INFO)
+- !ct (TEST)
+- !cd (DEBUG)
+- !cc (CRITICAL)
+
+Respect these markers if found in code. When removing a marker, state the rationale in the review/commit body.

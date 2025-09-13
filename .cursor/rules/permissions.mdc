@@ -1,0 +1,8 @@
+Permissions by mode (advisory):
+- Research: read-only; no code edits
+- Plan: create plans/specs; do not modify code
+- Execute: create/update code as per plan; avoid deleting unless planned
+- Review: read-only; summarize and validate
+- Commit: no code edits; commit message only
+
+If a change conflicts with mode policy, pause and switch modes explicitly.

@@ -1,5 +1,5 @@
 # σ₆: Protection Registry
-*v1.0 | Created: 2024-12-19 | Updated: 2024-12-19*
+*v1.0 | Created: 2025-09-13 | Updated: 2025-09-13*
 *Π: DEVELOPMENT | Ω: RESEARCH*
 
 ## 🛡️ Protected Regions

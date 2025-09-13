@@ -1,0 +1,22 @@
+- Modes: Research (/init, /r), Plan (/plan, /p), Execute (/execute, /e), Review (/review, /rev), Commit (/commit, /cm)
+- Use small, incremental edits. Keep scope tight. Avoid deep nesting and unrelated refactors.
+- Prefer clarity over cleverness. Name things with full words. Explain WHY for complex code in concise comments above blocks.
+- After any substantive code edit, build/test if applicable and summarize the result.
+- Default to not changing files that are not in the planned target list.
+- Analytics: follow `.cursor/rules/analytics-clarity.mdc` and `docs/analytics/Clarity.md` when planning and implementing telemetry.
+
+Commands
+- /init: capture goals and constraints into `memory-bank/projectbrief.md` and `memory-bank/activeContext.md`
+- /plan: outline the change, enumerate files to change, define acceptance checks
+- /execute: implement only the planned edits; do not expand scope mid-flight
+- /review: validate edits against the plan; summarize diffs and open questions
+- /commit: produce a Conventional Commit message and a short change impact
+
+Conventions
+- Commit messages: conventional commits (feat|fix|docs|refactor|test|chore|build|ci|perf|style): description
+- PRs: include summary, rationale, and test evidence
+- File references: use backticks for `files`/`functions`/`classes`
+
+Memory Bank
+- Use the six memory-bank files as the durable context. Keep them current:
+  - projectbrief, systemPatterns, techContext, activeContext, progress, protection

@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem"],
+      "config": {
+        "directories": ["${WORKSPACE_DIR:-.}"]
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_SEARCH_API_KEY": "${BRAVE_SEARCH_API_KEY}"
+      }
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-puppeteer"]
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["docker-mcp"]
+    }
+  }
+}

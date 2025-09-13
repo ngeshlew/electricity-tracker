@@ -1,0 +1,29 @@
+# Design Systems Integration Rules
+
+Follow these guidance items in addition to core RIPER rules.
+
+## Mode Hooks
+- Ω₁ Research: inventory platforms, constraints, and candidate systems; capture references in `memory-bank/activeContext.md`
+- Ω₂ Innovate: prototype key flows with 1–2 candidate systems; record findings
+- Ω₃ Plan: select primary design system using `docs/design-systems/decision-tree.md`; define borrowing policy and tokens; update `projectbrief.md`, `systemPatterns.md`, `techContext.md`
+- Ω₄ Execute: implement tokens and components; prefer library components over bespoke styles; ensure a11y, visual, and perf checks in CI
+- Ω₅ Review: verify adherence to `docs/design-systems/mode-checklists.md`; open issues for deviations
+- Commit Mode: reference DS artifacts changed (tokens/components/docs/tests)
+
+## Implementation Preferences
+- Prefer platform-native or official libraries (Apple SwiftUI/UIKit; Material Web/Compose; Carbon React/Web Components)
+- Tailwind is acceptable as a token/utility layer; behaviors come from accessible primitives (Headless UI/Radix) or official libs
+- Do not mix conflicting navigation paradigms; align to the chosen primary system
+- Keep one token source of truth; map to each platform theme
+
+## Quality Gates
+- Accessibility: WCAG 2.2 AA; keyboard + screen reader checks must pass
+- Performance: observe budgets (FCP/LCP/INP); avoid unnecessary reflow from ad-hoc styles
+- Consistency: use canonical components; custom CSS must reference tokens
+
+## Connections
+- Web.dev overlays MUST be respected for performance, PWA, and platform APIs; see `docs/webdev-integration.md` and `.cursor/rules/webdev-best-practices.mdc`
+- Clarity analytics MUST be planned and verified across modes; see `docs/analytics/Clarity.md` and `.cursor/rules/analytics-clarity.mdc`
+
+## References
+- See `docs/design-systems/meta-guidelines.md`, `docs/design-systems/decision-tree.md`, and `docs/design-systems/mode-checklists.md`

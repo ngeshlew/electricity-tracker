@@ -1,0 +1,14 @@
+This is a starter repo for any software development project in Cursor. 
+
+It contains the below:
+
+- Skelton files for each of the below: 
+  - Product Requirements Document (PRD)
+  - Project Plan (PP)
+  - Project Log (PL)
+  - .cursorrules file
+  - Cursor notebooks for the project
+
+- /specs/readme-cursor-setup-instructions.md - Instructions for setting up the project in Cursor, incl populating the above files. 
+
+

@@ -1,5 +1,10 @@
 import { createContext, useContext } from 'react';
-import type { AnalyticsState, TimeSeriesData, ChartDataPoint, PieChartData } from '../types';
+import type {
+  AnalyticsState,
+  TimeSeriesData,
+  ChartDataPoint,
+  PieChartData,
+} from '../types';
 
 export interface AnalyticsContextType extends AnalyticsState {
   updateTimeSeriesData: (data: TimeSeriesData[]) => void;
@@ -9,7 +14,9 @@ export interface AnalyticsContextType extends AnalyticsState {
   calculateConsumptionData: (readings: unknown[]) => ChartDataPoint[];
 }
 
-export const AnalyticsContext = createContext<AnalyticsContextType | undefined>(undefined);
+export const AnalyticsContext = createContext<AnalyticsContextType | undefined>(
+  undefined
+);
 
 export const useAnalytics = () => {
   const context = useContext(AnalyticsContext);

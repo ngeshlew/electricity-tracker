@@ -1,37 +1,39 @@
-import React from 'react';
+import { FC } from 'react';
 import { Header } from './Header';
 import { SummaryCards } from './SummaryCards';
 import { ConsumptionChart } from './ConsumptionChart';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
-import { useMeterReading } from '../../hooks/useMeterReadingContext';
+import { useElectricityStore } from '../../store/useElectricityStore';
 
-export const Dashboard: React.FC = () => {
-  const { isPanelOpen, togglePanel } = useMeterReading();
+export const Dashboard: FC = () => {
+  const { isMeterPanelOpen, toggleMeterPanel } = useElectricityStore();
 
   return (
-    <div className="min-h-screen bg-dark-900">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-dark-50 mb-2">
+        <div className="mb-8 lewis-animation-fade-in">
+          <h1 className="text-4xl font-bold lewis-text-gradient mb-3">
             Electricity Tracker
           </h1>
-          <p className="text-dark-400">
+          <p className="text-lg text-muted-foreground">
             Monitor your electricity consumption and costs in real-time
           </p>
         </div>
 
-        <SummaryCards />
+        <div className="lewis-animation-fade-in">
+          <SummaryCards />
+        </div>
         
-        <div className="mt-8">
+        <div className="mt-8 lewis-animation-fade-in">
           <ConsumptionChart />
         </div>
       </main>
 
       <MeterReadingPanel 
-        isOpen={isPanelOpen} 
-        onClose={() => togglePanel(false)} 
+        isOpen={isMeterPanelOpen} 
+        onClose={() => toggleMeterPanel(false)} 
       />
     </div>
   );

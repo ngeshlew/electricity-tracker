@@ -1,12 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import type { MeterReading, MeterReadingState } from '../types';
-import { MeterReadingContext, type MeterReadingContextType } from './useMeterReadingContext';
+import {
+  MeterReadingContext,
+  type MeterReadingContextType,
+} from './useMeterReadingContext';
 
 interface MeterReadingProviderProps {
   children: React.ReactNode;
 }
 
-export const MeterReadingProvider: React.FC<MeterReadingProviderProps> = ({ children }) => {
+export const MeterReadingProvider: React.FC<MeterReadingProviderProps> = ({
+  children,
+}) => {
   const [state, setState] = useState<MeterReadingState>({
     readings: [],
     isLoading: false,
@@ -15,60 +20,70 @@ export const MeterReadingProvider: React.FC<MeterReadingProviderProps> = ({ chil
     isPanelOpen: false,
   });
 
-  const addReading = useCallback(async (readingData: Omit<MeterReading, 'id' | 'createdAt' | 'updatedAt'>) => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
-    try {
-      // TODO: Implement actual API call
-      const newReading: MeterReading = {
-        ...readingData,
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+  const addReading = useCallback(
+    async (
+      readingData: Omit<MeterReading, 'id' | 'createdAt' | 'updatedAt'>
+    ) => {
+      setState(prev => ({ ...prev, isLoading: true, error: null }));
 
-      setState(prev => ({
-        ...prev,
-        readings: [...prev.readings, newReading],
-        isLoading: false,
-        error: null,
-      }));
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to add reading',
-      }));
-    }
-  }, []);
+      try {
+        // TODO: Implement actual API call
+        const newReading: MeterReading = {
+          ...readingData,
+          id: crypto.randomUUID(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
-  const updateReading = useCallback(async (id: string, readingData: Partial<MeterReading>) => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
-    try {
-      // TODO: Implement actual API call
-      setState(prev => ({
-        ...prev,
-        readings: prev.readings.map(reading =>
-          reading.id === id
-            ? { ...reading, ...readingData, updatedAt: new Date() }
-            : reading
-        ),
-        isLoading: false,
-        error: null,
-      }));
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to update reading',
-      }));
-    }
-  }, []);
+        setState(prev => ({
+          ...prev,
+          readings: [...prev.readings, newReading],
+          isLoading: false,
+          error: null,
+        }));
+      } catch (error) {
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          error:
+            error instanceof Error ? error.message : 'Failed to add reading',
+        }));
+      }
+    },
+    []
+  );
+
+  const updateReading = useCallback(
+    async (id: string, readingData: Partial<MeterReading>) => {
+      setState(prev => ({ ...prev, isLoading: true, error: null }));
+
+      try {
+        // TODO: Implement actual API call
+        setState(prev => ({
+          ...prev,
+          readings: prev.readings.map(reading =>
+            reading.id === id
+              ? { ...reading, ...readingData, updatedAt: new Date() }
+              : reading
+          ),
+          isLoading: false,
+          error: null,
+        }));
+      } catch (error) {
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          error:
+            error instanceof Error ? error.message : 'Failed to update reading',
+        }));
+      }
+    },
+    []
+  );
 
   const deleteReading = useCallback(async (id: string) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
+
     try {
       // TODO: Implement actual API call
       setState(prev => ({
@@ -81,7 +96,8 @@ export const MeterReadingProvider: React.FC<MeterReadingProviderProps> = ({ chil
       setState(prev => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to delete reading',
+        error:
+          error instanceof Error ? error.message : 'Failed to delete reading',
       }));
     }
   }, []);

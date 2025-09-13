@@ -1,17 +1,32 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Header } from './Header';
 import { SummaryCards } from './SummaryCards';
 import { ConsumptionChart } from './ConsumptionChart';
+import { MonthlyOverview } from './MonthlyOverview';
+import { WeeklyPieChart } from './WeeklyPieChart';
+import { DailyBreakdown } from './DailyBreakdown';
+import { ViewToggle } from './ViewToggle';
+import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
+import { ExportOptions } from '../analytics/ExportOptions';
+import { StatementUpload } from '../statements/StatementUpload';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Dashboard: FC = () => {
-  const { isMeterPanelOpen, toggleMeterPanel } = useElectricityStore();
+  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
+  const [currentMonth] = useState(new Date());
+  const [viewMode, setViewMode] = useState<'kwh' | 'cost'>('kwh');
+  const [timePeriod, setTimePeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('monthly');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'statements'>('overview');
+
+  const handleRefresh = () => {
+    loadMeterReadings();
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8 lewis-animation-fade-in">
           <h1 className="text-4xl font-bold lewis-text-gradient mb-3">
@@ -22,18 +37,96 @@ export const Dashboard: FC = () => {
           </p>
         </div>
 
-        <div className="lewis-animation-fade-in">
-          <SummaryCards />
+        {/* Tab Navigation */}
+        <div className="mb-6 lewis-animation-fade-in">
+          <div className="flex space-x-1 bg-muted/20 rounded-lg p-1 w-fit">
+            {[
+              { id: 'overview', label: 'Overview' },
+              { id: 'analytics', label: 'Analytics' },
+              { id: 'statements', label: 'Statements' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? 'lewis-button-primary shadow-md'
+                    : 'lewis-card-hover text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-        
-        <div className="mt-8 lewis-animation-fade-in">
-          <ConsumptionChart />
-        </div>
+
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="space-y-8 lewis-animation-fade-in">
+            <SummaryCards />
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ConsumptionChart />
+              <MonthlyOverview />
+            </div>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <div className="space-y-8 lewis-animation-fade-in">
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <TimePeriodSelector
+                selectedPeriod={timePeriod}
+                onPeriodChange={setTimePeriod}
+                onRefresh={handleRefresh}
+              />
+              <ViewToggle
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+              />
+            </div>
+
+            {/* Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <WeeklyPieChart
+                currentMonth={currentMonth}
+                viewMode={viewMode}
+              />
+              <DailyBreakdown
+                currentMonth={currentMonth}
+                viewMode={viewMode}
+              />
+            </div>
+
+            {/* Export Options */}
+            <ExportOptions />
+          </div>
+        )}
+
+        {/* Statements Tab */}
+        {activeTab === 'statements' && (
+          <div className="space-y-8 lewis-animation-fade-in">
+            <StatementUpload
+              onFileUpload={async (files) => {
+                console.log('Files uploaded:', files);
+                // TODO: Implement file processing
+              }}
+              onFileRemove={(fileId) => {
+                console.log('File removed:', fileId);
+                // TODO: Implement file removal
+              }}
+              uploadedFiles={[]}
+              isUploading={false}
+            />
+          </div>
+        )}
       </main>
 
-      <MeterReadingPanel 
-        isOpen={isMeterPanelOpen} 
-        onClose={() => toggleMeterPanel(false)} 
+      <MeterReadingPanel
+        isOpen={isMeterPanelOpen}
+        onClose={() => toggleMeterPanel(false)}
       />
     </div>
   );

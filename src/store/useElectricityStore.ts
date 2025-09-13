@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { Decimal } from 'decimal.js';
+import { apiService } from '../services/api';
+import { socketService } from '../services/socketService';
 import type { 
   MeterReading, 
   ChartDataPoint, 
@@ -31,6 +33,13 @@ interface ElectricityState {
   updateReading: (id: string, reading: Partial<MeterReading>) => Promise<void>;
   deleteReading: (id: string) => Promise<void>;
   toggleMeterPanel: (isOpen: boolean) => void;
+  
+  // Data loading
+  loadMeterReadings: () => Promise<void>;
+  
+  // Real-time updates
+  setupRealtimeUpdates: () => void;
+  cleanupRealtimeUpdates: () => void;
   
   // Analytics actions
   calculateConsumptionData: () => void;
@@ -74,11 +83,20 @@ export const useElectricityStore = create<ElectricityState>()(
           set({ isLoading: true, error: null });
           
           try {
-            const newReading: MeterReading = {
+            const response = await apiService.createMeterReading({
               ...readingData,
-              id: crypto.randomUUID(),
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              date: readingData.date.toISOString(),
+            });
+
+            if (!response.success || !response.data) {
+              throw new Error(response.error?.message || 'Failed to create reading');
+            }
+
+            const newReading: MeterReading = {
+              ...response.data,
+              date: new Date(response.data.date),
+              createdAt: new Date(response.data.createdAt),
+              updatedAt: new Date(response.data.updatedAt),
             };
 
             set((state) => ({
@@ -105,11 +123,27 @@ export const useElectricityStore = create<ElectricityState>()(
           set({ isLoading: true, error: null });
           
           try {
+            const response = await apiService.updateMeterReading(id, {
+              ...readingData,
+              date: readingData.date ? readingData.date.toISOString() : undefined,
+              createdAt: readingData.createdAt ? readingData.createdAt.toISOString() : undefined,
+              updatedAt: readingData.updatedAt ? readingData.updatedAt.toISOString() : undefined,
+            });
+
+            if (!response.success || !response.data) {
+              throw new Error(response.error?.message || 'Failed to update reading');
+            }
+
+            const updatedReading: MeterReading = {
+              ...response.data,
+              date: new Date(response.data.date),
+              createdAt: new Date(response.data.createdAt),
+              updatedAt: new Date(response.data.updatedAt),
+            };
+
             set((state) => ({
               readings: state.readings.map((reading) =>
-                reading.id === id
-                  ? { ...reading, ...readingData, updatedAt: new Date() }
-                  : reading
+                reading.id === id ? updatedReading : reading
               ).sort((a, b) => 
                 new Date(a.date).getTime() - new Date(b.date).getTime()
               ),
@@ -133,6 +167,12 @@ export const useElectricityStore = create<ElectricityState>()(
           set({ isLoading: true, error: null });
           
           try {
+            const response = await apiService.deleteMeterReading(id);
+
+            if (!response.success) {
+              throw new Error(response.error?.message || 'Failed to delete reading');
+            }
+
             set((state) => ({
               readings: state.readings.filter((reading) => reading.id !== id),
               isLoading: false,
@@ -153,6 +193,107 @@ export const useElectricityStore = create<ElectricityState>()(
 
         toggleMeterPanel: (isOpen) => {
           set({ isMeterPanelOpen: isOpen });
+        },
+
+        // Data loading actions
+        loadMeterReadings: async () => {
+          set({ isLoading: true, error: null });
+          
+          try {
+            const response = await apiService.getMeterReadings();
+
+            if (!response.success || !response.data) {
+              throw new Error(response.error?.message || 'Failed to load meter readings');
+            }
+
+            const readings: MeterReading[] = response.data.map(reading => ({
+              ...reading,
+              date: new Date(reading.date),
+              createdAt: new Date(reading.createdAt),
+              updatedAt: new Date(reading.updatedAt),
+            }));
+
+            set({
+              readings: readings.sort((a, b) => 
+                new Date(a.date).getTime() - new Date(b.date).getTime()
+              ),
+              isLoading: false,
+              error: null,
+            });
+
+            // Recalculate analytics data
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+          } catch (error) {
+            set({
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'Failed to load meter readings',
+            });
+          }
+        },
+
+        // Real-time updates
+        setupRealtimeUpdates: () => {
+          socketService.connect();
+
+          // Listen for real-time updates
+          socketService.onMeterReadingAdded((reading) => {
+            const newReading: MeterReading = {
+              ...reading,
+              date: new Date(reading.date),
+              createdAt: new Date(reading.createdAt),
+              updatedAt: new Date(reading.updatedAt),
+            };
+
+            set((state) => ({
+              readings: [...state.readings, newReading].sort((a, b) => 
+                new Date(a.date).getTime() - new Date(b.date).getTime()
+              ),
+            }));
+
+            // Recalculate analytics data
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+          });
+
+          socketService.onMeterReadingUpdated((reading) => {
+            const updatedReading: MeterReading = {
+              ...reading,
+              date: new Date(reading.date),
+              createdAt: new Date(reading.createdAt),
+              updatedAt: new Date(reading.updatedAt),
+            };
+
+            set((state) => ({
+              readings: state.readings.map((r) =>
+                r.id === reading.id ? updatedReading : r
+              ).sort((a, b) => 
+                new Date(a.date).getTime() - new Date(b.date).getTime()
+              ),
+            }));
+
+            // Recalculate analytics data
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+          });
+
+          socketService.onMeterReadingDeleted(({ id }) => {
+            set((state) => ({
+              readings: state.readings.filter((reading) => reading.id !== id),
+            }));
+
+            // Recalculate analytics data
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+          });
+        },
+
+        cleanupRealtimeUpdates: () => {
+          socketService.disconnect();
         },
 
         // Analytics calculations

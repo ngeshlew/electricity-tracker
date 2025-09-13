@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MeterReading {
+  id        String   @id @default(cuid())
+  meterId   String
+  reading   Decimal  @db.Decimal(10, 2)
+  date      DateTime
+  type      ReadingType
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("meter_readings")
+}
+
+model EnergyStatement {
+  id            String   @id @default(cuid())
+  supplier      String
+  periodStart   DateTime @map("period_start")
+  periodEnd     DateTime @map("period_end")
+  totalKwh      Decimal  @map("total_kwh") @db.Decimal(10, 2)
+  totalCost     Decimal  @map("total_cost") @db.Decimal(10, 2)
+  unitRate      Decimal  @map("unit_rate") @db.Decimal(8, 4)
+  standingCharge Decimal @map("standing_charge") @db.Decimal(8, 2)
+  fileUrl       String?  @map("file_url")
+  importedAt    DateTime @default(now()) @map("imported_at")
+
+  @@map("energy_statements")
+}
+
+model ConsumptionAnalytics {
+  id                String      @id @default(cuid())
+  periodType        PeriodType  @map("period_type")
+  periodDate        DateTime    @map("period_date")
+  kwh               Decimal     @db.Decimal(10, 2)
+  cost              Decimal     @db.Decimal(10, 2)
+  averageDailyUsage Decimal?    @map("average_daily_usage") @db.Decimal(10, 2)
+  trend             TrendType?
+  createdAt         DateTime    @default(now()) @map("created_at")
+
+  @@map("consumption_analytics")
+}
+
+model UserPreferences {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  theme          String   @default("dark")
+  currency       String   @default("GBP")
+  unitRate       Decimal  @map("unit_rate") @db.Decimal(8, 4) @default(0.30)
+  standingCharge Decimal  @map("standing_charge") @db.Decimal(8, 2) @default(0.50)
+  notifications  Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
+
+enum ReadingType {
+  MANUAL
+  IMPORTED
+}
+
+enum PeriodType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum TrendType {
+  INCREASING
+  DECREASING
+  STABLE
+}

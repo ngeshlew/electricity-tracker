@@ -45,7 +45,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
         meterId: 'default-meter',
         reading: data.reading,
         date: data.date,
-        type: 'manual',
+        type: 'MANUAL',
         notes: data.notes || '',
       });
       

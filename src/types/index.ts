@@ -5,7 +5,7 @@ export interface MeterReading {
   meterId: string;
   reading: number;
   date: Date;
-  type: 'manual' | 'imported';
+  type: 'MANUAL' | 'IMPORTED';
   notes?: string;
   createdAt: Date;
   updatedAt: Date;

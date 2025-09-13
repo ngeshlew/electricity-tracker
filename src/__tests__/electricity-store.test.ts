@@ -40,7 +40,7 @@ describe('Electricity Store', () => {
       meterId: 'test-meter',
       reading: 1000,
       date: new Date('2024-01-01'),
-      type: 'manual' as const,
+      type: 'MANUAL' as const,
       notes: 'Test reading',
     };
 
@@ -66,7 +66,7 @@ describe('Electricity Store', () => {
         meterId: 'test-meter',
         reading: 1000,
         date: new Date('2024-01-01'),
-        type: 'manual' as const,
+        type: 'MANUAL' as const,
       });
     });
 
@@ -76,7 +76,7 @@ describe('Electricity Store', () => {
         meterId: 'test-meter',
         reading: 1050,
         date: new Date('2024-01-02'),
-        type: 'manual' as const,
+        type: 'MANUAL' as const,
       });
     });
 

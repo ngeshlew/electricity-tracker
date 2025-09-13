@@ -1,0 +1,218 @@
+import express from 'express';
+import { prisma } from '../utils/database';
+import { createError } from '../middleware/errorHandler';
+
+const router = express.Router();
+
+// GET /api/analytics/summary - Get summary analytics
+router.get('/summary', async (req, res, next) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let whereClause: any = {};
+    
+    if (startDate && endDate) {
+      whereClause.date = {
+        gte: new Date(startDate as string),
+        lte: new Date(endDate as string)
+      };
+    }
+
+    const readings = await prisma.meterReading.findMany({
+      where: whereClause,
+      orderBy: { date: 'asc' }
+    });
+
+    // Calculate total consumption
+    let totalConsumption = 0;
+    let totalCost = 0;
+    const unitRate = 0.30; // Default unit rate
+
+    for (let i = 1; i < readings.length; i++) {
+      const consumption = readings[i].reading.toNumber() - readings[i - 1].reading.toNumber();
+      if (consumption > 0) {
+        totalConsumption += consumption;
+        totalCost += consumption * unitRate;
+      }
+    }
+
+    // Calculate daily average
+    const days = readings.length > 1 ? 
+      Math.ceil((readings[readings.length - 1].date.getTime() - readings[0].date.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+    const dailyAverage = days > 0 ? totalConsumption / days : 0;
+
+    // Determine trend
+    let trend = 'stable';
+    if (readings.length >= 4) {
+      const firstHalf = readings.slice(0, Math.floor(readings.length / 2));
+      const secondHalf = readings.slice(Math.floor(readings.length / 2));
+      
+      const firstHalfAvg = firstHalf.reduce((sum: number, reading: any, index: number) => {
+        if (index === 0) return 0;
+        return sum + (reading.reading.toNumber() - firstHalf[index - 1].reading.toNumber());
+      }, 0) / (firstHalf.length - 1);
+      
+      const secondHalfAvg = secondHalf.reduce((sum: number, reading: any, index: number) => {
+        if (index === 0) return 0;
+        return sum + (reading.reading.toNumber() - secondHalf[index - 1].reading.toNumber());
+      }, 0) / (secondHalf.length - 1);
+      
+      const difference = secondHalfAvg - firstHalfAvg;
+      const threshold = firstHalfAvg * 0.05; // 5% threshold
+      
+      if (difference > threshold) trend = 'increasing';
+      else if (difference < -threshold) trend = 'decreasing';
+    }
+
+    res.json({
+      success: true,
+      data: {
+        totalConsumption: Math.round(totalConsumption * 100) / 100,
+        totalCost: Math.round(totalCost * 100) / 100,
+        dailyAverage: Math.round(dailyAverage * 100) / 100,
+        trend,
+        readingCount: readings.length,
+        period: {
+          start: readings[0]?.date || null,
+          end: readings[readings.length - 1]?.date || null
+        }
+      }
+    });
+  } catch (error) {
+    next(createError('Failed to fetch summary analytics', 500));
+  }
+});
+
+// GET /api/analytics/trends - Get trend analysis
+router.get('/trends', async (req, res, next) => {
+  try {
+    const { period = 'monthly' } = req.query;
+
+    const readings = await prisma.meterReading.findMany({
+      orderBy: { date: 'asc' }
+    });
+
+    // Group readings by period
+    const groupedData = new Map<string, any[]>();
+    
+    readings.forEach((reading: any, index: number) => {
+      if (index === 0) return;
+      
+      const prevReading = readings[index - 1];
+      const consumption = reading.reading.toNumber() - prevReading.reading.toNumber();
+      
+      if (consumption > 0) {
+        let key: string;
+        const date = new Date(reading.date);
+        
+        switch (period) {
+          case 'daily':
+            key = date.toISOString().split('T')[0]!;
+            break;
+          case 'weekly':
+            const weekStart = new Date(date);
+            weekStart.setDate(date.getDate() - date.getDay());
+            key = weekStart.toISOString().split('T')[0]!;
+            break;
+          case 'monthly':
+            key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            break;
+          default:
+            key = date.toISOString().split('T')[0]!;
+        }
+        
+        if (!groupedData.has(key)) {
+          groupedData.set(key, []);
+        }
+        groupedData.get(key)!.push({
+          date: reading.date,
+          consumption,
+          cost: consumption * 0.30
+        });
+      }
+    });
+
+    // Calculate aggregated data for each period
+    const trendData = Array.from(groupedData.entries()).map(([period, data]) => {
+      const totalKwh = data.reduce((sum, item) => sum + item.consumption, 0);
+      const totalCost = data.reduce((sum, item) => sum + item.cost, 0);
+      const averageDaily = totalKwh / data.length;
+      
+      return {
+        period,
+        totalKwh: Math.round(totalKwh * 100) / 100,
+        totalCost: Math.round(totalCost * 100) / 100,
+        averageDaily: Math.round(averageDaily * 100) / 100,
+        dataCount: data.length
+      };
+    });
+
+    res.json({
+      success: true,
+      data: trendData
+    });
+  } catch (error) {
+    next(createError('Failed to fetch trend analytics', 500));
+  }
+});
+
+// GET /api/analytics/export - Export analytics data
+router.get('/export', async (req, res, next) => {
+  try {
+    const { format = 'json', startDate, endDate } = req.query;
+
+    let whereClause: any = {};
+    
+    if (startDate && endDate) {
+      whereClause.date = {
+        gte: new Date(startDate as string),
+        lte: new Date(endDate as string)
+      };
+    }
+
+    const readings = await prisma.meterReading.findMany({
+      where: whereClause,
+      orderBy: { date: 'asc' }
+    });
+
+    // Calculate consumption data
+    const consumptionData = [];
+    for (let i = 1; i < readings.length; i++) {
+      const consumption = readings[i].reading.toNumber() - readings[i - 1].reading.toNumber();
+      if (consumption > 0) {
+        consumptionData.push({
+          date: readings[i].date.toISOString().split('T')[0],
+          kwh: Math.round(consumption * 100) / 100,
+          cost: Math.round(consumption * 0.30 * 100) / 100,
+          readingId: readings[i].id
+        });
+      }
+    }
+
+    if (format === 'csv') {
+      // Convert to CSV format
+      const csvHeader = 'Date,kWh,Cost,Reading ID\n';
+      const csvData = consumptionData.map(item => 
+        `${item.date},${item.kwh},${item.cost},${item.readingId}`
+      ).join('\n');
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=consumption-data.csv');
+      res.send(csvHeader + csvData);
+    } else {
+      res.json({
+        success: true,
+        data: consumptionData,
+        metadata: {
+          totalRecords: consumptionData.length,
+          exportDate: new Date().toISOString(),
+          format: 'json'
+        }
+      });
+    }
+  } catch (error) {
+    next(createError('Failed to export analytics data', 500));
+  }
+});
+
+export default router;

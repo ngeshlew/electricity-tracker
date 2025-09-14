@@ -1,6 +1,7 @@
 import express from 'express';
 import { prisma } from '../utils/database';
 import { createError } from '../middleware/errorHandler';
+import { z } from 'zod';
 
 const router = express.Router();
 
@@ -45,27 +46,25 @@ router.get('/:id', async (req, res, next) => {
 // POST /api/meter-readings - Create new meter reading
 router.post('/', async (req, res, next) => {
   try {
-    const { meterId, reading, date, type, notes, isFirstReading } = req.body;
-
-    // Validate required fields
-    if (!meterId || reading === undefined || !date) {
-      return next(createError('Missing required fields', 400));
-    }
-
-    // Validate reading is positive
-    if (reading < 0) {
-      return next(createError('Reading must be positive', 400));
-    }
+    const schema = z.object({
+      meterId: z.string().min(1),
+      reading: z.number().nonnegative(),
+      date: z.string().refine((s) => !Number.isNaN(Date.parse(s)), 'Invalid date'),
+      type: z.enum(['MANUAL', 'IMPORTED', 'ESTIMATED']).optional(),
+      notes: z.string().optional(),
+      isFirstReading: z.boolean().optional()
+    });
+    const parsed = schema.parse(req.body);
 
     const newReading = await prisma.meterReading.create({
       data: {
-        meterId: String(meterId),
+        meterId: String(parsed.meterId),
         // Prisma accepts number or string for Decimal; ensure number
-        reading: Number(reading),
-        date: new Date(date),
-        type: (type === 'MANUAL' || type === 'IMPORTED' || type === 'ESTIMATED') ? type : 'MANUAL',
-        notes: notes ?? null,
-        isFirstReading: isFirstReading ?? false
+        reading: Number(parsed.reading),
+        date: new Date(parsed.date),
+        type: parsed.type ?? 'MANUAL',
+        notes: parsed.notes ?? null,
+        isFirstReading: parsed.isFirstReading ?? false
       }
     });
 
@@ -101,20 +100,25 @@ router.put('/:id', async (req, res, next) => {
       return next(createError('Meter reading not found', 404));
     }
 
-    // Validate reading is positive if provided
-    if (reading !== undefined && reading < 0) {
-      return next(createError('Reading must be positive', 400));
-    }
+    const schema = z.object({
+      meterId: z.string().min(1).optional(),
+      reading: z.number().nonnegative().optional(),
+      date: z.string().refine((s) => !Number.isNaN(Date.parse(s)), 'Invalid date').optional(),
+      type: z.enum(['MANUAL', 'IMPORTED', 'ESTIMATED']).optional(),
+      notes: z.string().optional(),
+      isFirstReading: z.boolean().optional()
+    });
+    const parsed = schema.parse(req.body);
 
     const updatedReading = await prisma.meterReading.update({
       where: { id },
       data: {
-        ...(meterId && { meterId: String(meterId) }),
-        ...(reading !== undefined && { reading: Number(reading) }),
-        ...(date && { date: new Date(date) }),
-        ...(type && (type === 'MANUAL' || type === 'IMPORTED' || type === 'ESTIMATED') && { type }),
-        ...(notes !== undefined && { notes }),
-        ...(isFirstReading !== undefined && { isFirstReading: Boolean(isFirstReading) })
+        ...(parsed.meterId && { meterId: String(parsed.meterId) }),
+        ...(parsed.reading !== undefined && { reading: Number(parsed.reading) }),
+        ...(parsed.date && { date: new Date(parsed.date) }),
+        ...(parsed.type && { type: parsed.type }),
+        ...(parsed.notes !== undefined && { notes: parsed.notes }),
+        ...(parsed.isFirstReading !== undefined && { isFirstReading: Boolean(parsed.isFirstReading) })
       }
     });
 

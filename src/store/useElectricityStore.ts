@@ -487,8 +487,7 @@ export const useElectricityStore = create<ElectricityState>()(
         setupRealtimeUpdates: () => {
           socketService.connect();
 
-          // Listen for real-time updates
-          socketService.onMeterReadingAdded((reading) => {
+          const onAdded = (reading: MeterReading) => {
             const newReading: MeterReading = {
               ...reading,
               date: new Date(reading.date),
@@ -512,9 +511,9 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculateConsumptionData();
             get().calculateTimeSeriesData('daily');
             get().calculatePieChartData();
-          });
+          };
 
-          socketService.onMeterReadingUpdated((reading) => {
+          const onUpdated = (reading: MeterReading) => {
             const updatedReading: MeterReading = {
               ...reading,
               date: new Date(reading.date),
@@ -532,9 +531,9 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculateConsumptionData();
             get().calculateTimeSeriesData('daily');
             get().calculatePieChartData();
-          });
+          };
 
-          socketService.onMeterReadingDeleted(({ id }) => {
+          const onDeleted = ({ id }: { id: string }) => {
             set((state) => ({
               readings: state.readings.filter((reading) => reading.id !== id),
             }));
@@ -543,10 +542,23 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculateConsumptionData();
             get().calculateTimeSeriesData('daily');
             get().calculatePieChartData();
-          });
+          };
+
+          socketService.onMeterReadingAdded(onAdded);
+          socketService.onMeterReadingUpdated(onUpdated);
+          socketService.onMeterReadingDeleted(onDeleted);
+
+          (window as any).__elecHandlers = { onAdded, onUpdated, onDeleted };
         },
 
         cleanupRealtimeUpdates: () => {
+          const handlers = (window as any).__elecHandlers;
+          if (handlers) {
+            socketService.offMeterReadingAdded(handlers.onAdded);
+            socketService.offMeterReadingUpdated(handlers.onUpdated);
+            socketService.offMeterReadingDeleted(handlers.onDeleted);
+            delete (window as any).__elecHandlers;
+          }
           socketService.disconnect();
         },
 

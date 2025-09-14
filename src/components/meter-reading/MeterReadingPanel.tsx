@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button-simple';
@@ -31,6 +31,8 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
   onClose 
 }) => {
   const { toggleMeterPanel } = useElectricityStore();
+  const firstFocusableRef = useRef<HTMLButtonElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -55,6 +57,21 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
               onClose();
               toggleMeterPanel(false);
             }
+            if (e.key === 'Tab' && panelRef.current) {
+              const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+                'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+              );
+              const first = focusable[0];
+              const last = focusable[focusable.length - 1];
+              if (!first || !last) return;
+              if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                (last as HTMLElement).focus();
+              } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                (first as HTMLElement).focus();
+              }
+            }
           }}
         >
           <motion.div
@@ -63,6 +80,7 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 20, opacity: 0, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+            ref={panelRef}
           >
             <Card className="w-full lewis-card lewis-shadow-glow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
@@ -79,6 +97,7 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
                   className="h-10 w-10 lewis-card-hover"
                   title="Close modal"
                   aria-label="Close meter reading panel"
+                  ref={firstFocusableRef}
                 >
                   <XMarkIcon className="h-5 w-5" />
                 </Button>

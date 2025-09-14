@@ -1,7 +1,5 @@
 // API service for communicating with the backend
-const API_BASE_URL = process.env.NODE_ENV === 'test' 
-  ? 'http://localhost:3001' 
-  : 'http://localhost:3001';
+const API_BASE_URL = (import.meta as any).env?.VITE_SERVER_URL || 'http://localhost:3001';
 
 export interface ApiResponse<T> {
   success: boolean;

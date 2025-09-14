@@ -9,6 +9,7 @@ import { ViewToggle } from './ViewToggle';
 import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
 import { ExportOptions } from '../analytics/ExportOptions';
 import { StatementUpload } from '../statements/StatementUpload';
+import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -128,6 +129,8 @@ export const Dashboard: FC = () => {
         isOpen={isMeterPanelOpen}
         onClose={() => toggleMeterPanel(false)}
       />
+      
+      <UserGuide />
     </div>
   );
 };

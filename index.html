@@ -4,10 +4,62 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#8b5cf6" />
+    <meta name="description" content="AI-powered electricity consumption tracking dashboard with real-time analytics" />
+    <meta name="keywords" content="electricity, energy, consumption, tracking, analytics, dashboard" />
+    <meta name="author" content="Electricity Tracker Team" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+    
+    <!-- Apple Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ElecTracker" />
+    
+    <!-- Microsoft Meta Tags -->
+    <meta name="msapplication-TileColor" content="#8b5cf6" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Electricity Tracker" />
+    <meta property="og:description" content="AI-powered electricity consumption tracking dashboard" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://electricity-tracker.com" />
+    <meta property="og:image" content="/screenshots/desktop-dashboard.png" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Electricity Tracker" />
+    <meta name="twitter:description" content="AI-powered electricity consumption tracking dashboard" />
+    <meta name="twitter:image" content="/screenshots/desktop-dashboard.png" />
+    
+    <title>Electricity Tracker - AI-Powered Energy Analytics</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

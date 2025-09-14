@@ -1,11 +1,6 @@
 import React from 'react';
-import { 
-  BoltIcon, 
-  CurrencyPoundIcon, 
-  ChartBarIcon,
-  ArrowTrendingUpIcon 
-} from '@heroicons/react/24/outline';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
+import { Bolt, PoundSterling, BarChart2, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { formatDateUK } from '../../utils/dateFormatters';
 
@@ -233,8 +228,8 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ timePeriod, viewMode
         ? (kwhChange >= 0 ? 'positive' as const : 'negative' as const)
         : (costChange >= 0 ? 'positive' as const : 'negative' as const),
       icon: viewMode === 'kwh' 
-        ? <BoltIcon className="w-4 h-4 text-primary" />
-        : <CurrencyPoundIcon className="w-4 h-4 text-primary" />
+        ? <Bolt className="w-4 h-4 text-primary" />
+        : <PoundSterling className="w-4 h-4 text-primary" />
     },
     {
       title: viewMode === 'kwh' ? 'Total Cost' : getPeriodTitle(),
@@ -246,15 +241,15 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ timePeriod, viewMode
         ? (costChange >= 0 ? 'positive' as const : 'negative' as const)
         : (kwhChange >= 0 ? 'positive' as const : 'negative' as const),
       icon: viewMode === 'kwh'
-        ? <CurrencyPoundIcon className="w-4 h-4 text-primary" />
-        : <BoltIcon className="w-4 h-4 text-primary" />
+        ? <PoundSterling className="w-4 h-4 text-primary" />
+        : <Bolt className="w-4 h-4 text-primary" />
     },
     {
       title: 'Daily Average',
       value: `${averageDaily.toFixed(2)} kWh`,
       change: trend === 'increasing' ? '↗️ Increasing' : trend === 'decreasing' ? '↘️ Decreasing' : '→ Stable',
       changeType: trend === 'increasing' ? 'positive' as const : trend === 'decreasing' ? 'negative' as const : 'neutral' as const,
-      icon: <ChartBarIcon className="w-4 h-4 text-primary" />
+      icon: <BarChart2 className="w-4 h-4 text-primary" />
     }
   ];
 

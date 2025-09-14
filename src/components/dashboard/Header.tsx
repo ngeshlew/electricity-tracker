@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { PlusIcon } from '@heroicons/react/24/outline';
-import { Button } from '@/components/ui/button-simple';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Header: FC = () => {
@@ -23,7 +23,7 @@ export const Header: FC = () => {
             onClick={() => toggleMeterPanel(true)} 
             className="lewis-button-primary flex items-center space-x-2 lewis-animation-slide-up"
           >
-            <PlusIcon className="w-5 h-5" />
+            <Plus className="w-5 h-5" />
             <span>Add Reading</span>
           </Button>
         </div>

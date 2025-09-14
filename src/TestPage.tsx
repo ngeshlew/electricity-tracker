@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from '@/components/ui/button-simple';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const TestPage: React.FC = () => {
   return (

@@ -1,14 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { Button } from '@/components/ui/button-simple';
-import { 
-  DocumentArrowUpIcon, 
-  DocumentTextIcon, 
-  XMarkIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon
-} from '@heroicons/react/24/outline';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { FileUp, FileText, X, CheckCircle2, TriangleAlert } from 'lucide-react';
 
 interface UploadedFile {
   file: File;
@@ -59,22 +53,22 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
     const extension = fileName.split('.').pop()?.toLowerCase();
     switch (extension) {
       case 'pdf':
-        return <DocumentTextIcon className="h-8 w-8 text-red-500" />;
+        return <FileText className="h-8 w-8 text-red-500" />;
       case 'csv':
-        return <DocumentTextIcon className="h-8 w-8 text-green-500" />;
+        return <FileText className="h-8 w-8 text-green-500" />;
       case 'xlsx':
-        return <DocumentTextIcon className="h-8 w-8 text-blue-500" />;
+        return <FileText className="h-8 w-8 text-blue-500" />;
       default:
-        return <DocumentTextIcon className="h-8 w-8 text-gray-500" />;
+        return <FileText className="h-8 w-8 text-gray-500" />;
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'success':
-        return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
+        return <CheckCircle2 className="h-5 w-5 text-green-500" />;
       case 'error':
-        return <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />;
+        return <TriangleAlert className="h-5 w-5 text-red-500" />;
       case 'uploading':
         return <div className="h-5 w-5 border-2 border-electric-purple border-t-transparent rounded-full animate-spin" />;
       default:
@@ -117,7 +111,7 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
           <input {...getInputProps()} />
           <div className="space-y-4">
             <div className="mx-auto w-16 h-16 bg-electric-purple/20 rounded-full flex items-center justify-center">
-              <DocumentArrowUpIcon className="h-8 w-8 text-electric-purple" />
+              <FileUp className="h-8 w-8 text-electric-purple" />
             </div>
             
             <div>
@@ -175,7 +169,7 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
                       className="h-8 w-8 lewis-card-hover"
                       disabled={file.status === 'uploading'}
                     >
-                      <XMarkIcon className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>

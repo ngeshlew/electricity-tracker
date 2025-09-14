@@ -1,11 +1,6 @@
 import React from 'react';
-import { Button } from '@/components/ui/button-simple';
-import { 
-  CalendarDaysIcon, 
-  ClockIcon, 
-  CalendarIcon,
-  ArrowPathIcon
-} from '@heroicons/react/24/outline';
+import { Button } from '@/components/ui/button';
+import { CalendarDays, Clock, Calendar, RefreshCw } from 'lucide-react';
 
 export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
@@ -17,10 +12,10 @@ interface TimePeriodSelectorProps {
 }
 
 const periodOptions: { value: TimePeriod; label: string; icon: React.ReactNode }[] = [
-  { value: 'daily', label: 'Daily', icon: <CalendarDaysIcon className="h-4 w-4" /> },
-  { value: 'weekly', label: 'Weekly', icon: <ClockIcon className="h-4 w-4" /> },
-  { value: 'monthly', label: 'Monthly', icon: <CalendarIcon className="h-4 w-4" /> },
-  { value: 'yearly', label: 'Yearly', icon: <CalendarIcon className="h-4 w-4" /> },
+  { value: 'daily', label: 'Daily', icon: <CalendarDays className="h-4 w-4" /> },
+  { value: 'weekly', label: 'Weekly', icon: <Clock className="h-4 w-4" /> },
+  { value: 'monthly', label: 'Monthly', icon: <Calendar className="h-4 w-4" /> },
+  { value: 'yearly', label: 'Yearly', icon: <Calendar className="h-4 w-4" /> },
 ];
 
 export const TimePeriodSelector: React.FC<TimePeriodSelectorProps> = ({
@@ -58,7 +53,7 @@ export const TimePeriodSelector: React.FC<TimePeriodSelectorProps> = ({
           className="lewis-card-hover"
           title="Refresh data"
         >
-          <ArrowPathIcon className="h-4 w-4" />
+          <RefreshCw className="h-4 w-4" />
         </Button>
       )}
     </div>

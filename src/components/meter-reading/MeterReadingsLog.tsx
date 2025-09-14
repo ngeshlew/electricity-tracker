@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { Button } from '@/components/ui/button-simple';
-import { 
-  EyeIcon, 
-  PencilIcon, 
-  TrashIcon,
-  CalendarIcon,
-  BoltIcon,
-  CurrencyPoundIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Eye, Pencil, Trash2, Calendar, Bolt, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
 
@@ -22,7 +15,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   onEdit,
   onDelete
 }) => {
-  const { readings, isLoading, deleteReading, toggleFirstReading, generateEstimatedReadings, removeEstimatedReadings, removeEstimatedReading } = useElectricityStore();
+  const { readings, isLoading, deleteReading, toggleFirstReading, generateEstimatedReadings, removeEstimatedReading } = useElectricityStore();
   const [selectedReading, setSelectedReading] = useState<MeterReading | null>(null);
   const [filterType, setFilterType] = useState<'all' | 'MANUAL' | 'IMPORTED' | 'ESTIMATED'>('all');
 
@@ -101,7 +94,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <BoltIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <Bolt className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground">No meter readings found</p>
             <p className="text-sm text-muted-foreground mt-2">
               Add your first reading to start tracking your electricity consumption
@@ -192,13 +185,13 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                 <div className="flex items-center space-x-4">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 bg-electric-purple/20 rounded-full flex items-center justify-center">
-                      <BoltIcon className="h-5 w-5 text-electric-purple" />
+                      <Bolt className="h-5 w-5 text-electric-purple" />
                     </div>
                   </div>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2">
-                      <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-medium">
                         {formatDate(reading.date)}
                       </span>
@@ -209,7 +202,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     
                     <div className="mt-1 flex items-center space-x-4">
                       <div className="flex items-center space-x-1">
-                        <BoltIcon className="h-4 w-4 text-muted-foreground" />
+                        <Bolt className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-medium">
                           {Number(reading.reading).toFixed(2)} kWh
                         </span>
@@ -262,7 +255,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     className="h-8 w-8 lewis-card-hover"
                     title="View details"
                   >
-                    <EyeIcon className="h-4 w-4" />
+                    <Eye className="h-4 w-4" />
                   </Button>
                   
                   <Button
@@ -276,7 +269,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     }`}
                     title={reading.isFirstReading ? "Unmark as first reading" : "Mark as first reading"}
                   >
-                    <BoltIcon className="h-4 w-4" />
+                    <Bolt className="h-4 w-4" />
                   </Button>
                   
                   {onEdit && (
@@ -287,7 +280,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       className="h-8 w-8 lewis-card-hover"
                       title="Edit reading"
                     >
-                      <PencilIcon className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" />
                     </Button>
                   )}
                   
@@ -298,7 +291,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     className="h-8 w-8 lewis-card-hover text-red-500 hover:text-red-700"
                     title="Delete reading"
                   >
-                    <TrashIcon className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -307,25 +300,18 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         </div>
         
         {/* Reading Details Modal */}
-        {selectedReading && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <Card className="lewis-card max-w-md w-full max-h-[80vh] overflow-y-auto">
-              <CardHeader className="relative">
-                <CardTitle className="text-lg font-semibold lewis-text-gradient pr-10">
-                  Reading Details
-                </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSelectedReading(null)}
-                  className="absolute top-4 right-4 h-8 w-8 lewis-card-hover z-10"
-                  title="Close"
-                >
-                  <XMarkIcon className="h-4 w-4" />
+        <Dialog open={!!selectedReading} onOpenChange={(open) => !open && setSelectedReading(null)}>
+          <DialogContent className="max-w-md w-full max-h-[80vh] overflow-y-auto lewis-card">
+            <DialogHeader className="flex flex-row items-center justify-between">
+              <DialogTitle className="text-lg font-semibold lewis-text-gradient">Reading Details</DialogTitle>
+              <DialogClose asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 lewis-card-hover" title="Close">
+                  <X className="h-4 w-4" />
                 </Button>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
+              </DialogClose>
+            </DialogHeader>
+            {selectedReading && (
+              <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Date</label>
@@ -344,14 +330,12 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     <p className="text-sm">{selectedReading.type}</p>
                   </div>
                 </div>
-                
                 {selectedReading.notes && (
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Notes</label>
                     <p className="text-sm">{selectedReading.notes}</p>
                   </div>
                 )}
-                
                 <div className="pt-4 border-t border-border">
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Created:</span>
@@ -366,10 +350,10 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     </span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );

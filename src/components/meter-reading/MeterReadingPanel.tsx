@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Button } from '@/components/ui/button-simple';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
+import React from 'react';
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { MeterReadingForm } from './MeterReadingForm';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -26,89 +25,35 @@ interface MeterReadingPanelProps {
   onClose: () => void; // Callback to close the modal
 }
 
-export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({ 
-  isOpen, 
-  onClose 
-}) => {
+export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({ isOpen, onClose }) => {
   const { toggleMeterPanel } = useElectricityStore();
-  const firstFocusableRef = useRef<HTMLButtonElement | null>(null);
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
       onClose();
       toggleMeterPanel(false);
     }
   };
-  
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          aria-modal="true"
-          role="dialog"
-          onClick={onBackdrop}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              onClose();
-              toggleMeterPanel(false);
-            }
-            if (e.key === 'Tab' && panelRef.current) {
-              const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-                'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
-              );
-              const first = focusable[0];
-              const last = focusable[focusable.length - 1];
-              if (!first || !last) return;
-              if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                (last as HTMLElement).focus();
-              } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                (first as HTMLElement).focus();
-              }
-            }
-          }}
-        >
-          <motion.div
-            className="w-full max-w-md max-h-[90vh] overflow-y-auto"
-            initial={{ y: 40, opacity: 0, scale: 0.98 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 20, opacity: 0, scale: 0.98 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-            ref={panelRef}
-          >
-            <Card className="w-full lewis-card lewis-shadow-glow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                <CardTitle className="text-xl font-semibold lewis-text-gradient">
-                  Add Meter Reading
-                </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    onClose();
-                    toggleMeterPanel(false);
-                  }}
-                  className="h-10 w-10 lewis-card-hover"
-                  title="Close modal"
-                  aria-label="Close meter reading panel"
-                  ref={firstFocusableRef}
-                >
-                  <XMarkIcon className="h-5 w-5" />
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <MeterReadingForm onSuccess={onClose} />
-              </CardContent>
-            </Card>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="w-full max-w-md max-h-[90vh] overflow-y-auto lewis-card lewis-shadow-glow">
+        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <DialogTitle className="text-xl font-semibold lewis-text-gradient">Add Meter Reading</DialogTitle>
+          <DialogClose asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 lewis-card-hover"
+              title="Close modal"
+              aria-label="Close meter reading panel"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </DialogClose>
+        </DialogHeader>
+        <MeterReadingForm onSuccess={() => handleOpenChange(false)} />
+      </DialogContent>
+    </Dialog>
   );
 };

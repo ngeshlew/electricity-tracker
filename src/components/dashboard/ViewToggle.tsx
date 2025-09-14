@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from '@/components/ui/button-simple';
-import { CurrencyDollarIcon, BoltIcon } from '@heroicons/react/24/outline';
+import { Button } from '@/components/ui/button';
+import { DollarSign, Bolt } from 'lucide-react';
 
 interface ViewToggleProps {
   viewMode: 'kwh' | 'cost';
@@ -25,7 +25,7 @@ export const ViewToggle: React.FC<ViewToggleProps> = ({
             : 'lewis-card-hover text-muted-foreground hover:text-foreground'
         }`}
       >
-        <BoltIcon className="h-4 w-4" />
+        <Bolt className="h-4 w-4" />
         <span>kWh</span>
       </Button>
       
@@ -39,7 +39,7 @@ export const ViewToggle: React.FC<ViewToggleProps> = ({
             : 'lewis-card-hover text-muted-foreground hover:text-foreground'
         }`}
       >
-        <CurrencyDollarIcon className="h-4 w-4" />
+        <DollarSign className="h-4 w-4" />
         <span>Cost</span>
       </Button>
     </div>

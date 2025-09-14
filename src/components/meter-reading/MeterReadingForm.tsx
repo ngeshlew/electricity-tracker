@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button-simple';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from '@/components/ui/toaster';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 /**
@@ -79,27 +84,22 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       
       reset();
       onSuccess();
-      
-      // Show success message
-      alert('Meter reading added successfully!');
+      toast.success('Meter reading added successfully');
     } catch (error) {
       console.error('Failed to add meter reading:', error);
-      alert('Failed to add meter reading. Please try again.');
+      toast.error('Failed to add meter reading. Please try again.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lewis-animation-fade-in">
       <div>
-        <label htmlFor="reading" className="block text-sm font-medium text-foreground mb-3">
-          Meter Reading (kWh)
-        </label>
-        <input
+        <Label htmlFor="reading" className="mb-3 block">Meter Reading (kWh)</Label>
+        <Input
           id="reading"
           type="number"
           step="0.01"
           {...register('reading', { valueAsNumber: true })}
-          className="lewis-input w-full"
           placeholder="Enter meter reading"
         />
         {errors.reading && (
@@ -108,14 +108,11 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       </div>
 
       <div>
-        <label htmlFor="date" className="block text-sm font-medium text-foreground mb-3">
-          Date
-        </label>
-        <input
+        <Label htmlFor="date" className="mb-3 block">Date</Label>
+        <Input
           id="date"
           type="date"
           {...register('date', { valueAsDate: true })}
-          className="lewis-input w-full"
         />
         {errors.date && (
           <p className="text-sm text-destructive mt-2 lewis-animation-slide-up">{errors.date.message}</p>
@@ -123,14 +120,11 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       </div>
 
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-foreground mb-3">
-          Notes (Optional)
-        </label>
-        <textarea
+        <Label htmlFor="notes" className="mb-3 block">Notes (Optional)</Label>
+        <Textarea
           id="notes"
           {...register('notes')}
           rows={3}
-          className="lewis-input w-full resize-none"
           placeholder="Add any notes about this reading"
         />
         {errors.notes && (
@@ -141,16 +135,14 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       {/* First Reading Checkbox - Only shown if no first reading exists */}
       {showFirstReadingCheckbox && (
         <div className="flex items-center space-x-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-          <input
+          <Checkbox
             id="isFirstReading"
-            type="checkbox"
             checked={isFirstReading}
-            onChange={(e) => setIsFirstReading(e.target.checked)}
-            className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+            onCheckedChange={(v) => setIsFirstReading(Boolean(v))}
           />
-          <label htmlFor="isFirstReading" className="text-sm font-medium text-purple-800 dark:text-purple-200">
+          <Label htmlFor="isFirstReading" className="text-sm font-medium text-purple-800 dark:text-purple-200">
             This is my first meter reading (move-in reading)
-          </label>
+          </Label>
         </div>
       )}
 

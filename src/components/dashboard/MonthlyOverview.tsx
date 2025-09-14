@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { Button } from '@/components/ui/button-simple';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { format, startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
 import { formatDateUK, getWeekStart, getWeekEnd, getWeekNumber } from '../../utils/dateFormatters';
@@ -161,7 +161,7 @@ export const MonthlyOverview: React.FC = () => {
             onClick={() => navigateMonth('prev')}
             className="h-8 w-8 lewis-card-hover"
           >
-            <ChevronLeftIcon className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm font-medium min-w-[120px] text-center">
             {format(currentMonth, 'MMM yyyy')}
@@ -172,7 +172,7 @@ export const MonthlyOverview: React.FC = () => {
             onClick={() => navigateMonth('next')}
             className="h-8 w-8 lewis-card-hover"
           >
-            <ChevronRightIcon className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>

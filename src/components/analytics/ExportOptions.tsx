@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { Button } from '@/components/ui/button-simple';
-import { 
-  ArrowDownTrayIcon,
-  DocumentArrowDownIcon,
-  TableCellsIcon,
-  CalendarIcon,
-  ChartBarIcon
-} from '@heroicons/react/24/outline';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Download, FileDown, Table, Calendar, BarChart2 } from 'lucide-react';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 interface ExportOptionsProps {
@@ -119,21 +113,21 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
     {
       title: 'Meter Readings',
       description: 'Export all meter reading data',
-      icon: <TableCellsIcon className="h-6 w-6" />,
+      icon: <Table className="h-6 w-6" />,
       dataType: 'readings' as const,
       available: readings.length > 0
     },
     {
       title: 'Consumption Chart',
       description: 'Export consumption chart data',
-      icon: <ChartBarIcon className="h-6 w-6" />,
+      icon: <BarChart2 className="h-6 w-6" />,
       dataType: 'chart' as const,
       available: chartData.length > 0
     },
     {
       title: 'Analytics Data',
       description: 'Export time series analytics',
-      icon: <CalendarIcon className="h-6 w-6" />,
+      icon: <Calendar className="h-6 w-6" />,
       dataType: 'analytics' as const,
       available: timeSeriesData.length > 0
     }
@@ -143,7 +137,7 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
     <Card className={`lewis-card lewis-shadow-glow lewis-animation-fade-in ${className}`}>
       <CardHeader>
         <CardTitle className="text-lg font-semibold lewis-text-gradient flex items-center space-x-2">
-          <ArrowDownTrayIcon className="h-5 w-5" />
+          <Download className="h-5 w-5" />
           <span>Export Data</span>
         </CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -182,7 +176,7 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
                   disabled={!option.available || isExporting}
                   className="lewis-card-hover"
                 >
-                  <DocumentArrowDownIcon className="h-4 w-4 mr-1" />
+                  <FileDown className="h-4 w-4 mr-1" />
                   CSV
                 </Button>
                 <Button
@@ -192,7 +186,7 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
                   disabled={!option.available || isExporting}
                   className="lewis-card-hover"
                 >
-                  <DocumentArrowDownIcon className="h-4 w-4 mr-1" />
+                  <FileDown className="h-4 w-4 mr-1" />
                   JSON
                 </Button>
               </div>
@@ -213,7 +207,7 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
 
         {exportOptions.every(option => !option.available) && (
           <div className="text-center py-8 text-muted-foreground">
-            <ArrowDownTrayIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <Download className="h-12 w-12 mx-auto mb-2 opacity-50" />
             <p>No data available for export</p>
             <p className="text-sm">Add some meter readings to enable export options</p>
           </div>

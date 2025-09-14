@@ -52,7 +52,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 
   const calculateConsumption = (current: MeterReading, previous?: MeterReading) => {
     if (!previous) return 0;
-    return current.reading - previous.reading;
+    return Number(current.reading) - Number(previous.reading);
   };
 
   const calculateCost = (kwh: number) => {
@@ -144,7 +144,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       <div className="flex items-center space-x-1">
                         <BoltIcon className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-medium">
-                          {reading.reading.toFixed(2)} kWh
+                          {Number(reading.reading).toFixed(2)} kWh
                         </span>
                       </div>
                       
@@ -249,7 +249,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Reading</label>
-                    <p className="text-sm font-medium">{selectedReading.reading.toFixed(2)} kWh</p>
+                    <p className="text-sm font-medium">{Number(selectedReading.reading).toFixed(2)} kWh</p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Type</label>

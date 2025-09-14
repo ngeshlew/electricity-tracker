@@ -1,7 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from '@/components/ui/sheet';
 import { MeterReadingForm } from './MeterReadingForm';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -36,24 +36,20 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({ isOpen, on
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="w-full max-w-md max-h-[90vh] overflow-y-auto lewis-card lewis-shadow-glow">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <DialogTitle className="text-xl font-semibold lewis-text-gradient">Add Meter Reading</DialogTitle>
-          <DialogClose asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 lewis-card-hover"
-              title="Close modal"
-              aria-label="Close meter reading panel"
-            >
+    <Sheet open={isOpen} onOpenChange={handleOpenChange}>
+      <SheetContent side="right" className="lewis-card lewis-shadow-glow">
+        <SheetHeader>
+          <SheetTitle className="text-xl font-semibold lewis-text-gradient">Add Meter Reading</SheetTitle>
+          <SheetClose asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Close meter reading panel">
               <X className="h-5 w-5" />
             </Button>
-          </DialogClose>
-        </DialogHeader>
-        <MeterReadingForm onSuccess={() => handleOpenChange(false)} />
-      </DialogContent>
-    </Dialog>
+          </SheetClose>
+        </SheetHeader>
+        <div className="mt-4">
+          <MeterReadingForm onSuccess={() => handleOpenChange(false)} />
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };

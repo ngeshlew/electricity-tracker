@@ -4,6 +4,7 @@ import { Dashboard } from './components/dashboard/Dashboard';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useElectricityStore } from './store/useElectricityStore';
 import './index.css';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
 
 function App() {
@@ -23,13 +24,15 @@ function App() {
   return (
     <ErrorBoundary>
       <Router>
-        <div className="min-h-screen bg-background text-foreground">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
-          <Toaster />
-        </div>
+        <TooltipProvider>
+          <div className="min-h-screen bg-background text-foreground">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+            <Toaster />
+          </div>
+        </TooltipProvider>
       </Router>
     </ErrorBoundary>
   );

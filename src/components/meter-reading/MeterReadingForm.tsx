@@ -8,6 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/toaster';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { format } from 'date-fns';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 /**
@@ -58,6 +63,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
   // React Hook Form setup with validation
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -92,6 +98,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
   };
 
   return (
+    <Form {...{ control }}>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lewis-animation-fade-in">
       <div>
         <Label htmlFor="reading" className="mb-3 block">Meter Reading (kWh)</Label>
@@ -107,17 +114,36 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
         )}
       </div>
 
-      <div>
-        <Label htmlFor="date" className="mb-3 block">Date</Label>
-        <Input
-          id="date"
-          type="date"
-          {...register('date', { valueAsDate: true })}
-        />
-        {errors.date && (
-          <p className="text-sm text-destructive mt-2 lewis-animation-slide-up">{errors.date.message}</p>
+      <FormField
+        control={control}
+        name="date"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Date</FormLabel>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="justify-start w-full"
+                >
+                  <CalendarIcon className="h-4 w-4 mr-2" />
+                  {field.value ? format(field.value, 'PPP') : 'Pick a date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="p-0">
+                <Calendar
+                  mode="single"
+                  selected={field.value}
+                  onSelect={(d) => d && field.onChange(d)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <FormMessage>{errors.date?.message}</FormMessage>
+          </FormItem>
         )}
-      </div>
+      />
 
       <div>
         <Label htmlFor="notes" className="mb-3 block">Notes (Optional)</Label>
@@ -167,5 +193,6 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
         </Button>
       </div>
     </form>
+    </Form>
   );
 };

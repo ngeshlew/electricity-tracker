@@ -2,6 +2,8 @@ import { FC } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useElectricityStore } from '../../store/useElectricityStore';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 export const Header: FC = () => {
   const { toggleMeterPanel } = useElectricityStore();
@@ -19,13 +21,34 @@ export const Header: FC = () => {
             </h1>
           </div>
           
-          <Button 
-            onClick={() => toggleMeterPanel(true)} 
-            className="lewis-button-primary flex items-center space-x-2 lewis-animation-slide-up"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Add Reading</span>
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="hidden md:inline-flex">⌘K</Button>
+              </DialogTrigger>
+              <DialogContent className="p-0 overflow-hidden max-w-lg">
+                <Command>
+                  <CommandInput placeholder="Search actions..." />
+                  <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup heading="Actions">
+                      <CommandItem onSelect={() => toggleMeterPanel(true)}>Add Reading</CommandItem>
+                      <CommandItem onSelect={() => location.assign('/dashboard')}>Go to Overview</CommandItem>
+                      <CommandItem onSelect={() => location.assign('/dashboard#analytics')}>Go to Analytics</CommandItem>
+                      <CommandItem onSelect={() => location.assign('/dashboard#statements')}>Go to Statements</CommandItem>
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </DialogContent>
+            </Dialog>
+            <Button 
+              onClick={() => toggleMeterPanel(true)} 
+              className="lewis-button-primary flex items-center space-x-2 lewis-animation-slide-up"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Add Reading</span>
+            </Button>
+          </div>
         </div>
       </div>
     </header>

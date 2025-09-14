@@ -8,6 +8,9 @@ import { DailyBreakdown } from './DailyBreakdown';
 import { ViewToggle } from './ViewToggle';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreVertical } from 'lucide-react';
 import { ExportOptions } from '../analytics/ExportOptions';
 import { StatementUpload } from '../statements/StatementUpload';
 import { apiService } from '../../services/api';
@@ -40,6 +43,23 @@ export const Dashboard: FC = () => {
           <p className="text-lg text-muted-foreground">
             Monitor your electricity consumption and costs in real-time
           </p>
+        </div>
+
+        {/* Breadcrumb */}
+        <div className="mb-2">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                {activeTab === 'overview' && <BreadcrumbPage>Overview</BreadcrumbPage>}
+                {activeTab === 'analytics' && <BreadcrumbPage>Analytics</BreadcrumbPage>}
+                {activeTab === 'statements' && <BreadcrumbPage>Statements</BreadcrumbPage>}
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
 
         {/* Tab Navigation (shadcn Tabs) */}
@@ -156,16 +176,25 @@ const StatementsSection: FC = () => {
                   <span className="text-muted-foreground ml-2">{new Date(s.importedAt).toLocaleString()}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {s.fileUrl && (
-                    <a href={s.fileUrl} target="_blank" rel="noreferrer" className="text-primary underline">View</a>
-                  )}
-                  <button
-                    className="text-destructive hover:underline"
-                    onClick={async () => {
-                      const res = await apiService.deleteStatement(s.id);
-                      if (res.success) refresh();
-                    }}
-                  >Delete</button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="h-8 w-8 inline-flex items-center justify-center rounded-md border hover:bg-accent">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {s.fileUrl && (
+                        <DropdownMenuItem asChild>
+                          <a href={s.fileUrl} target="_blank" rel="noreferrer">View</a>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onSelect={async () => {
+                        const res = await apiService.deleteStatement(s.id);
+                        if (res.success) refresh();
+                      }}>Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </li>
             ))}

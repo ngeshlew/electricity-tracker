@@ -287,8 +287,8 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     variant="ghost"
                     size="icon"
                     onClick={() => setPendingDeleteId(reading.id)}
-                    className="h-8 w-8 lewis-card-hover text-red-500 hover:text-red-700"
-                    title="Delete reading"
+                    className="h-8 w-8 lewis-card-hover text-destructive"
+                    aria-label="Delete reading"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

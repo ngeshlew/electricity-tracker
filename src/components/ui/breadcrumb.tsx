@@ -19,5 +19,5 @@ export const BreadcrumbLink: React.FC<React.AnchorHTMLAttributes<HTMLAnchorEleme
   <a className={cn("hover:text-foreground underline-offset-4 hover:underline", className)} {...props} />
 )
 
-export const BreadcrumbPage: React.FC = ({ children }) => <span className="text-foreground">{children}</span>
+export const BreadcrumbPage: React.FC<{ children: React.ReactNode }> = ({ children }) => <span className="text-foreground">{children}</span>
 

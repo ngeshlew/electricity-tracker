@@ -90,7 +90,7 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { meterId, reading, date, type, notes } = req.body;
+    const { meterId, reading, date, type, notes, isFirstReading } = req.body;
 
     // Check if reading exists
     const existingReading = await prisma.meterReading.findUnique({
@@ -113,7 +113,8 @@ router.put('/:id', async (req, res, next) => {
         ...(reading !== undefined && { reading: Number(reading) }),
         ...(date && { date: new Date(date) }),
         ...(type && { type }),
-        ...(notes !== undefined && { notes })
+        ...(notes !== undefined && { notes }),
+        ...(isFirstReading !== undefined && { isFirstReading: Boolean(isFirstReading) })
       }
     });
 

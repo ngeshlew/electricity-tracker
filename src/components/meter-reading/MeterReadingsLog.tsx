@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Pencil, Trash2, Calendar, Bolt, X } from 'lucide-react';
+import { Eye, Pencil, Trash2, Calendar, Bolt, X, ArrowUpDown } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
@@ -9,6 +9,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarPicker } from '@/components/ui/calendar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface MeterReadingsLogProps {
   onEdit?: (reading: MeterReading) => void;
@@ -25,6 +28,17 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   const [query, setQuery] = useState('');
   const [sortKey, setSortKey] = useState<'date' | 'reading' | 'type'>('date');
   const [sortAsc, setSortAsc] = useState(false);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
+  const [kwhMin, setKwhMin] = useState<number | undefined>();
+  const [kwhMax, setKwhMax] = useState<number | undefined>();
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+
+  // debounce query
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query), 200);
+    return () => clearTimeout(t);
+  }, [query]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-GB', {
@@ -112,14 +126,18 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 
   const filteredReadings = readings.filter(reading => {
     if (filterType !== 'all' && reading.type !== filterType) return false;
-    if (query.trim().length > 0) {
-      const q = query.toLowerCase();
+    if (debouncedQuery.trim().length > 0) {
+      const q = debouncedQuery.toLowerCase();
       return (
         String(reading.reading).toLowerCase().includes(q) ||
         (reading.notes || '').toLowerCase().includes(q) ||
         reading.type.toLowerCase().includes(q)
       );
     }
+    if (dateFrom && reading.date < dateFrom) return false;
+    if (dateTo && reading.date > dateTo) return false;
+    if (typeof kwhMin === 'number' && reading.reading < kwhMin) return false;
+    if (typeof kwhMax === 'number' && reading.reading > kwhMax) return false;
     return true;
   });
   
@@ -164,9 +182,28 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-4 gap-3">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full">From: {dateFrom ? dateFrom.toLocaleDateString() : 'Any'}</Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="p-0">
+                <CalendarPicker mode="single" selected={dateFrom} onSelect={(d) => setDateFrom(d || undefined)} />
+              </PopoverContent>
+            </Popover>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full">To: {dateTo ? dateTo.toLocaleDateString() : 'Any'}</Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="p-0">
+                <CalendarPicker mode="single" selected={dateTo} onSelect={(d) => setDateTo(d || undefined)} />
+              </PopoverContent>
+            </Popover>
+            <Input type="number" step="0.01" placeholder="Min kWh" value={kwhMin ?? ''} onChange={(e) => setKwhMin(e.target.value === '' ? undefined : Number(e.target.value))} />
+            <Input type="number" step="0.01" placeholder="Max kWh" value={kwhMax ?? ''} onChange={(e) => setKwhMax(e.target.value === '' ? undefined : Number(e.target.value))} />
             <Button onClick={generateEstimatedReadings} size="sm" className="lewis-button-secondary">Generate Estimated Readings</Button>
-            <Button onClick={() => setSortAsc((v) => !v)} variant="ghost" size="sm" className="ml-2">Toggle Sort Direction</Button>
+            <Button onClick={() => setSortAsc((v) => !v)} variant="ghost" size="sm" className="ml-2"><ArrowUpDown className="h-4 w-4 mr-1" /> Toggle Sort</Button>
+            <Button variant="ghost" size="sm" onClick={() => { setDateFrom(undefined); setDateTo(undefined); setKwhMin(undefined); setKwhMax(undefined); }}>Clear Filters</Button>
           </div>
         </div>
       </CardHeader>

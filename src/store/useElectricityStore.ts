@@ -119,13 +119,19 @@ export const useElectricityStore = create<ElectricityState>()(
               updatedAt: new Date(response.data.updatedAt),
             };
 
-            set((state) => ({
-              readings: [...state.readings, newReading].sort((a, b) => 
-                new Date(a.date).getTime() - new Date(b.date).getTime()
-              ),
-              isLoading: false,
-              error: null,
-            }));
+            set((state) => {
+              const exists = state.readings.some(r => r.id === newReading.id);
+              const nextReadings = exists
+                ? state.readings.map(r => r.id === newReading.id ? newReading : r)
+                : [...state.readings, newReading];
+              return {
+                readings: nextReadings.sort((a, b) => 
+                  new Date(a.date).getTime() - new Date(b.date).getTime()
+                ),
+                isLoading: false,
+                error: null,
+              };
+            });
 
             // Recalculate analytics data
             get().calculateConsumptionData();
@@ -162,11 +168,9 @@ export const useElectricityStore = create<ElectricityState>()(
             };
 
             set((state) => ({
-              readings: state.readings.map((reading) =>
-                reading.id === id ? updatedReading : reading
-              ).sort((a, b) => 
-                new Date(a.date).getTime() - new Date(b.date).getTime()
-              ),
+              readings: state.readings
+                .map((reading) => reading.id === id ? updatedReading : reading)
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
               isLoading: false,
               error: null,
             }));
@@ -492,11 +496,17 @@ export const useElectricityStore = create<ElectricityState>()(
               updatedAt: new Date(reading.updatedAt),
             };
 
-            set((state) => ({
-              readings: [...state.readings, newReading].sort((a, b) => 
-                new Date(a.date).getTime() - new Date(b.date).getTime()
-              ),
-            }));
+            set((state) => {
+              const exists = state.readings.some(r => r.id === newReading.id);
+              const nextReadings = exists
+                ? state.readings.map(r => r.id === newReading.id ? newReading : r)
+                : [...state.readings, newReading];
+              return {
+                readings: nextReadings.sort((a, b) => 
+                  new Date(a.date).getTime() - new Date(b.date).getTime()
+                ),
+              };
+            });
 
             // Recalculate analytics data
             get().calculateConsumptionData();
@@ -513,11 +523,9 @@ export const useElectricityStore = create<ElectricityState>()(
             };
 
             set((state) => ({
-              readings: state.readings.map((r) =>
-                r.id === reading.id ? updatedReading : r
-              ).sort((a, b) => 
-                new Date(a.date).getTime() - new Date(b.date).getTime()
-              ),
+              readings: state.readings
+                .map((r) => r.id === reading.id ? updatedReading : r)
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
             }));
 
             // Recalculate analytics data

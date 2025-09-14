@@ -1,4 +1,5 @@
 import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button-simple';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
@@ -31,39 +32,51 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
 }) => {
   const { toggleMeterPanel } = useElectricityStore();
   
-  // Don't render if modal is closed
-  if (!isOpen) return null;
-
   return (
-    // Modal Overlay - Full screen backdrop with blur effect
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4 lewis-animation-fade-in">
-      {/* Modal Card - Centered with responsive positioning */}
-      <Card className="w-full max-w-md max-h-[90vh] overflow-y-auto lewis-card lewis-shadow-glow lewis-animation-slide-up">
-        {/* Modal Header - Contains title and close button */}
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          {/* Modal Title with gradient text */}
-          <CardTitle className="text-xl font-semibold lewis-text-gradient">
-            Add Meter Reading
-          </CardTitle>
-          {/* Close Button - Top right corner with X icon */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              onClose();
-              toggleMeterPanel(false);
-            }}
-            className="h-10 w-10 lewis-card-hover"
-            title="Close modal"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          aria-modal="true"
+          role="dialog"
+        >
+          <motion.div
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto"
+            initial={{ y: 40, opacity: 0, scale: 0.98 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 20, opacity: 0, scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 24 }}
           >
-            <XMarkIcon className="h-5 w-5" />
-          </Button>
-        </CardHeader>
-        {/* Modal Content - Contains the meter reading form */}
-        <CardContent>
-          <MeterReadingForm onSuccess={onClose} />
-        </CardContent>
-      </Card>
-    </div>
+            <Card className="w-full lewis-card lewis-shadow-glow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-xl font-semibold lewis-text-gradient">
+                  Add Meter Reading
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    onClose();
+                    toggleMeterPanel(false);
+                  }}
+                  className="h-10 w-10 lewis-card-hover"
+                  title="Close modal"
+                  aria-label="Close meter reading panel"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <MeterReadingForm onSuccess={onClose} />
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

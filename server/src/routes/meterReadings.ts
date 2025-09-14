@@ -63,7 +63,7 @@ router.post('/', async (req, res, next) => {
         // Prisma accepts number or string for Decimal; ensure number
         reading: Number(reading),
         date: new Date(date),
-        type: (type === 'MANUAL' || type === 'IMPORTED') ? type : 'MANUAL',
+        type: (type === 'MANUAL' || type === 'IMPORTED' || type === 'ESTIMATED') ? type : 'MANUAL',
         notes: notes ?? null,
         isFirstReading: isFirstReading ?? false
       }
@@ -112,7 +112,7 @@ router.put('/:id', async (req, res, next) => {
         ...(meterId && { meterId: String(meterId) }),
         ...(reading !== undefined && { reading: Number(reading) }),
         ...(date && { date: new Date(date) }),
-        ...(type && { type }),
+        ...(type && (type === 'MANUAL' || type === 'IMPORTED' || type === 'ESTIMATED') && { type }),
         ...(notes !== undefined && { notes }),
         ...(isFirstReading !== undefined && { isFirstReading: Boolean(isFirstReading) })
       }

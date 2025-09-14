@@ -17,8 +17,9 @@ export interface MeterReading {
   meterId: string;
   reading: number;
   date: string;
-  type: 'MANUAL' | 'IMPORTED';
+  type: 'MANUAL' | 'IMPORTED' | 'ESTIMATED';
   notes?: string;
+  isFirstReading?: boolean;
   createdAt: string;
   updatedAt: string;
 }

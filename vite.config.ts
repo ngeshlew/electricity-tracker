@@ -52,6 +52,17 @@ export default defineConfig({
                 maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
               }
             }
+          },
+          {
+            urlPattern: /^http:\/\/localhost:3001\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'dev-api-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24
+              }
+            }
           }
         ]
       }

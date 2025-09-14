@@ -66,7 +66,15 @@ export const MonthlyOverview: React.FC = () => {
       let weekCost = 0;
       
       for (let i = 1; i < weekReadings.length; i++) {
-        const consumption = weekReadings[i].reading - weekReadings[i - 1].reading;
+        const currentReading = weekReadings[i];
+        const previousReading = weekReadings[i - 1];
+        
+        // Skip consumption calculation if current reading is marked as first reading
+        if (currentReading.isFirstReading) {
+          continue;
+        }
+        
+        const consumption = currentReading.reading - previousReading.reading;
         if (consumption > 0) {
           weekKwh += consumption;
           weekCost += consumption * preferences.unitRate;

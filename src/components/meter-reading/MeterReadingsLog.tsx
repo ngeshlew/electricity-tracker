@@ -224,17 +224,15 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     </Button>
                   )}
                   
-                  {onDelete && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(reading.id)}
-                      className="h-8 w-8 lewis-card-hover text-red-500 hover:text-red-700"
-                      title="Delete reading"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(reading.id)}
+                    className="h-8 w-8 lewis-card-hover text-red-500 hover:text-red-700"
+                    title="Delete reading"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             );
@@ -245,15 +243,15 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         {selectedReading && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <Card className="lewis-card max-w-md w-full max-h-[80vh] overflow-y-auto">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold lewis-text-gradient">
+              <CardHeader className="relative">
+                <CardTitle className="text-lg font-semibold lewis-text-gradient pr-10">
                   Reading Details
                 </CardTitle>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setSelectedReading(null)}
-                  className="absolute top-4 right-4 h-8 w-8 lewis-card-hover"
+                  className="absolute top-4 right-4 h-8 w-8 lewis-card-hover z-10"
                   title="Close"
                 >
                   <XMarkIcon className="h-4 w-4" />

@@ -481,6 +481,10 @@ export const useElectricityStore = create<ElectricityState>()(
 
         // Utility functions
         getConsumptionBetweenReadings: (reading1, reading2) => {
+          // Skip consumption calculation if reading2 is marked as first reading
+          if (reading2.isFirstReading) {
+            return 0;
+          }
           const consumption = new Decimal(reading2.reading).minus(reading1.reading);
           return consumption.toNumber();
         },

@@ -5,6 +5,7 @@ import { Eye, Pencil, Trash2, Calendar, Bolt, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface MeterReadingsLogProps {
   onEdit?: (reading: MeterReading) => void;
@@ -34,23 +35,21 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this reading?')) {
-      try {
-        // Check if it's an estimated reading (only exists in frontend state)
-        const reading = readings.find(r => r.id === id);
-        if (reading && reading.type === 'ESTIMATED') {
-          // For estimated readings, remove them locally using removeEstimatedReading
-          await removeEstimatedReading(id);
-        } else {
-          // For database readings, use the normal delete function
-          await deleteReading(id);
-          if (onDelete) onDelete(id);
-        }
-      } catch (error) {
-        console.error('Failed to delete reading:', error);
-        alert('Failed to delete reading. Please try again.');
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const handleConfirmDelete = async () => {
+    if (!pendingDeleteId) return;
+    try {
+      const reading = readings.find(r => r.id === pendingDeleteId);
+      if (reading && reading.type === 'ESTIMATED') {
+        await removeEstimatedReading(pendingDeleteId);
+      } else {
+        await deleteReading(pendingDeleteId);
+        if (onDelete) onDelete(pendingDeleteId);
       }
+    } catch (error) {
+      console.error('Failed to delete reading:', error);
+    } finally {
+      setPendingDeleteId(null);
     }
   };
 
@@ -287,7 +286,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(reading.id)}
+                    onClick={() => setPendingDeleteId(reading.id)}
                     className="h-8 w-8 lewis-card-hover text-red-500 hover:text-red-700"
                     title="Delete reading"
                   >
@@ -355,6 +354,35 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
           </DialogContent>
         </Dialog>
       </CardContent>
+      <MeterReadingsLogDeleteDialog
+        open={!!pendingDeleteId}
+        onOpenChange={(open) => !open && setPendingDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </Card>
+  );
+};
+
+// Delete confirmation dialog mounted at end to avoid layout shifts
+export const MeterReadingsLogDeleteDialog: React.FC<{
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
+}> = ({ open, onOpenChange, onConfirm }) => {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete reading?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently remove the meter reading.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="inline-flex items-center justify-center rounded-md bg-destructive text-destructive-foreground px-4 py-2 text-sm font-medium hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };

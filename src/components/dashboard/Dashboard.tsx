@@ -6,6 +6,7 @@ import { MonthlyOverview } from './MonthlyOverview';
 import { WeeklyPieChart } from './WeeklyPieChart';
 import { DailyBreakdown } from './DailyBreakdown';
 import { ViewToggle } from './ViewToggle';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
 import { ExportOptions } from '../analytics/ExportOptions';
 import { StatementUpload } from '../statements/StatementUpload';
@@ -41,80 +42,54 @@ export const Dashboard: FC = () => {
           </p>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tab Navigation (shadcn Tabs) */}
         <div className="mb-6 lewis-animation-fade-in">
-          <div className="flex space-x-1 bg-muted/20 rounded-lg p-1 w-fit">
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'analytics', label: 'Analytics' },
-              { id: 'statements', label: 'Statements' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  activeTab === tab.id
-                    ? 'lewis-button-primary shadow-md'
-                    : 'lewis-card-hover text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="statements">Statements</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            <SummaryCards timePeriod={timePeriod} viewMode={viewMode} />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ConsumptionChart />
-              <MonthlyOverview />
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+          <TabsContent value="overview">
+            <div className="space-y-8 lewis-animation-fade-in">
+              <SummaryCards timePeriod={timePeriod} viewMode={viewMode} />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <ConsumptionChart />
+                <MonthlyOverview />
+              </div>
+              <MeterReadingsLog />
             </div>
-            
-            <MeterReadingsLog />
-          </div>
-        )}
+          </TabsContent>
 
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <TimePeriodSelector
-                selectedPeriod={timePeriod}
-                onPeriodChange={setTimePeriod}
-                onRefresh={handleRefresh}
-              />
-              <ViewToggle
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-              />
+          <TabsContent value="analytics">
+            <div className="space-y-8 lewis-animation-fade-in">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <TimePeriodSelector
+                  selectedPeriod={timePeriod}
+                  onPeriodChange={setTimePeriod}
+                  onRefresh={handleRefresh}
+                />
+                <ViewToggle
+                  viewMode={viewMode}
+                  onViewModeChange={setViewMode}
+                />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <WeeklyPieChart currentMonth={currentMonth} viewMode={viewMode} />
+                <DailyBreakdown currentMonth={currentMonth} viewMode={viewMode} />
+              </div>
+              <ExportOptions />
             </div>
+          </TabsContent>
 
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <WeeklyPieChart
-                currentMonth={currentMonth}
-                viewMode={viewMode}
-              />
-              <DailyBreakdown
-                currentMonth={currentMonth}
-                viewMode={viewMode}
-              />
-            </div>
-
-            {/* Export Options */}
-            <ExportOptions />
-          </div>
-        )}
-
-        {/* Statements Tab */}
-        {activeTab === 'statements' && (
-          <StatementsSection />
-        )}
+          <TabsContent value="statements">
+            <StatementsSection />
+          </TabsContent>
+        </Tabs>
       </main>
 
       <MeterReadingPanel

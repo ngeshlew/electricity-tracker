@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { CalendarDays, Clock, Calendar, RefreshCw } from 'lucide-react';
 
 export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly';
@@ -26,35 +26,23 @@ export const TimePeriodSelector: React.FC<TimePeriodSelectorProps> = ({
 }) => {
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
-      <div className="flex items-center space-x-1 bg-muted/20 rounded-lg p-1">
+      <ToggleGroup type="single" value={selectedPeriod} onValueChange={(v) => v && onPeriodChange(v as TimePeriod)}>
         {periodOptions.map((option) => (
-          <Button
-            key={option.value}
-            variant={selectedPeriod === option.value ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => onPeriodChange(option.value)}
-            className={`flex items-center space-x-2 transition-all duration-200 ${
-              selectedPeriod === option.value 
-                ? 'lewis-button-primary shadow-md' 
-                : 'lewis-card-hover text-muted-foreground hover:text-foreground'
-            }`}
-          >
+          <ToggleGroupItem key={option.value} value={option.value} className="flex items-center space-x-2">
             {option.icon}
             <span className="hidden sm:inline">{option.label}</span>
-          </Button>
+          </ToggleGroupItem>
         ))}
-      </div>
-      
+      </ToggleGroup>
+
       {onRefresh && (
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
           onClick={onRefresh}
-          className="lewis-card-hover"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           title="Refresh data"
         >
           <RefreshCw className="h-4 w-4" />
-        </Button>
+        </button>
       )}
     </div>
   );

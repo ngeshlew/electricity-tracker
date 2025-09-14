@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
 
@@ -128,12 +129,10 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
-            <div className="text-center">
-              <div className="text-4xl mb-2">📊</div>
-              <p>No data available for this month</p>
-            </div>
-          </div>
+          <Alert>
+            <AlertTitle>No data</AlertTitle>
+            <AlertDescription>Add meter readings to see weekly breakdown.</AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
     );

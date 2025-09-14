@@ -11,7 +11,7 @@ import { toast } from '@/components/ui/toaster';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { format } from 'date-fns';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -98,7 +98,21 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
   };
 
   return (
-    <Form {...{ control }}>
+    <Form value={{
+      control,
+      register,
+      handleSubmit,
+      setError: () => {},
+      clearErrors: () => {},
+      formState: { errors },
+      getValues: () => ({} as any),
+      setValue: () => {},
+      trigger: async () => true,
+      reset,
+      watch: () => ({} as any),
+      getFieldState: () => ({ invalid: false, isDirty: false, isTouched: false }),
+      unregister: () => {},
+    } as any}>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lewis-animation-fade-in">
       <div>
         <Label htmlFor="reading" className="mb-3 block">Meter Reading (kWh)</Label>

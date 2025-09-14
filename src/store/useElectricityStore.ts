@@ -37,6 +37,7 @@ interface ElectricityState {
   generateEstimatedReadings: () => Promise<void>;
   removeEstimatedReadings: (date: Date) => Promise<void>;
   removeEstimatedReading: (id: string) => Promise<void>;
+  updatePreferences: (patch: Partial<UserPreferences>) => void;
   
   // Data loading
   loadMeterReadings: () => Promise<void>;
@@ -443,6 +444,16 @@ export const useElectricityStore = create<ElectricityState>()(
               error: error instanceof Error ? error.message : 'Failed to remove estimated reading',
             });
           }
+        },
+
+        updatePreferences: (patch) => {
+          set((state) => ({
+            preferences: {
+              ...state.preferences,
+              ...patch,
+              updatedAt: new Date(),
+            },
+          }));
         },
 
         // Data loading actions

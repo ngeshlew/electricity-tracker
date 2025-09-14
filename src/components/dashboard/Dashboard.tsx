@@ -4,6 +4,7 @@ import { SummaryCards } from './SummaryCards';
 import { ConsumptionChart } from './ConsumptionChart';
 import { MonthlyOverview } from './MonthlyOverview';
 import { WeeklyPieChart } from './WeeklyPieChart';
+import { PreferencesPanel } from '../analytics/PreferencesPanel';
 import { DailyBreakdown } from './DailyBreakdown';
 import { ViewToggle } from './ViewToggle';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -102,6 +103,7 @@ export const Dashboard: FC = () => {
                 <WeeklyPieChart currentMonth={currentMonth} viewMode={viewMode} />
                 <DailyBreakdown currentMonth={currentMonth} viewMode={viewMode} />
               </div>
+              <PreferencesPanel />
               <ExportOptions />
             </div>
           </TabsContent>

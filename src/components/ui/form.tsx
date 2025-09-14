@@ -3,7 +3,7 @@ import * as LabelPrimitive from "@radix-ui/react-label"
 import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useFormContext } from "react-hook-form"
 import { cn } from "@/lib/utils"
 
-const Form = FormProvider
+const Form = FormProvider as unknown as <TFieldValues extends FieldValues, TContext = any, TTransformedValues extends FieldValues | undefined = undefined>(props: React.PropsWithChildren<{ value: import('react-hook-form').UseFormReturn<TFieldValues, TContext, TTransformedValues> }>) => React.ReactElement
 
 const FormField = <TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>(
   props: ControllerProps<TFieldValues, TName>

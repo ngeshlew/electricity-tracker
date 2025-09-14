@@ -151,13 +151,13 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
             key={option.title}
             className={`p-4 rounded-lg border ${
               option.available 
-                ? 'bg-muted/20 border-border hover:border-electric-purple/50' 
+                ? 'bg-muted/20 border-border hover:border-primary/50' 
                 : 'bg-muted/10 border-muted-foreground/20 opacity-50'
             }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-start space-x-3">
-                <div className="text-electric-purple mt-1">
+                <div className="text-primary mt-1">
                   {option.icon}
                 </div>
                 <div>

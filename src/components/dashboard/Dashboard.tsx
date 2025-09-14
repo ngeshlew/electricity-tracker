@@ -160,7 +160,7 @@ const StatementsSection: FC = () => {
                     <a href={s.fileUrl} target="_blank" rel="noreferrer" className="text-primary underline">View</a>
                   )}
                   <button
-                    className="text-destructive"
+                    className="text-destructive hover:underline"
                     onClick={async () => {
                       const res = await apiService.deleteStatement(s.id);
                       if (res.success) refresh();

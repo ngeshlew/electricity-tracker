@@ -73,7 +73,7 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
       case 'error':
         return <TriangleAlert className="h-5 w-5 text-red-500" />;
       case 'uploading':
-        return <div className="h-5 w-5 border-2 border-electric-purple border-t-transparent rounded-full animate-spin" />;
+        return <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />;
       default:
         return null;
     }
@@ -105,16 +105,16 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
           className={`
             border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200
             ${isDragActive || dragActive 
-              ? 'border-electric-purple bg-electric-purple/10' 
-              : 'border-muted-foreground/30 hover:border-electric-purple/50 hover:bg-electric-purple/5'
+              ? 'border-primary bg-primary/10' 
+              : 'border-muted-foreground/30 hover:border-primary/50 hover:bg-primary/5'
             }
             ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
           <input {...getInputProps()} />
           <div className="space-y-4">
-            <div className="mx-auto w-16 h-16 bg-electric-purple/20 rounded-full flex items-center justify-center">
-              <FileUp className="h-8 w-8 text-electric-purple" />
+            <div className="mx-auto w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+              <FileUp className="h-8 w-8 text-primary" />
             </div>
             
             <div>
@@ -188,13 +188,13 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
         {isUploading && (
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center space-x-2">
-              <div className="h-4 w-4 border-2 border-electric-purple border-t-transparent rounded-full animate-spin" />
+              <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               <span className="text-sm text-muted-foreground">
                 Processing files...
               </span>
             </div>
             <div className="w-full bg-muted/20 rounded-full h-2">
-              <div className="bg-gradient-to-r from-electric-purple to-electric-pink h-2 rounded-full animate-pulse" />
+              <div className="bg-gradient-to-r from-primary to-accent h-2 rounded-full animate-pulse" />
             </div>
           </div>
         )}

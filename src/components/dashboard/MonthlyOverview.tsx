@@ -140,9 +140,9 @@ export const MonthlyOverview: React.FC = () => {
   const getTrendColor = (trend: string) => {
     switch (trend) {
       case 'increasing':
-        return 'text-electric-red';
+        return 'text-destructive';
       case 'decreasing':
-        return 'text-electric-green';
+        return 'text-emerald-500';
       default:
         return 'text-muted-foreground';
     }
@@ -218,7 +218,7 @@ export const MonthlyOverview: React.FC = () => {
                 className="flex items-center justify-between p-3 rounded-lg lewis-card-hover bg-muted/20"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-electric-purple/20 flex items-center justify-center text-sm font-medium">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium">
                     {week.week}
                   </div>
                   <div>

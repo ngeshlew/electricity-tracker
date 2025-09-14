@@ -43,8 +43,8 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
           <Card className="lewis-card lewis-shadow-glow max-w-md w-full">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-electric-red/20 rounded-full flex items-center justify-center mb-4">
-                <TriangleAlert className="h-8 w-8 text-electric-red" />
+              <div className="mx-auto w-16 h-16 bg-destructive/20 rounded-full flex items-center justify-center mb-4">
+                <TriangleAlert className="h-8 w-8 text-destructive" />
               </div>
               <CardTitle className="text-xl font-semibold lewis-text-gradient">
                 Something went wrong

@@ -11,7 +11,7 @@ export const Header: FC = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 lewis-animation-fade-in">
-            <div className="w-10 h-10 lewis-gradient-primary rounded-lg flex items-center justify-center lewis-shadow-glow">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center lewis-shadow-glow">
               <span className="text-primary-foreground font-bold text-lg lewis-animation-pulse">⚡</span>
             </div>
             <h1 className="text-2xl font-bold lewis-text-gradient">

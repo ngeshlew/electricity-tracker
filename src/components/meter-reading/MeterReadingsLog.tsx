@@ -75,7 +75,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <div className="h-8 w-8 border-2 border-electric-purple border-t-transparent rounded-full animate-spin" />
+            <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             <span className="ml-2 text-muted-foreground">Loading readings...</span>
           </div>
         </CardContent>
@@ -183,8 +183,8 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
               >
                 <div className="flex items-center space-x-4">
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-electric-purple/20 rounded-full flex items-center justify-center">
-                      <Bolt className="h-5 w-5 text-electric-purple" />
+                    <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                      <Bolt className="h-5 w-5 text-primary" />
                     </div>
                   </div>
                   
@@ -210,7 +210,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       {consumption > 0 && (
                         <div className="flex items-center space-x-1">
                           <span className="text-xs text-muted-foreground">Usage:</span>
-                          <span className="text-sm font-medium text-electric-purple">
+                          <span className="text-sm font-medium text-primary">
                             {consumption.toFixed(2)} kWh
                           </span>
                           <span className="text-xs text-muted-foreground">

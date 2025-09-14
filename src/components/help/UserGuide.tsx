@@ -27,21 +27,21 @@ export const UserGuide: React.FC = () => {
           </p>
           <div className="space-y-3">
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-electric-purple/20 rounded-full flex items-center justify-center text-sm font-medium">1</div>
+              <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">1</div>
               <div>
                 <p className="font-medium">Add Your First Reading</p>
                 <p className="text-sm text-muted-foreground">Click the "Add Reading" button to record your first meter reading.</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-electric-purple/20 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+              <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">2</div>
               <div>
                 <p className="font-medium">Explore Analytics</p>
                 <p className="text-sm text-muted-foreground">Switch to the Analytics tab to view consumption trends and charts.</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-electric-purple/20 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+              <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-sm font-medium">3</div>
               <div>
                 <p className="font-medium">Upload Statements</p>
                 <p className="text-sm text-muted-foreground">Use the Statements tab to upload and process your energy bills.</p>
@@ -128,8 +128,8 @@ export const UserGuide: React.FC = () => {
         <div className="space-y-4">
           <h4 className="font-semibold text-lg">Maximize Your Savings</h4>
           <div className="space-y-3">
-            <div className="p-4 bg-electric-green/10 border border-electric-green/20 rounded-lg">
-              <p className="font-medium text-electric-green mb-2">💡 Energy Saving Tips</p>
+            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+              <p className="font-medium text-emerald-500 mb-2">💡 Energy Saving Tips</p>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Use LED bulbs instead of incandescent</li>
                 <li>• Unplug devices when not in use</li>
@@ -137,8 +137,8 @@ export const UserGuide: React.FC = () => {
                 <li>• Consider time-of-use pricing</li>
               </ul>
             </div>
-            <div className="p-4 bg-electric-blue/10 border border-electric-blue/20 rounded-lg">
-              <p className="font-medium text-electric-blue mb-2">📊 Data Analysis</p>
+            <div className="p-4 bg-sky-500/10 border border-sky-500/20 rounded-lg">
+              <p className="font-medium text-sky-500 mb-2">📊 Data Analysis</p>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Look for patterns in your consumption</li>
                 <li>• Compare month-over-month trends</li>
@@ -146,8 +146,8 @@ export const UserGuide: React.FC = () => {
                 <li>• Set consumption goals</li>
               </ul>
             </div>
-            <div className="p-4 bg-electric-purple/10 border border-electric-purple/20 rounded-lg">
-              <p className="font-medium text-electric-purple mb-2">🔧 App Features</p>
+            <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+              <p className="font-medium text-primary mb-2">🔧 App Features</p>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Export data for external analysis</li>
                 <li>• Use mobile app for quick readings</li>
@@ -198,7 +198,7 @@ export const UserGuide: React.FC = () => {
                   className="w-full p-4 flex items-center justify-between lewis-card-hover"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="text-electric-purple">
+                    <div className="text-primary">
                       {section.icon}
                     </div>
                     <span className="font-medium">{section.title}</span>

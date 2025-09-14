@@ -11,7 +11,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, ArrowUpDown } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ExportOptions } from '../analytics/ExportOptions';
 import { StatementUpload } from '../statements/StatementUpload';
 import { apiService } from '../../services/api';
@@ -128,6 +129,7 @@ const StatementsSection: FC = () => {
   const [files, setFiles] = useState<{ id: string; file: File; status: 'uploading' | 'success' | 'error'; error?: string }[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [serverFiles, setServerFiles] = useState<any[]>([]);
+  const [sortAsc, setSortAsc] = useState(false);
 
   const refresh = async () => {
     const res = await apiService.listStatements();
@@ -169,38 +171,55 @@ const StatementsSection: FC = () => {
 
       {serverFiles.length > 0 && (
         <div className="lewis-card lewis-shadow-glow p-4 rounded-lg border">
-          <h3 className="text-md font-semibold mb-3">Processed Statements</h3>
-          <ul className="space-y-2">
-            {serverFiles.map((s) => (
-              <li key={s.id} className="flex items-center justify-between text-sm">
-                <div>
-                  <span className="font-medium">{s.supplier}</span>
-                  <span className="text-muted-foreground ml-2">{new Date(s.importedAt).toLocaleString()}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="h-8 w-8 inline-flex items-center justify-center rounded-md border hover:bg-accent">
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {s.fileUrl && (
-                        <DropdownMenuItem asChild>
-                          <a href={s.fileUrl} target="_blank" rel="noreferrer">View</a>
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onSelect={async () => {
-                        const res = await apiService.deleteStatement(s.id);
-                        if (res.success) refresh();
-                      }}>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-md font-semibold">Processed Statements</h3>
+            <button
+              className="inline-flex items-center text-sm hover:underline"
+              onClick={() => setSortAsc((v) => !v)}
+            >
+              <ArrowUpDown className="h-4 w-4 mr-1" /> Sort by imported date
+            </button>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Supplier</TableHead>
+                <TableHead>Imported</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...serverFiles]
+                .sort((a, b) => sortAsc ? new Date(a.importedAt).getTime() - new Date(b.importedAt).getTime() : new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime())
+                .map((s) => (
+                <TableRow key={s.id}>
+                  <TableCell className="font-medium">{s.supplier}</TableCell>
+                  <TableCell className="text-muted-foreground">{new Date(s.importedAt).toLocaleString()}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="h-8 w-8 inline-flex items-center justify-center rounded-md border hover:bg-accent">
+                          <MoreVertical className="h-4 w-4" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {s.fileUrl && (
+                          <DropdownMenuItem asChild>
+                            <a href={s.fileUrl} target="_blank" rel="noreferrer">View</a>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onSelect={async () => {
+                          const res = await apiService.deleteStatement(s.id);
+                          if (res.success) refresh();
+                        }}>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>

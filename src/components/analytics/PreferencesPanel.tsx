@@ -49,7 +49,7 @@ export const PreferencesPanel: React.FC = () => {
         <div className="space-y-2">
           <label className="text-sm text-muted-foreground">Notifications</label>
           <div className="flex h-10 items-center">
-            <Switch checked={preferences.notifications} onCheckedChange={(c) => updatePreferences({ notifications: Boolean(c) })} />
+            <Switch checked={preferences.notifications} onCheckedChange={(c: boolean) => updatePreferences({ notifications: Boolean(c) })} />
             <span className="ml-2 text-sm">Enabled</span>
           </div>
         </div>

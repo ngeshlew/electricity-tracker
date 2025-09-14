@@ -1,3 +1,21 @@
+# Local development artifacts
+dev.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files
+.env
+
+# Build and logs
+dist/
+node_modules/
+server-dev.log
+server.pid
+
+# Uploads (if enabled)
+uploads/
+
 node_modules
 # Keep environment variables out of version control
 .env

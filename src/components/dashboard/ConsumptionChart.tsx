@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { formatDateUK, addDays, isSameDay } from '../../utils/dateFormatters';
+import { formatDateUK, addDays } from '../../utils/dateFormatters';
 
 export const ConsumptionChart: React.FC = () => {
   const { chartData } = useElectricityStore();
@@ -60,12 +60,12 @@ export const ConsumptionChart: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartDataFormatted}>
               <defs>
-                <linearGradient id="lewisGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="hsl(var(--electric-purple))" />
-                  <stop offset="100%" stopColor="hsl(var(--electric-pink))" />
+                <linearGradient id="chartPrimary" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" />
+                  <stop offset="100%" stopColor="hsl(var(--accent))" />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted opacity-30" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />
               <XAxis 
                 dataKey="date" 
                 className="text-xs fill-muted-foreground"
@@ -92,11 +92,10 @@ export const ConsumptionChart: React.FC = () => {
               <Line 
                 type="monotone" 
                 dataKey="consumption" 
-                stroke="url(#lewisGradient)" 
+                stroke="url(#chartPrimary)" 
                 strokeWidth={3}
-                dot={{ fill: 'hsl(var(--electric-purple))', strokeWidth: 2, r: 5, stroke: 'hsl(var(--background))' }}
-                activeDot={{ r: 8, stroke: 'hsl(var(--electric-pink))', strokeWidth: 3, fill: 'hsl(var(--background))' }}
-                className="lewis-chart-line"
+                dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 5, stroke: 'hsl(var(--background))' }}
+                activeDot={{ r: 8, stroke: 'hsl(var(--accent))', strokeWidth: 3, fill: 'hsl(var(--background))' }}
               />
             </LineChart>
           </ResponsiveContainer>

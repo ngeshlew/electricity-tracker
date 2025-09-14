@@ -14,12 +14,12 @@ interface WeeklyData {
 }
 
 const COLORS = [
-  'hsl(var(--electric-purple))',
-  'hsl(var(--electric-pink))',
-  'hsl(var(--electric-blue))',
-  'hsl(var(--electric-green))',
-  'hsl(var(--electric-orange))',
-  'hsl(var(--electric-red))',
+  'hsl(var(--primary))',
+  'hsl(var(--accent))',
+  'hsl(var(--secondary))',
+  'hsl(var(--muted-foreground))',
+  'hsl(var(--ring))',
+  'hsl(var(--foreground))',
 ];
 
 interface WeeklyPieChartProps {

@@ -146,11 +146,7 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={dailyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="hsl(var(--border))" 
-                opacity={0.3}
-              />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />
               <XAxis 
                 dataKey="date" 
                 stroke="hsl(var(--muted-foreground))"
@@ -170,17 +166,17 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
               <Line
                 type="monotone"
                 dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'}
-                stroke="hsl(var(--electric-purple))"
+                stroke="hsl(var(--primary))"
                 strokeWidth={3}
                 dot={{
-                  fill: 'hsl(var(--electric-purple))',
+                  fill: 'hsl(var(--primary))',
                   strokeWidth: 2,
                   stroke: 'hsl(var(--background))',
                   r: 4
                 }}
                 activeDot={{
                   r: 6,
-                  fill: 'hsl(var(--electric-pink))',
+                  fill: 'hsl(var(--accent))',
                   stroke: 'hsl(var(--background))',
                   strokeWidth: 2
                 }}

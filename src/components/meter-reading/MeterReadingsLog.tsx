@@ -7,7 +7,8 @@ import {
   TrashIcon,
   CalendarIcon,
   BoltIcon,
-  CurrencyPoundIcon
+  CurrencyPoundIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
@@ -21,7 +22,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   onEdit,
   onDelete
 }) => {
-  const { readings, isLoading, deleteReading } = useElectricityStore();
+  const { readings, isLoading, deleteReading, toggleFirstReading } = useElectricityStore();
   const [selectedReading, setSelectedReading] = useState<MeterReading | null>(null);
 
   const formatDate = (date: Date) => {
@@ -52,6 +53,8 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 
   const calculateConsumption = (current: MeterReading, previous?: MeterReading) => {
     if (!previous) return 0;
+    // Skip consumption calculation if the current reading is marked as first reading
+    if (current.isFirstReading) return 0;
     return Number(current.reading) - Number(previous.reading);
   };
 
@@ -175,6 +178,11 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       }`}>
                         {reading.type}
                       </span>
+                      {reading.isFirstReading && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                          First Reading
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -188,6 +196,20 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                     title="View details"
                   >
                     <EyeIcon className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => toggleFirstReading(reading.id)}
+                    className={`h-8 w-8 lewis-card-hover ${
+                      reading.isFirstReading 
+                        ? 'text-purple-600 hover:text-purple-700' 
+                        : 'text-muted-foreground hover:text-purple-600'
+                    }`}
+                    title={reading.isFirstReading ? "Unmark as first reading" : "Mark as first reading"}
+                  >
+                    <BoltIcon className="h-4 w-4" />
                   </Button>
                   
                   {onEdit && (
@@ -231,9 +253,10 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                   variant="ghost"
                   size="icon"
                   onClick={() => setSelectedReading(null)}
-                  className="absolute top-4 right-4 h-8 w-8"
+                  className="absolute top-4 right-4 h-8 w-8 lewis-card-hover"
+                  title="Close"
                 >
-                  ×
+                  <XMarkIcon className="h-4 w-4" />
                 </Button>
               </CardHeader>
               

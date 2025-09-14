@@ -7,6 +7,7 @@ export interface MeterReading {
   date: Date;
   type: 'MANUAL' | 'IMPORTED';
   notes?: string;
+  isFirstReading?: boolean; // Flag to mark the initial move-in reading
   createdAt: Date;
   updatedAt: Date;
 }

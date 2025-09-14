@@ -45,7 +45,7 @@ router.get('/:id', async (req, res, next) => {
 // POST /api/meter-readings - Create new meter reading
 router.post('/', async (req, res, next) => {
   try {
-    const { meterId, reading, date, type, notes } = req.body;
+    const { meterId, reading, date, type, notes, isFirstReading } = req.body;
 
     // Validate required fields
     if (!meterId || reading === undefined || !date) {
@@ -64,7 +64,8 @@ router.post('/', async (req, res, next) => {
         reading: Number(reading),
         date: new Date(date),
         type: (type === 'MANUAL' || type === 'IMPORTED') ? type : 'MANUAL',
-        notes: notes ?? null
+        notes: notes ?? null,
+        isFirstReading: isFirstReading ?? false
       }
     });
 

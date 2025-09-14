@@ -33,6 +33,7 @@ interface ElectricityState {
   updateReading: (id: string, reading: Partial<MeterReading>) => Promise<void>;
   deleteReading: (id: string) => Promise<void>;
   toggleMeterPanel: (isOpen: boolean) => void;
+  toggleFirstReading: (id: string) => Promise<void>;
   
   // Data loading
   loadMeterReadings: () => Promise<void>;
@@ -207,6 +208,59 @@ export const useElectricityStore = create<ElectricityState>()(
           }
         },
 
+        toggleFirstReading: async (id) => {
+          set({ isLoading: true, error: null });
+          
+          try {
+            const { readings } = get();
+            const reading = readings.find(r => r.id === id);
+            if (!reading) throw new Error('Reading not found');
+
+            const newIsFirstReading = !reading.isFirstReading;
+            
+            // If setting as first reading, unset any other first readings
+            if (newIsFirstReading) {
+              const otherFirstReadings = readings.filter(r => r.id !== id && r.isFirstReading);
+              for (const otherReading of otherFirstReadings) {
+                await apiService.updateMeterReading(otherReading.id, { isFirstReading: false });
+              }
+            }
+
+            const response = await apiService.updateMeterReading(id, { isFirstReading: newIsFirstReading });
+
+            if (!response.success || !response.data) {
+              throw new Error(response.error?.message || 'Failed to update reading');
+            }
+
+            const updatedReading: MeterReading = {
+              ...response.data,
+              date: new Date(response.data.date),
+              createdAt: new Date(response.data.createdAt),
+              updatedAt: new Date(response.data.updatedAt),
+            };
+
+            set((state) => ({
+              readings: state.readings.map((r) =>
+                r.id === id ? updatedReading : r
+              ).sort((a, b) => 
+                new Date(a.date).getTime() - new Date(b.date).getTime()
+              ),
+              isLoading: false,
+              error: null,
+            }));
+
+            // Recalculate analytics data
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+          } catch (error) {
+            set({
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'Failed to update reading',
+            });
+          }
+        },
+
         toggleMeterPanel: (isOpen) => {
           set({ isMeterPanelOpen: isOpen });
         },
@@ -326,6 +380,11 @@ export const useElectricityStore = create<ElectricityState>()(
           for (let i = 1; i < readings.length; i++) {
             const prevReading = readings[i - 1];
             const currentReading = readings[i];
+            
+            // Skip consumption calculation if current reading is marked as first reading
+            if (currentReading.isFirstReading) {
+              continue;
+            }
             
             const consumption = get().getConsumptionBetweenReadings(prevReading, currentReading);
             const cost = get().calculateCost(consumption);

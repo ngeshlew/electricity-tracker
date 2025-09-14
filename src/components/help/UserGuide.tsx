@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { CircleHelp, X, ChevronRight, ChevronDown, BookOpen, Lightbulb, Cog, BarChart2 } from 'lucide-react';
 
 interface GuideSection {
@@ -165,39 +165,31 @@ export const UserGuide: React.FC = () => {
     setActiveSection(activeSection === sectionId ? null : sectionId);
   };
 
-  if (!isOpen) {
-    return (
-      <Button
-        onClick={() => setIsOpen(true)}
-        variant="outline"
-        className="fixed bottom-6 right-6 z-50 lewis-card-hover"
-        title="Open User Guide"
-      >
-        <CircleHelp className="h-5 w-5 mr-2" />
-        Help
-      </Button>
-    );
-  }
-
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="lewis-card lewis-shadow-glow max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-xl font-semibold lewis-text-gradient flex items-center space-x-2">
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="fixed bottom-6 right-6 z-50 lewis-card-hover"
+          title="Open User Guide"
+        >
+          <CircleHelp className="h-5 w-5 mr-2" />
+          Help
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="lewis-card lewis-shadow-glow max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <DialogHeader className="flex flex-row items-center justify-between">
+          <DialogTitle className="text-xl font-semibold lewis-text-gradient flex items-center space-x-2">
             <CircleHelp className="h-6 w-6" />
             <span>User Guide</span>
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsOpen(false)}
-            className="lewis-card-hover"
-          >
-            <X className="h-5 w-5" />
-          </Button>
-        </CardHeader>
-        
-        <CardContent className="overflow-y-auto max-h-[calc(90vh-120px)]">
+          </DialogTitle>
+          <DialogClose asChild>
+            <Button variant="ghost" size="icon" className="lewis-card-hover">
+              <X className="h-5 w-5" />
+            </Button>
+          </DialogClose>
+        </DialogHeader>
+        <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
           <div className="space-y-4">
             {guideSections.map((section) => (
               <div key={section.id} className="border border-border rounded-lg">
@@ -241,8 +233,8 @@ export const UserGuide: React.FC = () => {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

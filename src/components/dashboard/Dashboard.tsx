@@ -157,7 +157,7 @@ const StatementsSection: FC = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   {s.fileUrl && (
-                    <a href={s.fileUrl} target="_blank" rel="noreferrer" className="text-electric-purple underline">View</a>
+                    <a href={s.fileUrl} target="_blank" rel="noreferrer" className="text-primary underline">View</a>
                   )}
                   <button
                     className="text-destructive"

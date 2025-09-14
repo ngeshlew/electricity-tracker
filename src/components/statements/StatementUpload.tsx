@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/toaster';
 import { FileUp, FileText, X, CheckCircle2, TriangleAlert } from 'lucide-react';
 
 interface UploadedFile {
@@ -32,7 +33,9 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      onFileUpload(acceptedFiles);
+      onFileUpload(acceptedFiles)
+        .then(() => toast.success('Statements uploaded'))
+        .catch(() => toast.error('Upload failed'));
     }
   }, [onFileUpload]);
 
@@ -165,7 +168,10 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onFileRemove(file.id)}
+                      onClick={() => {
+                        onFileRemove(file.id);
+                        toast.success('Removed file from queue');
+                      }}
                       className="h-8 w-8 lewis-card-hover"
                       disabled={file.status === 'uploading'}
                     >

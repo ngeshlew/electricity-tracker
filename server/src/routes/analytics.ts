@@ -29,7 +29,18 @@ router.get('/summary', async (req, res, next) => {
     const unitRate = 0.30; // Default unit rate
 
     for (let i = 1; i < readings.length; i++) {
-      const consumption = readings[i].reading.toNumber() - readings[i - 1].reading.toNumber();
+      const prev = readings[i - 1];
+      const curr = readings[i];
+      if (!prev || !curr) continue;
+
+      const prevVal = typeof (prev.reading as any).toNumber === 'function'
+        ? (prev.reading as any).toNumber()
+        : Number(prev.reading as unknown as number);
+      const currVal = typeof (curr.reading as any).toNumber === 'function'
+        ? (curr.reading as any).toNumber()
+        : Number(curr.reading as unknown as number);
+
+      const consumption = currVal - prevVal;
       if (consumption > 0) {
         totalConsumption += consumption;
         totalCost += consumption * unitRate;
@@ -37,8 +48,14 @@ router.get('/summary', async (req, res, next) => {
     }
 
     // Calculate daily average
-    const days = readings.length > 1 ? 
-      Math.ceil((readings[readings.length - 1].date.getTime() - readings[0].date.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+    let days = 0;
+    if (readings.length > 1) {
+      const first = readings[0];
+      const last = readings[readings.length - 1];
+      if (first && last) {
+        days = Math.ceil((last.date.getTime() - first.date.getTime()) / (1000 * 60 * 60 * 24));
+      }
+    }
     const dailyAverage = days > 0 ? totalConsumption / days : 0;
 
     // Determine trend
@@ -47,15 +64,30 @@ router.get('/summary', async (req, res, next) => {
       const firstHalf = readings.slice(0, Math.floor(readings.length / 2));
       const secondHalf = readings.slice(Math.floor(readings.length / 2));
       
-      const firstHalfAvg = firstHalf.reduce((sum: number, reading: any, index: number) => {
-        if (index === 0) return 0;
-        return sum + (reading.reading.toNumber() - firstHalf[index - 1].reading.toNumber());
-      }, 0) / (firstHalf.length - 1);
-      
-      const secondHalfAvg = secondHalf.reduce((sum: number, reading: any, index: number) => {
-        if (index === 0) return 0;
-        return sum + (reading.reading.toNumber() - secondHalf[index - 1].reading.toNumber());
-      }, 0) / (secondHalf.length - 1);
+      const computeAvg = (arr: any[]): number => {
+        let sum = 0;
+        let count = 0;
+        for (let i = 1; i < arr.length; i++) {
+          const prev = arr[i - 1];
+          const curr = arr[i];
+          if (!prev || !curr) continue;
+          const prevVal = typeof (prev.reading as any).toNumber === 'function'
+            ? (prev.reading as any).toNumber()
+            : Number(prev.reading as unknown as number);
+          const currVal = typeof (curr.reading as any).toNumber === 'function'
+            ? (curr.reading as any).toNumber()
+            : Number(curr.reading as unknown as number);
+          const diff = currVal - prevVal;
+          if (diff > 0) {
+            sum += diff;
+          }
+          count++;
+        }
+        return count > 0 ? sum / count : 0;
+      };
+
+      const firstHalfAvg = computeAvg(firstHalf);
+      const secondHalfAvg = computeAvg(secondHalf);
       
       const difference = secondHalfAvg - firstHalfAvg;
       const threshold = firstHalfAvg * 0.05; // 5% threshold
@@ -97,38 +129,52 @@ router.get('/trends', async (req, res, next) => {
     
     readings.forEach((reading: any, index: number) => {
       if (index === 0) return;
-      
       const prevReading = readings[index - 1];
-      const consumption = reading.reading.toNumber() - prevReading.reading.toNumber();
+      if (!prevReading || !reading) return;
+
+      const prevVal = typeof (prevReading.reading as any).toNumber === 'function'
+        ? (prevReading.reading as any).toNumber()
+        : Number(prevReading.reading as unknown as number);
+      const currVal = typeof (reading.reading as any).toNumber === 'function'
+        ? (reading.reading as any).toNumber()
+        : Number(reading.reading as unknown as number);
+      const consumption = currVal - prevVal;
       
       if (consumption > 0) {
         let key: string;
         const date = new Date(reading.date);
         
-        switch (period) {
+        const toDateOnly = (d: Date): string => {
+          const iso = d.toISOString();
+          const parts = iso.split('T');
+          return parts[0] ?? iso;
+        };
+
+        switch (String(period)) {
           case 'daily':
-            key = date.toISOString().split('T')[0]!;
+            key = toDateOnly(date);
             break;
           case 'weekly':
-            const weekStart = new Date(date);
-            weekStart.setDate(date.getDate() - date.getDay());
-            key = weekStart.toISOString().split('T')[0]!;
+            {
+              const weekStart = new Date(date);
+              weekStart.setDate(date.getDate() - date.getDay());
+              key = toDateOnly(weekStart);
+            }
             break;
           case 'monthly':
             key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
             break;
           default:
-            key = date.toISOString().split('T')[0]!;
+            key = toDateOnly(date);
         }
         
-        if (!groupedData.has(key)) {
-          groupedData.set(key, []);
-        }
-        groupedData.get(key)!.push({
+        const list = groupedData.get(key) ?? [];
+        list.push({
           date: reading.date,
           consumption,
           cost: consumption * 0.30
         });
+        groupedData.set(key, list);
       }
     });
 
@@ -176,15 +222,28 @@ router.get('/export', async (req, res, next) => {
     });
 
     // Calculate consumption data
-    const consumptionData = [];
+    const consumptionData: Array<{ date: string; kwh: number; cost: number; readingId: string }> = [];
     for (let i = 1; i < readings.length; i++) {
-      const consumption = readings[i].reading.toNumber() - readings[i - 1].reading.toNumber();
+      const prev = readings[i - 1];
+      const curr = readings[i];
+      if (!prev || !curr) continue;
+
+      const prevVal = typeof (prev.reading as any).toNumber === 'function'
+        ? (prev.reading as any).toNumber()
+        : Number(prev.reading as unknown as number);
+      const currVal = typeof (curr.reading as any).toNumber === 'function'
+        ? (curr.reading as any).toNumber()
+        : Number(curr.reading as unknown as number);
+      const consumption = currVal - prevVal;
       if (consumption > 0) {
+        const iso = curr.date.toISOString();
+        const parts = iso.split('T');
+        const dateOnly = parts[0] ?? iso;
         consumptionData.push({
-          date: readings[i].date.toISOString().split('T')[0],
+          date: dateOnly,
           kwh: Math.round(consumption * 100) / 100,
           cost: Math.round(consumption * 0.30 * 100) / 100,
-          readingId: readings[i].id
+          readingId: curr.id
         });
       }
     }

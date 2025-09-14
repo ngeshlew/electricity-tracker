@@ -59,11 +59,12 @@ router.post('/', async (req, res, next) => {
 
     const newReading = await prisma.meterReading.create({
       data: {
-        meterId,
-        reading: parseFloat(reading),
+        meterId: String(meterId),
+        // Prisma accepts number or string for Decimal; ensure number
+        reading: Number(reading),
         date: new Date(date),
-        type: type || 'MANUAL',
-        notes: notes || null
+        type: (type === 'MANUAL' || type === 'IMPORTED') ? type : 'MANUAL',
+        notes: notes ?? null
       }
     });
 
@@ -78,7 +79,9 @@ router.post('/', async (req, res, next) => {
       data: newReading
     });
   } catch (error) {
-    next(createError('Failed to create meter reading', 500));
+    // Log underlying error for debugging during development
+    console.error('Create meter reading failed:', error);
+    next(error as any);
   }
 });
 
@@ -105,8 +108,8 @@ router.put('/:id', async (req, res, next) => {
     const updatedReading = await prisma.meterReading.update({
       where: { id },
       data: {
-        ...(meterId && { meterId }),
-        ...(reading !== undefined && { reading: parseFloat(reading) }),
+        ...(meterId && { meterId: String(meterId) }),
+        ...(reading !== undefined && { reading: Number(reading) }),
         ...(date && { date: new Date(date) }),
         ...(type && { type }),
         ...(notes !== undefined && { notes })
@@ -181,19 +184,34 @@ router.get('/analytics/consumption', async (req, res, next) => {
     });
 
     // Calculate consumption between consecutive readings
-    const consumptionData = [];
+    const consumptionData: Array<{ date: string; kwh: number; cost: number; readingId: string }> = [];
     for (let i = 1; i < readings.length; i++) {
       const prevReading = readings[i - 1];
       const currentReading = readings[i];
-      
-      const consumption = currentReading.reading.toNumber() - prevReading.reading.toNumber();
-      
+
+      if (!prevReading || !currentReading) {
+        continue;
+      }
+
+      const prevValue = typeof (prevReading.reading as any).toNumber === 'function'
+        ? (prevReading.reading as any).toNumber()
+        : Number(prevReading.reading as unknown as number);
+      const currentValue = typeof (currentReading!.reading as any).toNumber === 'function'
+        ? (currentReading!.reading as any).toNumber()
+        : Number(currentReading!.reading as unknown as number);
+
+      const consumption = currentValue - prevValue;
+
       if (consumption > 0) {
+        const isoString = currentReading!.date.toISOString();
+        const dateParts = isoString.split('T');
+        const dateOnly = dateParts[0] ?? isoString;
+
         consumptionData.push({
-          date: currentReading.date.toISOString().split('T')[0],
+          date: dateOnly,
           kwh: consumption,
           cost: consumption * 0.30, // Default unit rate
-          readingId: currentReading.id
+          readingId: currentReading!.id
         });
       }
     }

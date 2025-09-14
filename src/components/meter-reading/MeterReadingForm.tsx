@@ -51,8 +51,12 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       
       reset();
       onSuccess();
+      
+      // Show success message
+      alert('Meter reading added successfully!');
     } catch (error) {
       console.error('Failed to add meter reading:', error);
+      alert('Failed to add meter reading. Please try again.');
     }
   };
 

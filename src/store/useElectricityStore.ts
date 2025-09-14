@@ -82,6 +82,22 @@ export const useElectricityStore = create<ElectricityState>()(
         addReading: async (readingData) => {
           set({ isLoading: true, error: null });
           
+          // Check for duplicate readings
+          const { readings } = get();
+          const isDuplicate = readings.some(reading => 
+            reading.meterId === readingData.meterId &&
+            reading.date.toDateString() === readingData.date.toDateString() &&
+            Math.abs(reading.reading - readingData.reading) < 0.01 // Allow 0.01 kWh tolerance
+          );
+          
+          if (isDuplicate) {
+            set({ 
+              isLoading: false, 
+              error: 'A reading for this meter on this date already exists. Please check the readings log or use a different date.' 
+            });
+            return;
+          }
+          
           try {
             const response = await apiService.createMeterReading({
               ...readingData,
@@ -346,8 +362,11 @@ export const useElectricityStore = create<ElectricityState>()(
                 break;
               }
               case 'weekly': {
+                // Use Monday as week start (ISO 8601 standard)
                 const weekStart = new Date(date);
-                weekStart.setDate(date.getDate() - date.getDay());
+                const day = weekStart.getDay();
+                const diff = weekStart.getDate() - day + (day === 0 ? -6 : 1); // Monday as start
+                weekStart.setDate(diff);
                 key = weekStart.toISOString().split('T')[0];
                 break;
               }

@@ -2,16 +2,51 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
+import { formatDateUK, addDays, isSameDay } from '../../utils/dateFormatters';
 
 export const ConsumptionChart: React.FC = () => {
   const { chartData } = useElectricityStore();
   
-  // Transform chart data for Recharts
-  const chartDataFormatted = chartData.map(point => ({
-    date: point.date,
-    consumption: point.kwh,
-    cost: point.cost,
-  }));
+  // Fill missing dates to prevent chart gaps
+  const fillMissingDates = (data: typeof chartData) => {
+    if (data.length < 2) return data;
+    
+    const filledData = [];
+    const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    for (let i = 0; i < sortedData.length; i++) {
+      const current = sortedData[i];
+      const next = sortedData[i + 1];
+      
+      filledData.push({
+        date: current.date,
+        consumption: current.kwh,
+        cost: current.cost,
+      });
+      
+      // Fill gaps between current and next reading
+      if (next) {
+        const currentDate = new Date(current.date);
+        const nextDate = new Date(next.date);
+        const daysDiff = Math.floor((nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Add zero consumption days for gaps > 1 day
+        for (let day = 1; day < daysDiff; day++) {
+          const gapDate = addDays(currentDate, day);
+          filledData.push({
+            date: gapDate.toISOString().split('T')[0],
+            consumption: 0,
+            cost: 0,
+          });
+        }
+      }
+    }
+    
+    return filledData;
+  };
+  
+  // Transform chart data for Recharts with filled gaps
+  const chartDataFormatted = fillMissingDates(chartData);
 
   return (
     <Card className="lewis-card lewis-card-hover lewis-animation-fade-in">
@@ -34,7 +69,7 @@ export const ConsumptionChart: React.FC = () => {
               <XAxis 
                 dataKey="date" 
                 className="text-xs fill-muted-foreground"
-                tickFormatter={(value) => new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
+                tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
               />
               <YAxis 
                 className="text-xs fill-muted-foreground"
@@ -52,7 +87,7 @@ export const ConsumptionChart: React.FC = () => {
                   `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
                   name === 'consumption' ? 'Consumption' : 'Cost'
                 ]}
-                labelFormatter={(value) => `Date: ${new Date(value).toLocaleDateString()}`}
+                labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
               />
               <Line 
                 type="monotone" 

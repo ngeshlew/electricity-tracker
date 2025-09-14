@@ -11,6 +11,7 @@ import { ExportOptions } from '../analytics/ExportOptions';
 import { StatementUpload } from '../statements/StatementUpload';
 import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
+import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Dashboard: FC = () => {
@@ -64,12 +65,14 @@ export const Dashboard: FC = () => {
         {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div className="space-y-8 lewis-animation-fade-in">
-            <SummaryCards />
+            <SummaryCards timePeriod={timePeriod} viewMode={viewMode} />
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <ConsumptionChart />
               <MonthlyOverview />
             </div>
+            
+            <MeterReadingsLog />
           </div>
         )}
 

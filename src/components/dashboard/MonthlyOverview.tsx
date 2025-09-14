@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button-simple';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { format, startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
+import { formatDateUK, getWeekStart, getWeekEnd, getWeekNumber } from '../../utils/dateFormatters';
 
 interface WeeklyData {
   week: number;
@@ -50,13 +51,15 @@ export const MonthlyOverview: React.FC = () => {
       }
     }
 
-    // Calculate weekly breakdown
+    // Calculate weekly breakdown using Monday as week start
     const weeks = eachWeekOfInterval({ start: monthStart, end: monthEnd });
     const weeklyBreakdown: WeeklyData[] = weeks.map((weekStart, index) => {
-      const weekEnd = endOfWeek(weekStart);
+      // Use our custom week calculation for Monday start
+      const actualWeekStart = getWeekStart(weekStart);
+      const actualWeekEnd = getWeekEnd(weekStart);
       const weekReadings = monthReadings.filter(reading => {
         const readingDate = new Date(reading.date);
-        return readingDate >= weekStart && readingDate <= weekEnd;
+        return readingDate >= actualWeekStart && readingDate <= actualWeekEnd;
       });
 
       let weekKwh = 0;
@@ -71,12 +74,12 @@ export const MonthlyOverview: React.FC = () => {
       }
 
       return {
-        week: index + 1,
-        startDate: weekStart,
-        endDate: weekEnd,
+        week: getWeekNumber(actualWeekStart),
+        startDate: actualWeekStart,
+        endDate: actualWeekEnd,
         kwh: Math.round(weekKwh * 100) / 100,
         cost: Math.round(weekCost * 100) / 100,
-        days: Math.min(7, Math.ceil((weekEnd.getTime() - weekStart.getTime()) / (1000 * 60 * 60 * 24)))
+        days: Math.min(7, Math.ceil((actualWeekEnd.getTime() - actualWeekStart.getTime()) / (1000 * 60 * 60 * 24)))
       };
     });
 
@@ -215,7 +218,7 @@ export const MonthlyOverview: React.FC = () => {
                       Week {week.week}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {format(week.startDate, 'MMM d')} - {format(week.endDate, 'MMM d')}
+                      {formatDateUK(week.startDate, 'chart')} - {formatDateUK(week.endDate, 'chart')}
                     </div>
                   </div>
                 </div>

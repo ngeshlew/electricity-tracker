@@ -47,17 +47,23 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
   }, []);
 
   const calculateConsumptionData = useCallback(
-    (readings: unknown[]): ChartDataPoint[] => {
-      // TODO: Implement actual calculation logic
-      // This is a placeholder implementation
-      return readings.map(reading => {
-        const readingData = reading as { date: Date; reading: number };
-        return {
-          date: readingData.date.toISOString().split('T')[0],
-          kwh: readingData.reading,
-          cost: readingData.reading * 0.3, // Mock calculation
-        };
-      });
+    (readings: { date: Date; reading: number; isFirstReading?: boolean }[]): ChartDataPoint[] => {
+      if (!Array.isArray(readings) || readings.length < 2) return [];
+      const sorted = [...readings].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      const results: ChartDataPoint[] = [];
+      for (let i = 1; i < sorted.length; i++) {
+        const prev = sorted[i - 1];
+        const curr = sorted[i];
+        if (!curr || curr.isFirstReading) continue;
+        const kwh = Math.max(0, curr.reading - prev.reading);
+        const cost = kwh * 0.30;
+        results.push({
+          date: new Date(curr.date).toISOString().split('T')[0],
+          kwh,
+          cost,
+        });
+      }
+      return results;
     },
     []
   );

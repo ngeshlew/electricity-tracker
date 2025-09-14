@@ -9,10 +9,12 @@ import { ViewToggle } from './ViewToggle';
 import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
 import { ExportOptions } from '../analytics/ExportOptions';
 import { StatementUpload } from '../statements/StatementUpload';
+import { apiService } from '../../services/api';
 import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { useElectricityStore } from '../../store/useElectricityStore';
+import { useEffect } from 'react';
 
 export const Dashboard: FC = () => {
   const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
@@ -111,20 +113,7 @@ export const Dashboard: FC = () => {
 
         {/* Statements Tab */}
         {activeTab === 'statements' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            <StatementUpload
-              onFileUpload={async (files) => {
-                console.log('Files uploaded:', files);
-                // TODO: Implement file processing
-              }}
-              onFileRemove={(fileId) => {
-                console.log('File removed:', fileId);
-                // TODO: Implement file removal
-              }}
-              uploadedFiles={[]}
-              isUploading={false}
-            />
-          </div>
+          <StatementsSection />
         )}
       </main>
 
@@ -134,6 +123,80 @@ export const Dashboard: FC = () => {
       />
       
       <UserGuide />
+    </div>
+  );
+};
+
+const StatementsSection: FC = () => {
+  const [files, setFiles] = useState<{ id: string; file: File; status: 'uploading' | 'success' | 'error'; error?: string }[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [serverFiles, setServerFiles] = useState<any[]>([]);
+
+  const refresh = async () => {
+    const res = await apiService.listStatements();
+    if (res.success && res.data) setServerFiles(res.data);
+  };
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  const onFileUpload = async (incoming: File[]) => {
+    const newItems = incoming.map(f => ({ id: crypto.randomUUID(), file: f, status: 'uploading' as const }));
+    setFiles(prev => [...prev, ...newItems]);
+    setIsUploading(true);
+    try {
+      const res = await apiService.uploadStatements(incoming);
+      if (!res.success) throw new Error(res.error?.message || 'Upload failed');
+      setFiles(prev => prev.map(p => ({ ...p, status: 'success' })));
+      await refresh();
+    } catch (e) {
+      setFiles(prev => prev.map(p => ({ ...p, status: 'error', error: e instanceof Error ? e.message : 'Upload failed' })));
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const onFileRemove = async (fileId: string) => {
+    setFiles(prev => prev.filter(f => f.id !== fileId));
+  };
+
+  return (
+    <div className="space-y-8 lewis-animation-fade-in">
+      <StatementUpload
+        onFileUpload={onFileUpload}
+        onFileRemove={onFileRemove}
+        uploadedFiles={files}
+        isUploading={isUploading}
+      />
+
+      {serverFiles.length > 0 && (
+        <div className="lewis-card lewis-shadow-glow p-4 rounded-lg border">
+          <h3 className="text-md font-semibold mb-3">Processed Statements</h3>
+          <ul className="space-y-2">
+            {serverFiles.map((s) => (
+              <li key={s.id} className="flex items-center justify-between text-sm">
+                <div>
+                  <span className="font-medium">{s.supplier}</span>
+                  <span className="text-muted-foreground ml-2">{new Date(s.importedAt).toLocaleString()}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {s.fileUrl && (
+                    <a href={s.fileUrl} target="_blank" rel="noreferrer" className="text-electric-purple underline">View</a>
+                  )}
+                  <button
+                    className="text-destructive"
+                    onClick={async () => {
+                      const res = await apiService.deleteStatement(s.id);
+                      if (res.success) refresh();
+                    }}
+                  >Delete</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

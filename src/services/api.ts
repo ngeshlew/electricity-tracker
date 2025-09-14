@@ -187,6 +187,35 @@ class ApiService {
   }>> {
     return this.request('/health');
   }
+
+  // Statements endpoints
+  async uploadStatements(files: File[]): Promise<ApiResponse<any>> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+
+    try {
+      const response = await fetch(`${this.baseURL}/api/analytics/statements/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error?.message || 'Upload failed');
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        error: { message: error instanceof Error ? error.message : 'Unknown error' },
+      };
+    }
+  }
+
+  async listStatements(): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>('/api/analytics/statements');
+  }
+
+  async deleteStatement(id: string): Promise<ApiResponse<{ message: string }>> {
+    return this.request<{ message: string }>(`/api/analytics/statements/${id}`, { method: 'DELETE' });
+  }
 }
 
 // Export singleton instance

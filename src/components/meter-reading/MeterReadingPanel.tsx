@@ -31,6 +31,12 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
   onClose 
 }) => {
   const { toggleMeterPanel } = useElectricityStore();
+  const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+      toggleMeterPanel(false);
+    }
+  };
   
   return (
     <AnimatePresence>
@@ -43,6 +49,13 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
           transition={{ duration: 0.2 }}
           aria-modal="true"
           role="dialog"
+          onClick={onBackdrop}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              onClose();
+              toggleMeterPanel(false);
+            }
+          }}
         >
           <motion.div
             className="w-full max-w-md max-h-[90vh] overflow-y-auto"

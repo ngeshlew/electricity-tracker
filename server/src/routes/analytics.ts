@@ -1,8 +1,44 @@
 import express from 'express';
 import { prisma } from '../utils/database';
 import { createError } from '../middleware/errorHandler';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
+
+// File storage setup for statement uploads
+const uploadsDir = path.resolve(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    const base = path.basename(file.originalname, ext);
+    cb(null, `${base}-${uniqueSuffix}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowed = ['application/pdf', 'text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    if (allowed.includes(file.mimetype)) return cb(null, true);
+    cb(new Error('Unsupported file type'));
+  }
+});
+
+// Serve uploads statically
+router.use('/uploads', express.static(uploadsDir));
 
 // GET /api/analytics/summary - Get summary analytics
 router.get('/summary', async (req, res, next) => {
@@ -275,3 +311,64 @@ router.get('/export', async (req, res, next) => {
 });
 
 export default router;
+
+// Statements API
+// POST /api/analytics/statements/upload - Upload statement files
+router.post('/statements/upload', upload.array('files', 5), async (req, res, next) => {
+  try {
+    const files = (req as any).files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      return next(createError('No files uploaded', 400));
+    }
+
+    const created = await Promise.all(files.map(async (file) => {
+      const statement = await prisma.energyStatement.create({
+        data: {
+          supplier: 'Unknown',
+          periodStart: new Date(),
+          periodEnd: new Date(),
+          totalKwh: 0,
+          totalCost: 0,
+          unitRate: 0,
+          standingCharge: 0,
+          fileUrl: `/uploads/${path.basename(file.path)}`,
+        }
+      });
+      return statement;
+    }));
+
+    res.status(201).json({ success: true, data: created });
+  } catch (error) {
+    next(createError('Failed to upload statements', 500));
+  }
+});
+
+// GET /api/analytics/statements - List statements
+router.get('/statements', async (_req, res, next) => {
+  try {
+    const statements = await prisma.energyStatement.findMany({ orderBy: { importedAt: 'desc' } });
+    res.json({ success: true, data: statements });
+  } catch (error) {
+    next(createError('Failed to fetch statements', 500));
+  }
+});
+
+// DELETE /api/analytics/statements/:id - Delete statement
+router.delete('/statements/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const statement = await prisma.energyStatement.findUnique({ where: { id } });
+    if (!statement) return next(createError('Statement not found', 404));
+
+    // Best-effort file deletion
+    if (statement.fileUrl) {
+      const filePath = path.resolve(process.cwd(), statement.fileUrl.replace(/^\//, ''));
+      fs.unlink(filePath, () => {});
+    }
+
+    await prisma.energyStatement.delete({ where: { id } });
+    res.json({ success: true, message: 'Statement deleted' });
+  } catch (error) {
+    next(createError('Failed to delete statement', 500));
+  }
+});

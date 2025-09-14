@@ -12,6 +12,7 @@ dotenv.config();
 // Import routes
 import meterReadingRoutes from './routes/meterReadings';
 import analyticsRoutes from './routes/analytics';
+import path from 'path';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -37,6 +38,9 @@ app.use(cors({
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Static serving for uploaded statements
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 // Health check endpoint
 app.get('/health', (_req, res) => {

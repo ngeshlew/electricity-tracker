@@ -11,18 +11,16 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface MeterReadingsLogProps {
-  onEdit?: (reading: MeterReading) => void;
   onDelete?: (id: string) => void;
 }
 
 export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
-  onEdit,
   onDelete
 }) => {
-  const { readings, isLoading, deleteReading, toggleFirstReading, generateEstimatedReadings, removeEstimatedReading } = useElectricityStore();
+  const { readings, isLoading, deleteReading, toggleFirstReading, generateEstimatedReadings, removeEstimatedReading, updateReading } = useElectricityStore();
   const [selectedReading, setSelectedReading] = useState<MeterReading | null>(null);
   const [filterType, setFilterType] = useState<'all' | 'MANUAL' | 'IMPORTED' | 'ESTIMATED'>('all');
   const [query, setQuery] = useState('');
@@ -33,6 +31,33 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   const [kwhMin, setKwhMin] = useState<number | undefined>();
   const [kwhMax, setKwhMax] = useState<number | undefined>();
   const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingNotes, setEditingNotes] = useState('');
+  const [announce, setAnnounce] = useState('');
+
+  // persist table state
+  useEffect(() => {
+    const saved = localStorage.getItem('readings-table-state');
+    if (saved) {
+      try {
+        const s = JSON.parse(saved);
+        setFilterType(s.filterType ?? 'all');
+        setQuery(s.query ?? '');
+        setSortKey(s.sortKey ?? 'date');
+        setSortAsc(Boolean(s.sortAsc));
+        setDateFrom(s.dateFrom ? new Date(s.dateFrom) : undefined);
+        setDateTo(s.dateTo ? new Date(s.dateTo) : undefined);
+        setKwhMin(typeof s.kwhMin === 'number' ? s.kwhMin : undefined);
+        setKwhMax(typeof s.kwhMax === 'number' ? s.kwhMax : undefined);
+      } catch {}
+    }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem('readings-table-state', JSON.stringify({
+      filterType, query, sortKey, sortAsc, dateFrom, dateTo, kwhMin, kwhMax,
+    }));
+  }, [filterType, query, sortKey, sortAsc, dateFrom, dateTo, kwhMin, kwhMax]);
 
   // debounce query
   useEffect(() => {
@@ -70,6 +95,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
       console.error('Failed to delete reading:', error);
     } finally {
       setPendingDeleteId(null);
+      setAnnounce('Reading deleted');
     }
   };
 
@@ -150,6 +176,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 
   return (
     <Card className="lewis-card lewis-animation-fade-in">
+      <span className="sr-only" aria-live="polite" role="status">{announce}</span>
       <CardHeader>
         <CardTitle className="text-lg font-semibold lewis-text-gradient">
           Meter Readings Log ({filteredReadings.length} readings)
@@ -182,7 +209,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-5 gap-3">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full">From: {dateFrom ? dateFrom.toLocaleDateString() : 'Any'}</Button>
@@ -204,6 +231,24 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
             <Button onClick={generateEstimatedReadings} size="sm" className="lewis-button-secondary">Generate Estimated Readings</Button>
             <Button onClick={() => setSortAsc((v) => !v)} variant="ghost" size="sm" className="ml-2"><ArrowUpDown className="h-4 w-4 mr-1" /> Toggle Sort</Button>
             <Button variant="ghost" size="sm" onClick={() => { setDateFrom(undefined); setDateTo(undefined); setKwhMin(undefined); setKwhMax(undefined); }}>Clear Filters</Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const rows = sortedReadings.map(r => ({ id: r.id, date: r.date.toISOString().split('T')[0], reading: r.reading, type: r.type, notes: r.notes || '' }));
+                const headers = Object.keys(rows[0] || { id: '', date: '', reading: '', type: '', notes: '' });
+                const csv = [headers.join(','), ...rows.map(row => headers.map(h => {
+                  const v = (row as any)[h];
+                  const s = typeof v === 'string' ? v : String(v);
+                  return s.includes(',') ? `"${s.replace(/"/g, '""')}"` : s;
+                }).join(','))].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = `meter-readings-${new Date().toISOString().split('T')[0]}.csv`; a.click();
+                URL.revokeObjectURL(url);
+              }}
+            >Export CSV</Button>
           </div>
         </div>
       </CardHeader>
@@ -212,9 +257,30 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Reading</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead>
+                <div className="flex items-center">
+                  <Checkbox
+                    checked={sortedReadings.length > 0 && sortedReadings.every(r => selectedIds[r.id])}
+                    onCheckedChange={(c) => {
+                      const next: Record<string, boolean> = {};
+                      if (c) sortedReadings.forEach(r => next[r.id] = true);
+                      setSelectedIds(next);
+                    }}
+                    aria-label="Select all"
+                  />
+                  <span className="ml-2">Date</span>
+                </div>
+              </TableHead>
+              <TableHead>
+                <button className="inline-flex items-center" onClick={() => setSortKey('reading')}>
+                  Reading {sortKey === 'reading' && (sortAsc ? '▲' : '▼')}
+                </button>
+              </TableHead>
+              <TableHead>
+                <button className="inline-flex items-center" onClick={() => setSortKey('type')}>
+                  Type {sortKey === 'type' && (sortAsc ? '▲' : '▼')}
+                </button>
+              </TableHead>
               <TableHead>Notes</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -227,6 +293,11 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
               return (
                 <TableRow key={reading.id}>
                   <TableCell>
+                    <Checkbox
+                      checked={!!selectedIds[reading.id]}
+                      onCheckedChange={(c) => setSelectedIds(prev => ({ ...prev, [reading.id]: Boolean(c) }))}
+                      aria-label={`Select reading ${formatDate(reading.date)}`}
+                    />
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-medium">{formatDate(reading.date)}</span>
@@ -256,7 +327,23 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       <span className="ml-2 text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">First Reading</span>
                     )}
                   </TableCell>
-                  <TableCell className="max-w-[240px] truncate">{reading.notes || '-'}</TableCell>
+                  <TableCell className="max-w-[240px]">
+                    {editingId === reading.id ? (
+                      <div className="flex items-center space-x-2">
+                        <Input value={editingNotes} onChange={(e) => setEditingNotes(e.target.value)} className="h-8" />
+                        <Button
+                          size="sm"
+                          onClick={async () => {
+                            await updateReading(reading.id, { notes: editingNotes });
+                            setEditingId(null); setEditingNotes(''); setAnnounce('Notes updated');
+                          }}
+                        >Save</Button>
+                        <Button size="sm" variant="ghost" onClick={() => { setEditingId(null); setEditingNotes(''); }}>Cancel</Button>
+                      </div>
+                    ) : (
+                      <div className="truncate">{reading.notes || '-'}</div>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
                       <Button variant="ghost" size="icon" onClick={() => setSelectedReading(reading)} className="h-8 w-8 lewis-card-hover" title="View details">
@@ -271,11 +358,15 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       >
                         <Bolt className="h-4 w-4" />
                       </Button>
-                      {onEdit && (
-                        <Button variant="ghost" size="icon" onClick={() => onEdit(reading)} className="h-8 w-8 lewis-card-hover" title="Edit reading">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => { setEditingId(reading.id); setEditingNotes(reading.notes || ''); }}
+                        className="h-8 w-8 lewis-card-hover"
+                        title="Edit notes"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
                       <Button variant="ghost" size="icon" onClick={() => setPendingDeleteId(reading.id)} className="h-8 w-8 lewis-card-hover text-destructive" aria-label="Delete reading">
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -286,6 +377,23 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
             })}
           </TableBody>
         </Table>
+        {Object.values(selectedIds).some(Boolean) && (
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">{Object.values(selectedIds).filter(Boolean).length} selected</span>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={async () => {
+                const ids = Object.entries(selectedIds).filter(([, v]) => v).map(([k]) => k);
+                for (const id of ids) {
+                  await deleteReading(id);
+                }
+                setSelectedIds({});
+                setAnnounce('Selected readings deleted');
+              }}
+            >Delete Selected</Button>
+          </div>
+        )}
         
         {/* Reading Details Modal */}
         <Dialog open={!!selectedReading} onOpenChange={(open) => !open && setSelectedReading(null)}>

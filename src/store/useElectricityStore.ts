@@ -34,6 +34,9 @@ interface ElectricityState {
   deleteReading: (id: string) => Promise<void>;
   toggleMeterPanel: (isOpen: boolean) => void;
   toggleFirstReading: (id: string) => Promise<void>;
+  generateEstimatedReadings: () => Promise<void>;
+  removeEstimatedReadings: (date: Date) => Promise<void>;
+  removeEstimatedReading: (id: string) => Promise<void>;
   
   // Data loading
   loadMeterReadings: () => Promise<void>;
@@ -263,6 +266,179 @@ export const useElectricityStore = create<ElectricityState>()(
 
         toggleMeterPanel: (isOpen) => {
           set({ isMeterPanelOpen: isOpen });
+        },
+
+        generateEstimatedReadings: async () => {
+          set({ isLoading: true, error: null });
+          
+          try {
+            const { readings } = get();
+            if (readings.length === 0) return;
+
+            // Sort readings by date
+            const sortedReadings = [...readings].sort((a, b) => 
+              new Date(a.date).getTime() - new Date(b.date).getTime()
+            );
+
+            const estimatedReadings: Omit<MeterReading, 'id' | 'createdAt' | 'updatedAt'>[] = [];
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Find the last manual reading
+            const lastManualReading = sortedReadings
+              .filter(r => r.type === 'MANUAL')
+              .pop();
+
+            if (!lastManualReading) return;
+
+            const lastReadingDate = new Date(lastManualReading.date);
+            lastReadingDate.setHours(0, 0, 0, 0);
+
+            // Calculate daily average consumption from last 7 manual readings
+            const recentManualReadings = sortedReadings
+              .filter(r => r.type === 'MANUAL' && !r.isFirstReading)
+              .slice(-7);
+
+            if (recentManualReadings.length < 2) return;
+
+            let totalConsumption = 0;
+            let totalDays = 0;
+
+            for (let i = 1; i < recentManualReadings.length; i++) {
+              const consumption = recentManualReadings[i].reading - recentManualReadings[i - 1].reading;
+              const daysDiff = Math.ceil(
+                (new Date(recentManualReadings[i].date).getTime() - 
+                 new Date(recentManualReadings[i - 1].date).getTime()) / (1000 * 60 * 60 * 24)
+              );
+              totalConsumption += consumption;
+              totalDays += daysDiff;
+            }
+
+            const dailyAverage = totalDays > 0 ? totalConsumption / totalDays : 0;
+
+            // Generate estimated readings for missing days
+            let currentDate = new Date(lastReadingDate);
+            currentDate.setDate(currentDate.getDate() + 1);
+            let currentReading = lastManualReading.reading;
+
+            while (currentDate <= today) {
+              // Check if there's already a reading for this date
+              const existingReading = sortedReadings.find(r => {
+                const readingDate = new Date(r.date);
+                readingDate.setHours(0, 0, 0, 0);
+                return readingDate.getTime() === currentDate.getTime();
+              });
+
+              if (!existingReading) {
+                currentReading += dailyAverage;
+                estimatedReadings.push({
+                  meterId: lastManualReading.meterId,
+                  reading: Math.round(currentReading * 100) / 100,
+                  date: new Date(currentDate),
+                  type: 'ESTIMATED',
+                  notes: 'Estimated reading based on historical consumption',
+                  isFirstReading: false
+                });
+              } else {
+                // Update current reading to the existing reading
+                currentReading = existingReading.reading;
+              }
+
+              currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            // Add estimated readings to the store
+            if (estimatedReadings.length > 0) {
+              set((state) => ({
+                readings: [...state.readings, ...estimatedReadings].sort((a, b) => 
+                  new Date(a.date).getTime() - new Date(b.date).getTime()
+                ),
+                isLoading: false,
+                error: null,
+              }));
+
+              // Recalculate analytics data
+              get().calculateConsumptionData();
+              get().calculateTimeSeriesData('daily');
+              get().calculatePieChartData();
+            } else {
+              set({ isLoading: false, error: null });
+            }
+          } catch (error) {
+            set({
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'Failed to generate estimated readings',
+            });
+          }
+        },
+
+        removeEstimatedReadings: async (date) => {
+          set({ isLoading: true, error: null });
+          
+          try {
+            const { readings } = get();
+            const targetDate = new Date(date);
+            targetDate.setHours(0, 0, 0, 0);
+
+            // Find estimated readings for the same date
+            const estimatedReadingsToRemove = readings.filter(r => {
+              if (r.type !== 'ESTIMATED') return false;
+              const readingDate = new Date(r.date);
+              readingDate.setHours(0, 0, 0, 0);
+              return readingDate.getTime() === targetDate.getTime();
+            });
+
+            // Remove estimated readings from the store
+            set((state) => ({
+              readings: state.readings.filter(r => !estimatedReadingsToRemove.includes(r)),
+              isLoading: false,
+              error: null,
+            }));
+
+            // Recalculate analytics data
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+          } catch (error) {
+            set({
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'Failed to remove estimated readings',
+            });
+          }
+        },
+
+        removeEstimatedReading: async (id) => {
+          set({ isLoading: true, error: null });
+          
+          try {
+            const { readings } = get();
+            const readingToRemove = readings.find(r => r.id === id);
+            
+            if (!readingToRemove) {
+              throw new Error('Reading not found');
+            }
+            
+            if (readingToRemove.type !== 'ESTIMATED') {
+              throw new Error('Can only remove estimated readings with this function');
+            }
+
+            // Remove the specific estimated reading from the store
+            set((state) => ({
+              readings: state.readings.filter(r => r.id !== id),
+              isLoading: false,
+              error: null,
+            }));
+
+            // Recalculate analytics data
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+          } catch (error) {
+            set({
+              isLoading: false,
+              error: error instanceof Error ? error.message : 'Failed to remove estimated reading',
+            });
+          }
         },
 
         // Data loading actions

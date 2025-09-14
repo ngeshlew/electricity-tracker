@@ -22,8 +22,9 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   onEdit,
   onDelete
 }) => {
-  const { readings, isLoading, deleteReading, toggleFirstReading } = useElectricityStore();
+  const { readings, isLoading, deleteReading, toggleFirstReading, generateEstimatedReadings, removeEstimatedReadings, removeEstimatedReading } = useElectricityStore();
   const [selectedReading, setSelectedReading] = useState<MeterReading | null>(null);
+  const [filterType, setFilterType] = useState<'all' | 'MANUAL' | 'IMPORTED' | 'ESTIMATED'>('all');
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-GB', {
@@ -43,10 +44,19 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this reading?')) {
       try {
-        await deleteReading(id);
-        if (onDelete) onDelete(id);
+        // Check if it's an estimated reading (only exists in frontend state)
+        const reading = readings.find(r => r.id === id);
+        if (reading && reading.type === 'ESTIMATED') {
+          // For estimated readings, remove them locally using removeEstimatedReading
+          await removeEstimatedReading(id);
+        } else {
+          // For database readings, use the normal delete function
+          await deleteReading(id);
+          if (onDelete) onDelete(id);
+        }
       } catch (error) {
         console.error('Failed to delete reading:', error);
+        alert('Failed to delete reading. Please try again.');
       }
     }
   };
@@ -102,21 +112,75 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     );
   }
 
+  const filteredReadings = readings.filter(reading => {
+    if (filterType === 'all') return true;
+    return reading.type === filterType;
+  });
+  
+  const sortedReadings = [...filteredReadings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
     <Card className="lewis-card lewis-animation-fade-in">
       <CardHeader>
         <CardTitle className="text-lg font-semibold lewis-text-gradient">
-          Meter Readings Log ({readings.length} readings)
+          Meter Readings Log ({filteredReadings.length} readings)
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           View and manage all your meter readings
         </p>
+        
+        {/* Filter Tabs */}
+        <div className="flex space-x-2 mt-4">
+          <Button
+            variant={filterType === 'all' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setFilterType('all')}
+            className="lewis-button-primary"
+          >
+            All
+          </Button>
+          <Button
+            variant={filterType === 'MANUAL' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setFilterType('MANUAL')}
+            className="lewis-button-primary"
+          >
+            Manual
+          </Button>
+          <Button
+            variant={filterType === 'ESTIMATED' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setFilterType('ESTIMATED')}
+            className="lewis-button-primary"
+          >
+            Estimated
+          </Button>
+          <Button
+            variant={filterType === 'IMPORTED' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setFilterType('IMPORTED')}
+            className="lewis-button-primary"
+          >
+            Imported
+          </Button>
+        </div>
+        
+        {/* Generate Estimated Readings Button */}
+        <div className="mt-4">
+          <Button
+            onClick={generateEstimatedReadings}
+            className="lewis-button-secondary"
+            size="sm"
+          >
+            Generate Estimated Readings
+          </Button>
+        </div>
       </CardHeader>
       
       <CardContent>
         <div className="space-y-3">
-          {readings.map((reading, index) => {
-            const previousReading = index > 0 ? readings[index - 1] : undefined;
+          {sortedReadings.map((reading, index) => {
+            const previousReading = index > 0 ? sortedReadings[index - 1] : undefined;
             const consumption = calculateConsumption(reading, previousReading);
             const cost = calculateCost(consumption);
             
@@ -174,9 +238,12 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         reading.type === 'MANUAL' 
                           ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                          : reading.type === 'ESTIMATED'
+                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                           : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                       }`}>
                         {reading.type}
+                        {reading.type === 'ESTIMATED' && ' (Local)'}
                       </span>
                       {reading.isFirstReading && (
                         <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">

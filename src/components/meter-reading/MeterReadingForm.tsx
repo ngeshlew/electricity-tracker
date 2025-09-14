@@ -45,20 +45,26 @@ type MeterReadingFormData = z.infer<typeof meterReadingSchema>;
 
 interface MeterReadingFormProps {
   onSuccess: () => void;
+  forceFirstReading?: boolean;
 }
 
-export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess }) => {
+export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess, forceFirstReading = false }) => {
   const { addReading, isLoading, readings } = useElectricityStore();
   
   // State for first reading checkbox - only show if no first reading exists
   const [showFirstReadingCheckbox, setShowFirstReadingCheckbox] = useState(false);
-  const [isFirstReading, setIsFirstReading] = useState(false);
+  const [isFirstReading, setIsFirstReading] = useState(forceFirstReading);
   
   // Check if there's already a first reading in the system
   useEffect(() => {
-    const hasFirstReading = readings.some(reading => reading.isFirstReading);
-    setShowFirstReadingCheckbox(!hasFirstReading);
-  }, [readings]);
+    if (forceFirstReading) {
+      setShowFirstReadingCheckbox(false);
+      setIsFirstReading(true);
+    } else {
+      const hasFirstReading = readings.some(reading => reading.isFirstReading);
+      setShowFirstReadingCheckbox(!hasFirstReading);
+    }
+  }, [readings, forceFirstReading]);
   
   // React Hook Form setup with validation
   const {
@@ -115,7 +121,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
     } as any}>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lewis-animation-fade-in">
       <div>
-        <Label htmlFor="reading" className="mb-3 block">Meter Reading (kWh)</Label>
+        <Label htmlFor="reading" className="mb-3 block">{forceFirstReading ? 'Move-in Reading (kWh)' : 'Meter Reading (kWh)'}</Label>
         <Input
           id="reading"
           type="number"
@@ -173,7 +179,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       </div>
 
       {/* First Reading Checkbox - Only shown if no first reading exists */}
-      {showFirstReadingCheckbox && (
+      {!forceFirstReading && showFirstReadingCheckbox && (
         <div className="flex items-center space-x-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
           <Checkbox
             id="isFirstReading"

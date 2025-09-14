@@ -5,6 +5,7 @@ import { ConsumptionChart } from './ConsumptionChart';
 import { MonthlyOverview } from './MonthlyOverview';
 import { WeeklyPieChart } from './WeeklyPieChart';
 import { PreferencesPanel } from '../analytics/PreferencesPanel';
+import { OnboardingSheet } from '../onboarding/OnboardingSheet';
 import { DailyBreakdown } from './DailyBreakdown';
 import { ViewToggle } from './ViewToggle';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -119,6 +120,7 @@ export const Dashboard: FC = () => {
         isOpen={isMeterPanelOpen}
         onClose={() => toggleMeterPanel(false)}
       />
+      <OnboardingSheet />
       
       <UserGuide />
     </div>

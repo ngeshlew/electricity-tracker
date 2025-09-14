@@ -1,338 +1,281 @@
-# ⚡ Electricity Tracker
+# ⚡ Electricity Tracker Dashboard
 
-A modern, AI-powered electricity consumption tracking dashboard built with React, TypeScript, and real-time analytics. Monitor your energy usage, analyze consumption patterns, and optimize your electricity costs with an intuitive, mobile-first interface.
+A comprehensive, real-time electricity consumption tracking and analytics dashboard built with React, TypeScript, and modern web technologies. This application provides energy companies with professional-grade tools for monitoring electricity usage, cost analysis, and data visualization.
 
-![Electricity Tracker Dashboard](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)
-![React](https://img.shields.io/badge/React-18+-61dafb)
-![License](https://img.shields.io/badge/License-MIT-green)
+## 🚀 Features
 
-## ✨ Features
+### Core Functionality
+- **Real-time Meter Reading Management**: Add, edit, delete, and track electricity meter readings
+- **Advanced Analytics**: Comprehensive consumption analysis with daily, weekly, monthly, and yearly views
+- **Cost Tracking**: Automatic cost calculations based on configurable unit rates
+- **Estimated Readings**: AI-powered estimated readings for missing data periods
+- **PDF Statement Analysis**: Upload and analyze energy company statements
+- **Data Export**: Export analytics data in JSON and CSV formats
+- **Responsive Design**: Mobile-first design with touch-friendly interactions
 
-### 📊 **Real-time Analytics**
-- **Live Dashboard**: Real-time consumption monitoring with instant updates
-- **Interactive Charts**: Advanced visualizations using Recharts
-- **Trend Analysis**: AI-powered consumption pattern detection
-- **Multi-period Views**: Daily, weekly, monthly, and yearly breakdowns
-
-### 📱 **Mobile-First Design**
-- **Progressive Web App**: Install on any device for offline access
-- **Responsive Layout**: Optimized for all screen sizes
-- **Touch Interactions**: Intuitive mobile-friendly interface
-- **Lewis-Linear Design**: Custom design system with smooth animations
-
-### 🔄 **Real-time Features**
-- **Live Updates**: WebSocket-powered real-time data synchronization
-- **Instant Notifications**: Real-time alerts and updates
-- **Background Sync**: Offline data synchronization
-- **Auto-refresh**: Automatic data updates
-
-### 📈 **Advanced Analytics**
-- **Consumption Tracking**: Detailed kWh and cost analysis
-- **Trend Detection**: Automatic trend identification
-- **Export Options**: CSV and JSON data export
-- **Historical Analysis**: Long-term consumption insights
-
-### 📁 **Statement Management**
-- **File Upload**: Drag-and-drop PDF, CSV, and Excel support
-- **Auto-parsing**: Intelligent bill data extraction
-- **Import/Export**: Seamless data migration
-- **File Management**: Organized statement storage
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- PostgreSQL 14+
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/ngeshlew/electricity-tracker.git
-   cd electricity-tracker
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   cd server && npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   # Frontend (.env)
-   VITE_API_URL=http://localhost:3001
-   VITE_SOCKET_URL=http://localhost:3001
-   
-   # Backend (server/.env)
-   DATABASE_URL="postgresql://username:password@localhost:5432/electricity_tracker"
-   PORT=3001
-   CLIENT_URL=http://localhost:5173
-   ```
-
-4. **Set up the database**
-   ```bash
-   cd server
-   npm run db:setup
-   ```
-
-5. **Start the development servers**
-   ```bash
-   # Terminal 1 - Backend
-   cd server
-   npm run dev
-   
-   # Terminal 2 - Frontend
-   npm run dev
-   ```
-
-6. **Open your browser**
-   Navigate to `http://localhost:5173`
+### Advanced Features
+- **First Reading Management**: Special handling for move-in readings
+- **Duplicate Detection**: Prevents duplicate readings for the same date
+- **Reading Type Filtering**: Separate manual, estimated, and imported readings
+- **Real-time Updates**: Live data synchronization across all components
+- **Progressive Web App**: Installable with offline capabilities
+- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation
 
 ## 🏗️ Architecture
 
 ### Frontend Stack
-- **React 18** - Modern UI library with hooks
-- **TypeScript** - Type-safe development
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first styling
-- **Zustand** - Lightweight state management
-- **React Hook Form** - Form handling and validation
-- **Recharts** - Data visualization
-- **Socket.io** - Real-time communication
+- **React 18+** with TypeScript for type safety
+- **Vite** for fast development and building
+- **Zustand** for state management
+- **React Hook Form** with Zod validation
+- **Recharts** for data visualization
+- **Framer Motion** for animations
+- **Tailwind CSS** with custom Lewis-Linear design system
+- **Heroicons** for consistent iconography
 
 ### Backend Stack
-- **Express.js** - Web framework
-- **TypeScript** - Type-safe backend
-- **PostgreSQL** - Relational database
-- **Prisma ORM** - Database toolkit
-- **Socket.io** - Real-time server
-- **Helmet** - Security middleware
-- **CORS** - Cross-origin resource sharing
+- **Node.js** with Express.js
+- **TypeScript** for type safety
+- **Prisma ORM** with SQLite database
+- **Socket.io** for real-time updates
+- **Helmet** for security headers
+- **CORS** for cross-origin requests
 
 ### Design System
-- **Lewis-Linear** - Custom design system
-- **OCR A Std** - Monospace typography
-- **Electric Color Palette** - Purple/pink gradients
-- **Smooth Animations** - Framer Motion integration
-- **Dark Theme** - Modern dark interface
+- **Lewis-Linear Design System**: Custom design system with purple/pink gradients
+- **Shadcn UI**: Modern component library (selective usage)
+- **OCR A Std**: Monospace typography for technical aesthetic
+- **Dark Theme**: Primary theme with light mode support
 
-## 📱 PWA Features
+## 📁 Project Structure
 
-### Offline Support
-- **Service Worker**: Caches essential files for offline access
-- **Background Sync**: Syncs data when connection is restored
-- **Offline Indicators**: Clear feedback when offline
-- **Cached API Responses**: Serves cached data when offline
-
-### Mobile Installation
-- **Add to Home Screen**: Install as native app
-- **App Shortcuts**: Quick actions from home screen
-- **Splash Screen**: Custom loading screen
-- **App Icons**: High-quality icons for all devices
-
-## 🧪 Testing
-
-### Running Tests
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run specific test file
-npm test MonthlyOverview.test.tsx
+```
+electricity-tracker/
+├── src/
+│   ├── components/
+│   │   ├── dashboard/           # Main dashboard components
+│   │   │   ├── Dashboard.tsx    # Main dashboard container
+│   │   │   ├── Header.tsx       # Navigation header
+│   │   │   ├── SummaryCards.tsx # Analytics summary cards
+│   │   │   ├── ConsumptionChart.tsx # Main consumption chart
+│   │   │   ├── MonthlyOverview.tsx # Monthly breakdown view
+│   │   │   ├── WeeklyPieChart.tsx # Weekly consumption pie chart
+│   │   │   ├── DailyBreakdown.tsx # Daily consumption breakdown
+│   │   │   └── ViewToggle.tsx   # kWh/Cost view toggle
+│   │   ├── meter-reading/       # Meter reading management
+│   │   │   ├── MeterReadingPanel.tsx # Modal for adding readings
+│   │   │   ├── MeterReadingForm.tsx # Form for meter readings
+│   │   │   └── MeterReadingsLog.tsx # Readings log table
+│   │   ├── analytics/           # Analytics components
+│   │   │   ├── TimePeriodSelector.tsx # Time period selection
+│   │   │   └── ExportOptions.tsx # Data export options
+│   │   ├── statements/          # Statement management
+│   │   │   └── StatementUpload.tsx # PDF upload component
+│   │   ├── help/               # Help and guidance
+│   │   │   └── UserGuide.tsx   # User guide component
+│   │   └── ui/                 # UI component library
+│   │       ├── button.tsx      # Shadcn UI Button component
+│   │       ├── button-simple.tsx # Simplified Button component
+│   │       ├── card.tsx        # Shadcn UI Card components
+│   │       ├── card-simple.tsx # Simplified Card components
+│   │       └── skeleton.tsx    # Loading skeleton component
+│   ├── store/
+│   │   └── useElectricityStore.ts # Zustand state management
+│   ├── services/
+│   │   └── api.ts             # API service layer
+│   ├── utils/
+│   │   └── dateFormatters.ts  # Date formatting utilities
+│   ├── types/
+│   │   └── index.ts           # TypeScript type definitions
+│   └── styles/
+│       └── index.css          # Global styles and design system
+├── server/                    # Backend API
+│   ├── src/
+│   │   ├── routes/           # API routes
+│   │   ├── middleware/       # Express middleware
+│   │   └── utils/            # Server utilities
+│   └── prisma/
+│       └── schema.prisma     # Database schema
+└── docs/                     # Documentation
+    └── design-systems/       # Design system documentation
 ```
 
-### Test Coverage
-- **Unit Tests**: Component and utility testing
-- **Integration Tests**: API and state management testing
-- **E2E Tests**: Full user workflow testing
-- **Accessibility Tests**: WCAG 2.1 AA compliance
+## 🎨 Component Architecture
 
-## 📦 Deployment
+### Shadcn UI Usage Audit
 
-### Production Build
+#### ✅ Components Using Shadcn UI
+- **Button Component**: Used in `MeterReadingPanel`, `MeterReadingForm`, `MeterReadingsLog`
+- **Card Components**: Used in `MeterReadingPanel`, `MeterReadingsLog`, `SummaryCards`
+- **Skeleton Component**: Used for loading states
+
+#### ❌ Components NOT Using Shadcn UI
+- **Custom Input Fields**: All form inputs use custom Lewis-Linear styling
+- **Tab Navigation**: Custom tab implementation in `Dashboard`
+- **Charts**: Recharts library with custom styling
+- **Modal Overlays**: Custom modal implementation
+- **Loading States**: Custom loading animations
+- **Icons**: Heroicons library instead of Shadcn UI icons
+
+### Component Documentation
+
+#### Dashboard Components
+
+**Dashboard.tsx** - Main Application Container
+- **Purpose**: Central hub for all dashboard functionality
+- **Features**: Tab navigation, responsive layout, state management
+- **Shadcn UI**: None (custom implementation)
+- **Custom Styling**: Lewis-Linear design system
+
+**Header.tsx** - Navigation Header
+- **Purpose**: Top navigation with refresh and add reading buttons
+- **Features**: Responsive design, action buttons
+- **Shadcn UI**: None (custom implementation)
+- **Custom Styling**: Lewis-Linear gradients and animations
+
+**SummaryCards.tsx** - Analytics Summary
+- **Purpose**: Display key metrics and consumption data
+- **Features**: Dynamic data, responsive cards, trend indicators
+- **Shadcn UI**: Card components (Card, CardContent, CardHeader, CardTitle)
+- **Custom Styling**: Lewis-Linear gradients and animations
+
+#### Meter Reading Components
+
+**MeterReadingPanel.tsx** - Add Reading Modal
+- **Purpose**: Modal overlay for adding new meter readings
+- **Features**: Form validation, first reading checkbox, responsive design
+- **Shadcn UI**: Button, Card, CardContent, CardHeader, CardTitle
+- **Custom Styling**: Lewis-Linear animations and gradients
+
+**MeterReadingForm.tsx** - Reading Input Form
+- **Purpose**: Form for capturing meter reading data
+- **Features**: Validation, first reading checkbox, success feedback
+- **Shadcn UI**: Button component
+- **Custom Styling**: Lewis-Linear input styling and animations
+
+**MeterReadingsLog.tsx** - Readings Management Table
+- **Purpose**: Display and manage all meter readings
+- **Features**: Filtering, editing, deletion, first reading toggle
+- **Shadcn UI**: Button, Card components
+- **Custom Styling**: Lewis-Linear table styling and animations
+
+#### Analytics Components
+
+**ConsumptionChart.tsx** - Main Consumption Chart
+- **Purpose**: Visualize consumption trends over time
+- **Features**: Interactive charts, date formatting, gap filling
+- **Shadcn UI**: None (Recharts library)
+- **Custom Styling**: Lewis-Linear chart styling
+
+**MonthlyOverview.tsx** - Monthly Breakdown
+- **Purpose**: Weekly breakdown within current month
+- **Features**: Week calculations, consumption summaries
+- **Shadcn UI**: None (custom implementation)
+- **Custom Styling**: Lewis-Linear card styling
+
+## 🔧 Technical Implementation
+
+### State Management
+- **Zustand Store**: Centralized state management for all application data
+- **Real-time Updates**: Socket.io integration for live data synchronization
+- **Local Storage**: Persistent user preferences and settings
+
+### Data Flow
+1. **User Input** → Form validation → API call
+2. **API Response** → Store update → Component re-render
+3. **Real-time Updates** → Socket.io → Store update → UI update
+
+### Performance Optimizations
+- **Code Splitting**: Lazy loading for non-critical components
+- **Memoization**: React.memo for expensive components
+- **Bundle Optimization**: Vite for fast builds and HMR
+- **Chart Performance**: Optimized Recharts rendering
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ and npm
+- Git
+
+### Installation
 ```bash
-# Build frontend
-npm run build
+# Clone the repository
+git clone https://github.com/ngeshlew/electricity-tracker.git
+cd electricity-tracker
 
-# Build backend
-cd server && npm run build
+# Install dependencies
+npm install
+
+# Install server dependencies
+cd server && npm install && cd ..
+
+# Set up database
+cd server && npx prisma generate && npx prisma db push && cd ..
+
+# Start development servers
+npm run dev
 ```
 
 ### Environment Setup
-1. **Database**: Set up PostgreSQL production database
-2. **Environment Variables**: Configure production environment
-3. **SSL Certificate**: Set up HTTPS for security
-4. **Domain**: Configure custom domain
-5. **CDN**: Set up content delivery network
-
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up -d
+Create `.env` file in server directory:
+```
+DATABASE_URL="file:./dev.db"
 ```
 
-## 🔧 Configuration
+## 📱 User Flows
 
-### Environment Variables
+### Primary User Flow
+1. **Dashboard Access** → View current consumption and costs
+2. **Add Reading** → Click "Add Reading" → Fill form → Submit
+3. **View Analytics** → Switch to Analytics tab → Select time period
+4. **Export Data** → Click export button → Choose format → Download
 
-#### Frontend (.env)
-```env
-VITE_API_URL=https://api.electricity-tracker.com
-VITE_SOCKET_URL=https://api.electricity-tracker.com
-VITE_APP_NAME=Electricity Tracker
-VITE_APP_VERSION=1.0.0
-```
+### Advanced User Flow
+1. **First Reading** → Check "first reading" checkbox → Submit
+2. **Generate Estimates** → Click "Generate Estimated Readings"
+3. **Filter Readings** → Use filter tabs to view specific reading types
+4. **Upload Statement** → Switch to Statements tab → Upload PDF
 
-#### Backend (server/.env)
-```env
-DATABASE_URL="postgresql://user:pass@localhost:5432/electricity_tracker"
-PORT=3001
-CLIENT_URL=https://electricity-tracker.com
-NODE_ENV=production
-JWT_SECRET=your-jwt-secret
-```
+## 🛣️ Future Roadmap
 
-### Database Configuration
-```sql
--- Create database
-CREATE DATABASE electricity_tracker;
+### Phase 1: Core Enhancements (Q1 2024)
+- [ ] **PDF Analysis**: AI-powered statement parsing
+- [ ] **Smart Notifications**: Consumption alerts and reminders
+- [ ] **Multi-meter Support**: Handle multiple electricity meters
+- [ ] **Advanced Filtering**: Date range and custom filters
 
--- Create user
-CREATE USER elec_user WITH PASSWORD 'secure_password';
+### Phase 2: Analytics & Insights (Q2 2024)
+- [ ] **Predictive Analytics**: ML-based consumption forecasting
+- [ ] **Energy Efficiency Tips**: Personalized recommendations
+- [ ] **Comparative Analysis**: Year-over-year comparisons
+- [ ] **Carbon Footprint**: Environmental impact tracking
 
--- Grant permissions
-GRANT ALL PRIVILEGES ON DATABASE electricity_tracker TO elec_user;
-```
+### Phase 3: Integration & Scale (Q3 2024)
+- [ ] **Smart Meter Integration**: Direct meter data collection
+- [ ] **Energy Company APIs**: Real-time tariff updates
+- [ ] **Mobile App**: Native iOS/Android applications
+- [ ] **Multi-tenant Support**: Property management features
 
-## 📊 API Documentation
-
-### Meter Readings
-```typescript
-// Get all readings
-GET /api/meter-readings
-
-// Get reading by ID
-GET /api/meter-readings/:id
-
-// Create new reading
-POST /api/meter-readings
-{
-  "meterId": "default-meter",
-  "reading": 1500,
-  "date": "2024-01-15T10:30:00Z",
-  "type": "MANUAL",
-  "notes": "Monthly reading"
-}
-
-// Update reading
-PUT /api/meter-readings/:id
-
-// Delete reading
-DELETE /api/meter-readings/:id
-```
-
-### Analytics
-```typescript
-// Get consumption trends
-GET /api/analytics/trends?period=monthly
-
-// Get chart data
-GET /api/analytics/chart?period=weekly
-
-// Get consumption data
-GET /api/analytics/consumption?start=2024-01-01&end=2024-01-31
-```
-
-## 🎨 Design System
-
-### Colors
-```css
-/* Electric Purple */
---electric-purple: 139 92 246;
-
-/* Electric Pink */
---electric-pink: 236 72 153;
-
-/* Electric Blue */
---electric-blue: 59 130 246;
-
-/* Electric Green */
---electric-green: 34 197 94;
-
-/* Electric Orange */
---electric-orange: 249 115 22;
-
-/* Electric Red */
---electric-red: 239 68 68;
-```
-
-### Typography
-```css
-/* Primary Font */
-font-family: 'OCR A Std', monospace;
-
-/* Headings */
-.lewis-text-gradient {
-  background: linear-gradient(135deg, var(--electric-purple), var(--electric-pink));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-```
-
-### Components
-- **Cards**: `lewis-card` with glow effects
-- **Buttons**: `lewis-button-primary` with animations
-- **Animations**: `lewis-animation-fade-in` for smooth transitions
-- **Shadows**: `lewis-shadow-glow` for depth
-
-## 🔒 Security
-
-### Data Protection
-- **Input Validation**: Comprehensive input sanitization
-- **SQL Injection Prevention**: Prisma ORM protection
-- **XSS Protection**: React's built-in XSS prevention
-- **CSRF Protection**: Token-based CSRF protection
-
-### Privacy
-- **Local Storage**: Sensitive data stored locally
-- **No Tracking**: No analytics or tracking scripts
-- **Data Encryption**: All data encrypted in transit
-- **GDPR Compliant**: Privacy-first data handling
+### Phase 4: Enterprise Features (Q4 2024)
+- [ ] **User Management**: Multi-user access and permissions
+- [ ] **Reporting Dashboard**: Executive-level reporting
+- [ ] **API Access**: Third-party integrations
+- [ ] **White-label Solution**: Customizable branding
 
 ## 🤝 Contributing
 
-### Development Setup
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new features
-5. Submit a pull request
+### Development Guidelines
+- Follow TypeScript best practices
+- Use conventional commit messages
+- Write comprehensive tests
+- Document all new components
+- Follow the Lewis-Linear design system
 
 ### Code Style
-- **TypeScript**: Strict mode enabled
-- **ESLint**: Configured for React and TypeScript
-- **Prettier**: Code formatting
-- **Husky**: Pre-commit hooks
-
-### Commit Convention
-```
-feat: add new feature
-fix: bug fix
-docs: documentation update
-style: code formatting
-refactor: code refactoring
-test: add tests
-chore: maintenance tasks
-```
+- ESLint and Prettier configuration
+- Consistent naming conventions
+- Comprehensive JSDoc comments
+- Component documentation
 
 ## 📄 License
 
@@ -340,21 +283,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **React Team** - For the amazing React framework
-- **Vite Team** - For the fast build tool
-- **Tailwind CSS** - For the utility-first CSS framework
-- **Recharts** - For the beautiful chart library
-- **Prisma** - For the excellent database toolkit
-
-## 📞 Support
-
-- **Documentation**: [Full Documentation](https://electricity-tracker.com/docs)
-- **Issues**: [GitHub Issues](https://github.com/ngeshlew/electricity-tracker/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ngeshlew/electricity-tracker/discussions)
-- **Email**: support@electricity-tracker.com
+- **Shadcn UI** for the component library foundation
+- **Recharts** for beautiful data visualization
+- **Heroicons** for consistent iconography
+- **Tailwind CSS** for utility-first styling
+- **Lewis-Linear Design System** for the custom design language
 
 ---
 
-**Built with ❤️ by the Electricity Tracker Team**
-
-*Empowering users to take control of their energy consumption through intelligent analytics and beautiful design.*
+**Built with ❤️ for energy efficiency and sustainability**

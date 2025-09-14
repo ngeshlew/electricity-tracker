@@ -9,17 +9,46 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-s
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { formatDateUK } from '../../utils/dateFormatters';
 
+/**
+ * SummaryCards Component
+ * 
+ * Displays key analytics metrics in a responsive card layout.
+ * Features:
+ * - Dynamic data based on time period and view mode
+ * - Trend indicators with color coding
+ * - Responsive grid layout
+ * - Real-time data updates
+ * 
+ * Uses Shadcn UI: Card, CardContent, CardHeader, CardTitle components
+ * Uses Heroicons: BoltIcon, CurrencyPoundIcon, ChartBarIcon, ArrowTrendingUpIcon
+ * Custom styling: Lewis-Linear design system
+ */
+
+// Type definitions for component props
 export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly';
 export type ViewMode = 'kwh' | 'cost';
 
 interface SummaryCardProps {
-  title: string;
-  value: string;
-  change: string;
-  changeType: 'positive' | 'negative' | 'neutral';
-  icon: React.ReactNode;
+  title: string;        // Card title (e.g., "Total Consumption")
+  value: string;        // Main value display (e.g., "125.5 kWh")
+  change: string;       // Change indicator (e.g., "+5.2%")
+  changeType: 'positive' | 'negative' | 'neutral'; // Color coding for change
+  icon: React.ReactNode; // Heroicon component
 }
 
+/**
+ * SummaryCard Component
+ * 
+ * Individual summary card displaying a single metric.
+ * Features:
+ * - Icon, title, value, and change indicator
+ * - Color-coded change indicators
+ * - Hover animations
+ * - Responsive design
+ * 
+ * Uses Shadcn UI: Card, CardContent, CardHeader, CardTitle
+ * Custom styling: Lewis-Linear design system
+ */
 const SummaryCard: React.FC<SummaryCardProps> = ({ 
   title, 
   value, 
@@ -54,10 +83,23 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
 };
 
 interface SummaryCardsProps {
-  timePeriod: TimePeriod;
-  viewMode: ViewMode;
+  timePeriod: TimePeriod; // Current selected time period
+  viewMode: ViewMode;     // Current view mode (kWh or cost)
 }
 
+/**
+ * SummaryCards Component
+ * 
+ * Main container component that displays multiple summary cards.
+ * Features:
+ * - Dynamic data calculation based on time period
+ * - Responsive grid layout
+ * - Real-time data updates
+ * - Period comparison calculations
+ * 
+ * Uses Shadcn UI: Card components (via SummaryCard)
+ * Custom styling: Lewis-Linear design system
+ */
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ timePeriod, viewMode }) => {
   const { chartData, timeSeriesData } = useElectricityStore();
   

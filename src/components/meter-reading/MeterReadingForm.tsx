@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button-simple';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
+/**
+ * MeterReadingForm Component
+ * 
+ * A form component for adding new meter readings to the electricity tracker.
+ * Features:
+ * - Form validation using Zod schema
+ * - First reading checkbox (one-time only)
+ * - Success/error feedback
+ * - Responsive design with Lewis-Linear styling
+ * 
+ * Uses Shadcn UI: Button component
+ * Custom styling: Lewis-Linear design system
+ */
+
+// Zod validation schema for meter reading form data
 const meterReadingSchema = z.object({
   reading: z
     .number({ message: 'Reading is required' })
@@ -23,8 +38,19 @@ interface MeterReadingFormProps {
 }
 
 export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess }) => {
-  const { addReading, isLoading } = useElectricityStore();
+  const { addReading, isLoading, readings } = useElectricityStore();
   
+  // State for first reading checkbox - only show if no first reading exists
+  const [showFirstReadingCheckbox, setShowFirstReadingCheckbox] = useState(false);
+  const [isFirstReading, setIsFirstReading] = useState(false);
+  
+  // Check if there's already a first reading in the system
+  useEffect(() => {
+    const hasFirstReading = readings.some(reading => reading.isFirstReading);
+    setShowFirstReadingCheckbox(!hasFirstReading);
+  }, [readings]);
+  
+  // React Hook Form setup with validation
   const {
     register,
     handleSubmit,
@@ -39,6 +65,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
     },
   });
 
+  // Form submission handler
   const onSubmit = async (data: MeterReadingFormData) => {
     try {
       await addReading({
@@ -47,6 +74,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
         date: data.date,
         type: 'MANUAL',
         notes: data.notes || '',
+        isFirstReading: isFirstReading, // Include first reading flag
       });
       
       reset();
@@ -110,7 +138,25 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
         )}
       </div>
 
+      {/* First Reading Checkbox - Only shown if no first reading exists */}
+      {showFirstReadingCheckbox && (
+        <div className="flex items-center space-x-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+          <input
+            id="isFirstReading"
+            type="checkbox"
+            checked={isFirstReading}
+            onChange={(e) => setIsFirstReading(e.target.checked)}
+            className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+          />
+          <label htmlFor="isFirstReading" className="text-sm font-medium text-purple-800 dark:text-purple-200">
+            This is my first meter reading (move-in reading)
+          </label>
+        </div>
+      )}
+
+      {/* Form Action Buttons */}
       <div className="flex space-x-4 pt-6">
+        {/* Cancel Button - Closes the modal without saving */}
         <Button
           type="button"
           variant="outline"
@@ -119,6 +165,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
         >
           Cancel
         </Button>
+        {/* Submit Button - Saves the meter reading to the database */}
         <Button
           type="submit"
           disabled={isSubmitting || isLoading}

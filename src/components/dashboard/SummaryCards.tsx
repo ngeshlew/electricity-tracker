@@ -1,8 +1,7 @@
 import React from 'react';
-import { Bolt, PoundSterling, BarChart2, TrendingUp } from 'lucide-react';
+import { Bolt, PoundSterling, BarChart2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { formatDateUK } from '../../utils/dateFormatters';
 
 /**
  * SummaryCards Component

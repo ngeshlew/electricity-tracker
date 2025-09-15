@@ -5,7 +5,7 @@ export const Breadcrumb: React.FC<React.HTMLAttributes<HTMLElement>> = ({ classN
   <nav aria-label="Breadcrumb" className={cn("text-sm text-muted-foreground", className)} {...props} />
 )
 
-export const BreadcrumbList: React.FC<React.HTMLAttributes<ol>> = ({ className, ...props }) => (
+export const BreadcrumbList: React.FC<React.HTMLAttributes<HTMLOListElement>> = ({ className, ...props }) => (
   <ol className={cn("flex items-center gap-2", className)} {...props} />
 )
 

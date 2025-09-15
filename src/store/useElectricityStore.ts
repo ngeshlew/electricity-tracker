@@ -286,7 +286,7 @@ export const useElectricityStore = create<ElectricityState>()(
               new Date(a.date).getTime() - new Date(b.date).getTime()
             );
 
-            const estimatedReadings: Omit<MeterReading, 'id' | 'createdAt' | 'updatedAt'>[] = [];
+            const estimatedReadings: MeterReading[] = [];
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
@@ -338,12 +338,15 @@ export const useElectricityStore = create<ElectricityState>()(
               if (!existingReading) {
                 currentReading += dailyAverage;
                 estimatedReadings.push({
+                  id: crypto.randomUUID(),
                   meterId: lastManualReading.meterId,
                   reading: Math.round(currentReading * 100) / 100,
                   date: new Date(currentDate),
                   type: 'ESTIMATED',
                   notes: 'Estimated reading based on historical consumption',
-                  isFirstReading: false
+                  isFirstReading: false,
+                  createdAt: new Date(),
+                  updatedAt: new Date()
                 });
               } else {
                 // Update current reading to the existing reading
@@ -499,7 +502,7 @@ export const useElectricityStore = create<ElectricityState>()(
         setupRealtimeUpdates: () => {
           socketService.connect();
 
-          const onAdded = (reading: MeterReading) => {
+          const onAdded = (reading: any) => {
             const newReading: MeterReading = {
               ...reading,
               date: new Date(reading.date),
@@ -525,7 +528,7 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculatePieChartData();
           };
 
-          const onUpdated = (reading: MeterReading) => {
+          const onUpdated = (reading: any) => {
             const updatedReading: MeterReading = {
               ...reading,
               date: new Date(reading.date),

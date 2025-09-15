@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { format, startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachWeekOfInterval } from 'date-fns';
 import { formatDateUK, getWeekStart, getWeekEnd, getWeekNumber } from '../../utils/dateFormatters';
 
 interface WeeklyData {
@@ -53,7 +53,7 @@ export const MonthlyOverview: React.FC = () => {
 
     // Calculate weekly breakdown using Monday as week start
     const weeks = eachWeekOfInterval({ start: monthStart, end: monthEnd });
-    const weeklyBreakdown: WeeklyData[] = weeks.map((weekStart, index) => {
+    const weeklyBreakdown: WeeklyData[] = weeks.map((weekStart) => {
       // Use our custom week calculation for Monday start
       const actualWeekStart = getWeekStart(weekStart);
       const actualWeekEnd = getWeekEnd(weekStart);

@@ -5,6 +5,7 @@ import { ConsumptionChart } from './ConsumptionChart';
 import { MonthlyOverview } from './MonthlyOverview';
 import { WeeklyPieChart } from './WeeklyPieChart';
 import { PreferencesPanel } from '../analytics/PreferencesPanel';
+import { CompareMode } from '../analytics/CompareMode';
 import { OnboardingSheet } from '../onboarding/OnboardingSheet';
 import { DailyBreakdown } from './DailyBreakdown';
 import { ViewToggle } from './ViewToggle';
@@ -22,6 +23,7 @@ import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useEffect } from 'react';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 
 export const Dashboard: FC = () => {
   const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
@@ -33,6 +35,19 @@ export const Dashboard: FC = () => {
   const handleRefresh = () => {
     loadMeterReadings();
   };
+
+  useKeyboardShortcuts({
+    onAddReading: () => toggleMeterPanel(true),
+    onFocusSearch: () => {
+      const searchInput = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
+      searchInput?.focus();
+    },
+    onToggleFilters: () => {
+      // Focus first filter dropdown
+      const filterSelect = document.querySelector('[role="combobox"]') as HTMLButtonElement;
+      filterSelect?.click();
+    }
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -105,6 +120,7 @@ export const Dashboard: FC = () => {
                 <WeeklyPieChart currentMonth={currentMonth} viewMode={viewMode} />
                 <DailyBreakdown currentMonth={currentMonth} viewMode={viewMode} />
               </div>
+              <CompareMode />
               <PreferencesPanel />
               <ExportOptions />
             </div>

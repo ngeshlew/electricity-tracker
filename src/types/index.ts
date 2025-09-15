@@ -34,14 +34,24 @@ export interface ConsumptionData {
   trend: 'increasing' | 'decreasing' | 'stable';
 }
 
+export interface TimeOfUseRate {
+  id: string;
+  name: string;
+  startTime: string; // "09:00"
+  endTime: string;   // "17:00"
+  rate: number;      // per kWh
+  days: number[];    // [1,2,3,4,5] for Mon-Fri
+}
+
 export interface UserPreferences {
   id: string;
   userId: string;
-  theme: 'dark' | 'light';
+  theme: 'dark' | 'light' | 'system';
   currency: 'GBP' | 'USD' | 'EUR';
   unitRate: number;
   standingCharge: number;
   notifications: boolean;
+  timeOfUseRates: TimeOfUseRate[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -65,6 +65,7 @@ const defaultPreferences: UserPreferences = {
   unitRate: 0.30, // £0.30 per kWh
   standingCharge: 0.50, // £0.50 per day
   notifications: true,
+  timeOfUseRates: [],
   createdAt: new Date(),
   updatedAt: new Date(),
 };

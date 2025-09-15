@@ -1,9 +1,10 @@
 import { FC } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Link } from 'react-router-dom';
 
 export const Header: FC = () => {
   const { toggleMeterPanel } = useElectricityStore();
@@ -36,11 +37,17 @@ export const Header: FC = () => {
                       <CommandItem onSelect={() => location.assign('/dashboard')}>Go to Overview</CommandItem>
                       <CommandItem onSelect={() => location.assign('/dashboard#analytics')}>Go to Analytics</CommandItem>
                       <CommandItem onSelect={() => location.assign('/dashboard#statements')}>Go to Statements</CommandItem>
+                      <CommandItem onSelect={() => location.assign('/settings')}>Open Settings</CommandItem>
                     </CommandGroup>
                   </CommandList>
                 </Command>
               </DialogContent>
             </Dialog>
+            <Link to="/settings">
+              <Button variant="ghost" size="icon" title="Settings">
+                <SettingsIcon className="w-5 h-5" />
+              </Button>
+            </Link>
             <Button 
               onClick={() => toggleMeterPanel(true)} 
               className="lewis-button-primary flex items-center space-x-2 lewis-animation-slide-up"

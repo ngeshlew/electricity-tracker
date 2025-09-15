@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Dashboard } from './components/dashboard/Dashboard';
+import { Settings } from './pages/Settings';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useElectricityStore } from './store/useElectricityStore';
 import './index.css';
@@ -29,6 +30,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
             <Toaster />
           </div>

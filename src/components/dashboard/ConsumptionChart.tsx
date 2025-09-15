@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { formatDateUK, addDays } from '../../utils/dateFormatters';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Download, MoreVertical } from 'lucide-react';
+import { toPng, toSvg } from 'html-to-image';
 
 export const ConsumptionChart: React.FC = () => {
   const { chartData } = useElectricityStore();
+  const chartRef = useRef<HTMLDivElement>(null);
   
   // Fill missing dates to prevent chart gaps
   const fillMissingDates = (data: typeof chartData) => {
@@ -48,15 +53,49 @@ export const ConsumptionChart: React.FC = () => {
   // Transform chart data for Recharts with filled gaps
   const chartDataFormatted = fillMissingDates(chartData);
 
+  const downloadChart = async (format: 'png' | 'svg') => {
+    if (!chartRef.current) return;
+    try {
+      const dataUrl = format === 'png' 
+        ? await toPng(chartRef.current, { quality: 1.0, pixelRatio: 2 })
+        : await toSvg(chartRef.current);
+      const link = document.createElement('a');
+      link.download = `consumption-chart.${format}`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Download failed:', err);
+    }
+  };
+
   return (
     <Card className="lewis-card lewis-card-hover lewis-animation-fade-in">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold lewis-text-gradient">
-          Daily Consumption Trend
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-semibold lewis-text-gradient">
+            Daily Consumption Trend
+          </CardTitle>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => downloadChart('png')}>
+                <Download className="h-4 w-4 mr-2" />
+                Download PNG
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => downloadChart('svg')}>
+                <Download className="h-4 w-4 mr-2" />
+                Download SVG
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80 w-full">
+        <div className="h-80 w-full" ref={chartRef}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartDataFormatted}>
               <defs>

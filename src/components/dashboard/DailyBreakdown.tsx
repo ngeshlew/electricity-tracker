@@ -1,7 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Download, MoreVertical } from 'lucide-react';
+import { toPng, toSvg } from 'html-to-image';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachDayOfInterval, format } from 'date-fns';
 
@@ -19,6 +23,7 @@ interface DailyBreakdownProps {
 
 export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, viewMode }) => {
   const { readings, preferences } = useElectricityStore();
+  const chartRef = useRef<HTMLDivElement>(null);
 
   const dailyData = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
@@ -134,15 +139,49 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
   const maxValue = Math.max(...dailyData.map(d => viewMode === 'kwh' ? d.kwh : d.cost));
   const yAxisDomain = [0, Math.ceil(maxValue * 1.1)];
 
+  const downloadChart = async (format: 'png' | 'svg') => {
+    if (!chartRef.current) return;
+    try {
+      const dataUrl = format === 'png' 
+        ? await toPng(chartRef.current, { quality: 1.0, pixelRatio: 2 })
+        : await toSvg(chartRef.current);
+      const link = document.createElement('a');
+      link.download = `daily-breakdown.${format}`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Download failed:', err);
+    }
+  };
+
   return (
     <Card className="lewis-card lewis-shadow-glow lewis-animation-fade-in">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold lewis-text-gradient">
-          Daily Breakdown ({viewMode === 'kwh' ? 'kWh' : 'Cost'})
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold lewis-text-gradient">
+            Daily Breakdown ({viewMode === 'kwh' ? 'kWh' : 'Cost'})
+          </CardTitle>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => downloadChart('png')}>
+                <Download className="h-4 w-4 mr-2" />
+                Download PNG
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => downloadChart('svg')}>
+                <Download className="h-4 w-4 mr-2" />
+                Download SVG
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-80" ref={chartRef}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={dailyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />

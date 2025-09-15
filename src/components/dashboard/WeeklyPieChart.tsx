@@ -1,7 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Download, MoreVertical } from 'lucide-react';
+import { toPng, toSvg } from 'html-to-image';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
 
@@ -30,6 +34,7 @@ interface WeeklyPieChartProps {
 
 export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, viewMode }) => {
   const { readings, preferences } = useElectricityStore();
+  const chartRef = useRef<HTMLDivElement>(null);
 
   const weeklyData = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
@@ -120,6 +125,21 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
     );
   };
 
+  const downloadChart = async (format: 'png' | 'svg') => {
+    if (!chartRef.current) return;
+    try {
+      const dataUrl = format === 'png' 
+        ? await toPng(chartRef.current, { quality: 1.0, pixelRatio: 2 })
+        : await toSvg(chartRef.current);
+      const link = document.createElement('a');
+      link.download = `weekly-breakdown.${format}`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Download failed:', err);
+    }
+  };
+
   if (weeklyData.length === 0) {
     return (
       <Card className="lewis-card lewis-shadow-glow lewis-animation-fade-in">
@@ -141,12 +161,31 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
   return (
     <Card className="lewis-card lewis-shadow-glow lewis-animation-fade-in">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold lewis-text-gradient">
-          Weekly Breakdown ({viewMode === 'kwh' ? 'kWh' : 'Cost'})
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold lewis-text-gradient">
+            Weekly Breakdown ({viewMode === 'kwh' ? 'kWh' : 'Cost'})
+          </CardTitle>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => downloadChart('png')}>
+                <Download className="h-4 w-4 mr-2" />
+                Download PNG
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => downloadChart('svg')}>
+                <Download className="h-4 w-4 mr-2" />
+                Download SVG
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="h-64">
+        <div className="h-64" ref={chartRef}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

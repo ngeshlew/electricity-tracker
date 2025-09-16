@@ -642,6 +642,13 @@ export const useElectricityStore = create<ElectricityState>()(
           const { readings } = get();
           
           console.log('Calculating consumption data. Readings count:', readings.length);
+          console.log('Readings data:', readings.map(r => ({ 
+            id: r.id, 
+            date: r.date.toISOString().split('T')[0], 
+            reading: r.reading, 
+            isFirstReading: r.isFirstReading,
+            type: r.type 
+          })));
           
           if (readings.length < 2) {
             console.log('Not enough readings for consumption calculation');
@@ -653,6 +660,9 @@ export const useElectricityStore = create<ElectricityState>()(
           
           // Handle first reading - show 0 consumption on the first day
           const firstReading = readings[0];
+          console.log('First reading:', firstReading);
+          console.log('Is first reading marked as first?', firstReading?.isFirstReading);
+          
           if (firstReading && firstReading.isFirstReading) {
             chartData.push({
               date: firstReading.date.toISOString().split('T')[0],
@@ -670,6 +680,8 @@ export const useElectricityStore = create<ElectricityState>()(
             const consumption = get().getConsumptionBetweenReadings(prevReading, currentReading);
             const cost = get().calculateCost(consumption);
             
+            console.log(`Consumption between ${prevReading.date.toISOString().split('T')[0]} and ${currentReading.date.toISOString().split('T')[0]}:`, consumption);
+            
             chartData.push({
               date: currentReading.date.toISOString().split('T')[0],
               kwh: consumption,
@@ -678,6 +690,7 @@ export const useElectricityStore = create<ElectricityState>()(
             });
           }
 
+          console.log('Final chart data:', chartData);
           set({ chartData });
         },
 

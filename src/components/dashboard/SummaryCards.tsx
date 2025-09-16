@@ -105,7 +105,7 @@ interface SummaryCardsProps {
  * Custom styling: Lewis-Linear design system
  */
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
-  const { chartData, timeSeriesData, readings, isLoading, error } = useElectricityStore();
+  const { chartData, timeSeriesData } = useElectricityStore();
   
   
   // Use monthly as default time period

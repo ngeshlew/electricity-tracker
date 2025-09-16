@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import type { MeterReading } from './api';
 
-const SOCKET_URL = (import.meta as any).env?.VITE_SERVER_URL || 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
 
 class SocketService {
   private socket: Socket | null = null;

@@ -14,6 +14,7 @@ import { useElectricityStore } from '../../store/useElectricityStore';
 export const Dashboard: FC = () => {
   const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings, clearCacheAndReload, readings, chartData, isLoading, error } = useElectricityStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Load meter readings when component mounts
   useEffect(() => {
@@ -22,8 +23,11 @@ export const Dashboard: FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="md:pl-64">
+      <Sidebar 
+        collapsible={true}
+        onCollapseChange={setIsSidebarCollapsed}
+      />
+      <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-16' : 'md:pl-64'}`}>
         <Header />
         <main className="flex-1 p-6">
         <div className="mx-auto max-w-7xl">

@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   HomeIcon, 
   ChartBarIcon, 
   DocumentTextIcon, 
   Cog6ToothIcon,
-  BoltIcon
+  BoltIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
   className?: string;
+  collapsible?: boolean;
+  onCollapseChange?: (isCollapsed: boolean) => void;
 }
 
 const navigationItems = [
@@ -20,10 +24,19 @@ const navigationItems = [
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, current: false },
 ];
 
-export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ className, collapsible = false, onCollapseChange }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleCollapse = () => {
+    const newCollapsedState = !isCollapsed;
+    setIsCollapsed(newCollapsedState);
+    onCollapseChange?.(newCollapsedState);
+  };
+
   return (
     <div className={cn(
-      "hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0",
+      "hidden md:flex md:flex-col md:fixed md:inset-y-0 transition-all duration-300",
+      isCollapsed ? "md:w-16" : "md:w-64",
       "bg-sidebar border-r border-sidebar-border",
       className
     )}>
@@ -32,9 +45,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         <div className="flex h-8 w-8 items-center justify-center bg-sidebar-primary">
           <BoltIcon className="h-5 w-5 text-sidebar-primary-foreground" />
         </div>
-        <span className="ml-3 text-lg text-sidebar-foreground">
-          Electricity Tracker
-        </span>
+        {!isCollapsed && (
+          <span className="ml-3 text-lg text-sidebar-foreground">
+            Electricity Tracker
+          </span>
+        )}
+        {collapsible && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleCollapse}
+            className="ml-auto h-8 w-8 p-0 hover:bg-sidebar-accent"
+          >
+            {isCollapsed ? (
+              <ChevronRightIcon className="h-4 w-4 text-sidebar-foreground" />
+            ) : (
+              <ChevronLeftIcon className="h-4 w-4 text-sidebar-foreground" />
+            )}
+          </Button>
+        )}
       </div>
 
       {/* Navigation */}
@@ -44,30 +73,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
             key={item.name}
             variant={item.current ? "default" : "ghost"}
             className={cn(
-              "w-full justify-start text-left",
+              "w-full text-left transition-all duration-200",
+              isCollapsed ? "justify-center px-2" : "justify-start",
               item.current 
                 ? "bg-sidebar-accent text-sidebar-accent-foreground" 
                 : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             )}
+            title={isCollapsed ? item.name : undefined}
           >
-            <item.icon className="mr-3 h-5 w-5" />
-            {item.name}
+            <item.icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
+            {!isCollapsed && item.name}
           </Button>
         ))}
       </nav>
 
       {/* Footer */}
       <div className="flex shrink-0 border-t border-sidebar-border p-4">
-        <div className="flex items-center">
+        <div className={cn("flex items-center", isCollapsed ? "justify-center" : "")}>
           <div className="flex-shrink-0">
             <div className="h-8 w-8 bg-sidebar-accent flex items-center justify-center">
               <span className="text-xs text-sidebar-accent-foreground">U</span>
             </div>
           </div>
-          <div className="ml-3">
-            <p className="text-sm text-sidebar-foreground">User</p>
-            <p className="text-xs text-sidebar-muted-foreground">user@example.com</p>
-          </div>
+          {!isCollapsed && (
+            <div className="ml-3">
+              <p className="text-sm text-sidebar-foreground">User</p>
+              <p className="text-xs text-sidebar-muted-foreground">user@example.com</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

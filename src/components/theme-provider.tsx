@@ -6,6 +6,8 @@ type ThemeProviderProps = {
   children: React.ReactNode
   defaultTheme?: Theme
   storageKey?: string
+  // When true, overrides any stored theme with the provided default on first mount
+  resetToDefaultOnLoad?: boolean
 }
 
 type ThemeProviderState = {
@@ -24,11 +26,21 @@ export function ThemeProvider({
   children,
   defaultTheme = "mono",
   storageKey = "vite-ui-theme",
+  resetToDefaultOnLoad = false,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   )
+
+  useEffect(() => {
+    // Optionally force the default theme on initial load
+    if (resetToDefaultOnLoad) {
+      localStorage.setItem(storageKey, defaultTheme)
+      setTheme(defaultTheme)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const root = window.document.documentElement

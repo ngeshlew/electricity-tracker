@@ -46,7 +46,7 @@ function App() {
   }, [loadMeterReadings, setupRealtimeUpdates, cleanupRealtimeUpdates]);
 
   return (
-    <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme">
+    <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme" resetToDefaultOnLoad>
       <ErrorBoundary>
         <Router>
           <div className="min-h-screen bg-background text-foreground">

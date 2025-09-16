@@ -51,6 +51,26 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Database test endpoint
+app.get('/test-db', async (_req, res) => {
+  try {
+    const { prisma } = await import('./utils/database');
+    await prisma.$connect();
+    res.status(200).json({
+      status: 'OK',
+      message: 'Database connection successful',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Database connection failed',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // API Routes
 app.use('/api/meter-readings', meterReadingRoutes);
 app.use('/api/analytics', analyticsRoutes);

@@ -3,6 +3,10 @@ import type { MeterReading } from './api';
 
 const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
 
+// Debug logging
+console.log('🔌 SOCKET_URL:', SOCKET_URL);
+console.log('🔌 VITE_SERVER_URL env var:', import.meta.env.VITE_SERVER_URL);
+
 class SocketService {
   private socket: Socket | null = null;
   private isConnected = false;

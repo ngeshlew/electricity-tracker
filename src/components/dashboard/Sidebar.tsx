@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { SidebarTrigger } from '@/components/ui/sidebar-trigger';
 import { 
   HomeIcon, 
   ChartBarIcon, 
   DocumentTextIcon, 
   Cog6ToothIcon,
-  BoltIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon
+  BoltIcon
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -51,18 +50,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ className, collapsible = false
           </span>
         )}
         {collapsible && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleCollapse}
-            className="ml-auto h-8 w-8 p-0 hover:bg-sidebar-accent"
-          >
-            {isCollapsed ? (
-              <ChevronRightIcon className="h-4 w-4 text-sidebar-foreground" />
-            ) : (
-              <ChevronLeftIcon className="h-4 w-4 text-sidebar-foreground" />
-            )}
-          </Button>
+          <SidebarTrigger
+            isCollapsed={isCollapsed}
+            onToggle={toggleCollapse}
+            className="ml-auto"
+          />
         )}
       </div>
 

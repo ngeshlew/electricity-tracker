@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import type { MeterReading } from './api';
 
-const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'https://electricity-tracker-production.up.railway.app';
 
 // Debug logging
 console.log('🔌 SOCKET_URL:', SOCKET_URL);

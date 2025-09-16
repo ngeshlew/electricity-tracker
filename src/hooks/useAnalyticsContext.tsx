@@ -11,7 +11,7 @@ export interface AnalyticsContextType extends AnalyticsState {
   updatePieChartData: (data: PieChartData[]) => void;
   setSelectedPeriod: (period: 'daily' | 'weekly' | 'monthly') => void;
   setSelectedDateRange: (start: Date, end: Date) => void;
-  calculateConsumptionData: (readings: unknown[]) => ChartDataPoint[];
+  calculateConsumptionData: (readings: { date: Date; reading: number; isFirstReading?: boolean; }[]) => ChartDataPoint[];
 }
 
 export const AnalyticsContext = createContext<AnalyticsContextType | undefined>(

@@ -1,202 +1,102 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Header } from './Header';
+import { Sidebar } from './Sidebar';
 import { SummaryCards } from './SummaryCards';
 import { ConsumptionChart } from './ConsumptionChart';
 import { MonthlyOverview } from './MonthlyOverview';
-import { WeeklyPieChart } from './WeeklyPieChart';
-import { DailyBreakdown } from './DailyBreakdown';
-import { ViewToggle } from './ViewToggle';
-import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
-import { ExportOptions } from '../analytics/ExportOptions';
-import { StatementUpload } from '../statements/StatementUpload';
-import { apiService } from '../../services/api';
+import { ConsumptionBreakdown } from './ConsumptionBreakdown';
+import { MonthSelector } from './MonthSelector';
 import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { useEffect } from 'react';
 
 export const Dashboard: FC = () => {
-  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
-  const [currentMonth] = useState(new Date());
-  const [viewMode, setViewMode] = useState<'kwh' | 'cost'>('kwh');
-  const [timePeriod, setTimePeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('monthly');
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'statements'>('overview');
+  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings, readings, chartData, isLoading, error } = useElectricityStore();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const handleRefresh = () => {
+  // Load meter readings when component mounts
+  useEffect(() => {
+    console.log('Dashboard mounting, loading meter readings...');
     loadMeterReadings();
-  };
+  }, [loadMeterReadings]);
+
+  // Debug logging
+  console.log('Dashboard - readings length:', readings.length);
+  console.log('Dashboard - chartData length:', chartData.length);
+  console.log('Dashboard - isLoading:', isLoading);
+  console.log('Dashboard - error:', error);
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 lewis-animation-fade-in">
-          <h1 className="text-4xl font-bold lewis-text-gradient mb-3">
-            Electricity Tracker
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Monitor your electricity consumption and costs in real-time
-          </p>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="mb-6 lewis-animation-fade-in">
-          <div className="flex space-x-1 bg-muted/20 rounded-lg p-1 w-fit">
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'analytics', label: 'Analytics' },
-              { id: 'statements', label: 'Statements' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  activeTab === tab.id
-                    ? 'lewis-button-primary shadow-md'
-                    : 'lewis-card-hover text-muted-foreground hover:text-foreground'
-                }`}
+      <Sidebar />
+      <div className="md:pl-64">
+        <Header />
+        <main className="flex-1 p-6">
+        <div className="mx-auto max-w-7xl">
+          {/* Page Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground mt-2">
+              Monitor your electricity consumption and track your energy usage patterns
+            </p>
+            {/* Debug info */}
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <p className="text-sm">Debug Info:</p>
+              <p className="text-xs">Readings: {readings.length} | Chart Data: {chartData.length} | Loading: {isLoading ? 'Yes' : 'No'} | Error: {error || 'None'}</p>
+              <button 
+                onClick={() => {
+                  console.log('Manual refresh triggered');
+                  loadMeterReadings();
+                }}
+                className="mt-2 px-3 py-1 bg-primary text-primary-foreground text-xs rounded"
               >
-                {tab.label}
+                Refresh Data
               </button>
-            ))}
+            </div>
           </div>
-        </div>
 
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            <SummaryCards timePeriod={timePeriod} viewMode={viewMode} />
+                {/* Key Metrics Cards */}
+                <div className="mb-6">
+                  <SummaryCards currentMonth={currentMonth} />
+                </div>
+
+          {/* Main Content Grid */}
+          <div className="space-y-6">
+            <ConsumptionChart />
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ConsumptionChart />
-              <MonthlyOverview />
+            {/* Month Selector */}
+            <div className="flex justify-center">
+              <MonthSelector
+                currentMonth={currentMonth}
+                onMonthChange={setCurrentMonth}
+              />
             </div>
             
+                   <div className="grid gap-6 md:grid-cols-3">
+                     <ConsumptionBreakdown
+                       currentMonth={currentMonth}
+                       viewMode="kwh"
+                     />
+                     <MonthlyOverview
+                       currentMonth={currentMonth}
+                     />
+                   </div>
+          </div>
+
+          {/* Recent Readings */}
+          <div className="mt-8">
             <MeterReadingsLog />
           </div>
-        )}
-
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <TimePeriodSelector
-                selectedPeriod={timePeriod}
-                onPeriodChange={setTimePeriod}
-                onRefresh={handleRefresh}
-              />
-              <ViewToggle
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-              />
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <WeeklyPieChart
-                currentMonth={currentMonth}
-                viewMode={viewMode}
-              />
-              <DailyBreakdown
-                currentMonth={currentMonth}
-                viewMode={viewMode}
-              />
-            </div>
-
-            {/* Export Options */}
-            <ExportOptions />
-          </div>
-        )}
-
-        {/* Statements Tab */}
-        {activeTab === 'statements' && (
-          <StatementsSection />
-        )}
-      </main>
-
-      <MeterReadingPanel
-        isOpen={isMeterPanelOpen}
-        onClose={() => toggleMeterPanel(false)}
-      />
-      
-      <UserGuide />
-    </div>
-  );
-};
-
-const StatementsSection: FC = () => {
-  const [files, setFiles] = useState<{ id: string; file: File; status: 'uploading' | 'success' | 'error'; error?: string }[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [serverFiles, setServerFiles] = useState<any[]>([]);
-
-  const refresh = async () => {
-    const res = await apiService.listStatements();
-    if (res.success && res.data) setServerFiles(res.data);
-  };
-
-  useEffect(() => {
-    refresh();
-  }, []);
-
-  const onFileUpload = async (incoming: File[]) => {
-    const newItems = incoming.map(f => ({ id: crypto.randomUUID(), file: f, status: 'uploading' as const }));
-    setFiles(prev => [...prev, ...newItems]);
-    setIsUploading(true);
-    try {
-      const res = await apiService.uploadStatements(incoming);
-      if (!res.success) throw new Error(res.error?.message || 'Upload failed');
-      setFiles(prev => prev.map(p => ({ ...p, status: 'success' })));
-      await refresh();
-    } catch (e) {
-      setFiles(prev => prev.map(p => ({ ...p, status: 'error', error: e instanceof Error ? e.message : 'Upload failed' })));
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const onFileRemove = async (fileId: string) => {
-    setFiles(prev => prev.filter(f => f.id !== fileId));
-  };
-
-  return (
-    <div className="space-y-8 lewis-animation-fade-in">
-      <StatementUpload
-        onFileUpload={onFileUpload}
-        onFileRemove={onFileRemove}
-        uploadedFiles={files}
-        isUploading={isUploading}
-      />
-
-      {serverFiles.length > 0 && (
-        <div className="lewis-card lewis-shadow-glow p-4 rounded-lg border">
-          <h3 className="text-md font-semibold mb-3">Processed Statements</h3>
-          <ul className="space-y-2">
-            {serverFiles.map((s) => (
-              <li key={s.id} className="flex items-center justify-between text-sm">
-                <div>
-                  <span className="font-medium">{s.supplier}</span>
-                  <span className="text-muted-foreground ml-2">{new Date(s.importedAt).toLocaleString()}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {s.fileUrl && (
-                    <a href={s.fileUrl} target="_blank" rel="noreferrer" className="text-electric-purple underline">View</a>
-                  )}
-                  <button
-                    className="text-destructive"
-                    onClick={async () => {
-                      const res = await apiService.deleteStatement(s.id);
-                      if (res.success) refresh();
-                    }}
-                  >Delete</button>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
-      )}
+        </main>
+
+        <MeterReadingPanel
+          isOpen={isMeterPanelOpen}
+          onClose={() => toggleMeterPanel(false)}
+        />
+        <UserGuide />
+      </div>
     </div>
   );
 };

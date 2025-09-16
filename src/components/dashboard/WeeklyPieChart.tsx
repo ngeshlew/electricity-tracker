@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
 
@@ -87,12 +87,12 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
-          <p className="font-medium">{data.name}</p>
-          <p className="text-sm text-muted-foreground">
+        <div className="bg-background/95 backdrop-blur-sm border border-border  p-3 shadow-lg">
+          <p className="">{data.name}</p>
+          <p className="text-xs text-muted-foreground">
             {viewMode === 'kwh' ? `${data.kwh} kWh` : `£${data.cost.toFixed(2)}`}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {data.percentage}% of total
           </p>
         </div>
@@ -107,10 +107,10 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
         {payload?.map((entry: any, index: number) => (
           <div key={index} className="flex items-center space-x-2">
             <div
-              className="w-3 h-3 rounded-full"
+              className="w-3 h-3 "
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               {entry.value} ({entry.payload.percentage}%)
             </span>
           </div>
@@ -123,14 +123,14 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
     return (
       <Card className="lewis-card lewis-shadow-glow lewis-animation-fade-in">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold lewis-text-gradient">
+          <CardTitle className="text-base lewis-text-gradient">
             Weekly Breakdown
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-64 text-muted-foreground">
             <div className="text-center">
-              <div className="text-4xl mb-2">📊</div>
+              <div className="text-3xl mb-2">📊</div>
               <p>No data available for this month</p>
             </div>
           </div>
@@ -142,7 +142,7 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
   return (
     <Card className="lewis-card lewis-shadow-glow lewis-animation-fade-in">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold lewis-text-gradient">
+        <CardTitle className="text-base lewis-text-gradient">
           Weekly Breakdown ({viewMode === 'kwh' ? 'kWh' : 'Cost'})
         </CardTitle>
       </CardHeader>
@@ -174,16 +174,16 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
         {/* Summary Stats */}
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="text-center">
-            <div className="text-lg font-bold lewis-text-gradient">
+            <div className="text-base lewis-text-gradient">
               {weeklyData.reduce((sum, week) => sum + week.kwh, 0).toFixed(1)}
             </div>
-            <div className="text-sm text-muted-foreground">Total kWh</div>
+            <div className="text-xs text-muted-foreground">Total kWh</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold lewis-text-gradient">
+            <div className="text-base lewis-text-gradient">
               £{weeklyData.reduce((sum, week) => sum + week.cost, 0).toFixed(2)}
             </div>
-            <div className="text-sm text-muted-foreground">Total Cost</div>
+            <div className="text-xs text-muted-foreground">Total Cost</div>
           </div>
         </div>
       </CardContent>

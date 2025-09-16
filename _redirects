@@ -1,0 +1,5 @@
+# Netlify redirects file (backup method)
+/*    /index.html   200
+
+# API proxy (update with your actual backend URL)
+/api/*    https://your-backend-url.herokuapp.com/api/:splat    200

@@ -133,15 +133,39 @@ export const useElectricityStore = create<ElectricityState>()(
               };
             });
 
-            // Recalculate analytics data
-            get().calculateConsumptionData();
-            get().calculateTimeSeriesData('daily');
-            get().calculatePieChartData();
+            // Remove any estimated readings for the same date before generating new ones
+            await get().removeEstimatedReadings(readingData.date);
+            
+            // Generate estimated readings and recalculate analytics data
+            await get().generateEstimatedReadings();
           } catch (error) {
-            set({
-              isLoading: false,
-              error: error instanceof Error ? error.message : 'Failed to add reading',
+            // Fallback: Create reading locally if API fails
+            console.warn('API failed, creating reading locally:', error);
+            
+            const newReading: MeterReading = {
+              id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              ...readingData,
+              date: readingData.date,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+
+            set((state) => {
+              const nextReadings = [...state.readings, newReading];
+              return {
+                readings: nextReadings.sort((a, b) => 
+                  new Date(a.date).getTime() - new Date(b.date).getTime()
+                ),
+                isLoading: false,
+                error: null,
+              };
             });
+
+            // Remove any estimated readings for the same date before generating new ones
+            await get().removeEstimatedReadings(readingData.date);
+            
+            // Generate estimated readings and recalculate analytics data
+            await get().generateEstimatedReadings();
           }
         },
 
@@ -277,96 +301,117 @@ export const useElectricityStore = create<ElectricityState>()(
           
           try {
             const { readings } = get();
-            if (readings.length === 0) return;
+            
+            console.log('Generating estimated readings. Current readings:', readings.length);
+            
+            // First, remove all existing estimated readings
+            const manualReadings = readings.filter(r => r.type !== 'ESTIMATED');
+            
+            console.log('Manual readings after filtering:', manualReadings.length);
+            
+            if (manualReadings.length < 2) {
+              console.log('Not enough manual readings to generate estimates');
+              set({ isLoading: false, error: null });
+              return;
+            }
 
-            // Sort readings by date
-            const sortedReadings = [...readings].sort((a, b) => 
+            // Sort manual readings by date
+            const sortedManualReadings = [...manualReadings].sort((a, b) => 
               new Date(a.date).getTime() - new Date(b.date).getTime()
             );
 
             const estimatedReadings: Omit<MeterReading, 'id' | 'createdAt' | 'updatedAt'>[] = [];
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
 
-            // Find the last manual reading
-            const lastManualReading = sortedReadings
-              .filter(r => r.type === 'MANUAL')
-              .pop();
+            console.log('Sorted manual readings:', sortedManualReadings.map(r => ({
+              date: r.date,
+              reading: r.reading,
+              type: r.type,
+              isFirstReading: r.isFirstReading
+            })));
 
-            if (!lastManualReading) return;
-
-            const lastReadingDate = new Date(lastManualReading.date);
-            lastReadingDate.setHours(0, 0, 0, 0);
-
-            // Calculate daily average consumption from last 7 manual readings
-            const recentManualReadings = sortedReadings
-              .filter(r => r.type === 'MANUAL' && !r.isFirstReading)
-              .slice(-7);
-
-            if (recentManualReadings.length < 2) return;
-
-            let totalConsumption = 0;
-            let totalDays = 0;
-
-            for (let i = 1; i < recentManualReadings.length; i++) {
-              const consumption = recentManualReadings[i].reading - recentManualReadings[i - 1].reading;
+            // Generate estimated readings between consecutive manual readings
+            for (let i = 0; i < sortedManualReadings.length - 1; i++) {
+              const currentReading = sortedManualReadings[i];
+              const nextReading = sortedManualReadings[i + 1];
+              
+              console.log(`Processing pair ${i}: ${currentReading.date} (${currentReading.isFirstReading ? 'FIRST' : 'MANUAL'}) -> ${nextReading.date} (${nextReading.isFirstReading ? 'FIRST' : 'MANUAL'})`);
+              
+              const currentDate = new Date(currentReading.date);
+              const nextDate = new Date(nextReading.date);
+              
+              // Calculate days between readings
               const daysDiff = Math.ceil(
-                (new Date(recentManualReadings[i].date).getTime() - 
-                 new Date(recentManualReadings[i - 1].date).getTime()) / (1000 * 60 * 60 * 24)
+                (nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
               );
-              totalConsumption += consumption;
-              totalDays += daysDiff;
-            }
-
-            const dailyAverage = totalDays > 0 ? totalConsumption / totalDays : 0;
-
-            // Generate estimated readings for missing days
-            let currentDate = new Date(lastReadingDate);
-            currentDate.setDate(currentDate.getDate() + 1);
-            let currentReading = lastManualReading.reading;
-
-            while (currentDate <= today) {
-              // Check if there's already a reading for this date
-              const existingReading = sortedReadings.find(r => {
-                const readingDate = new Date(r.date);
-                readingDate.setHours(0, 0, 0, 0);
-                return readingDate.getTime() === currentDate.getTime();
-              });
-
-              if (!existingReading) {
-                currentReading += dailyAverage;
-                estimatedReadings.push({
-                  meterId: lastManualReading.meterId,
-                  reading: Math.round(currentReading * 100) / 100,
-                  date: new Date(currentDate),
-                  type: 'ESTIMATED',
-                  notes: 'Estimated reading based on historical consumption',
-                  isFirstReading: false
-                });
-              } else {
-                // Update current reading to the existing reading
-                currentReading = existingReading.reading;
+              
+              console.log(`Days difference: ${daysDiff}`);
+              
+              if (daysDiff <= 1) {
+                console.log('No gap to fill, skipping');
+                continue; // No gap to fill
               }
-
-              currentDate.setDate(currentDate.getDate() + 1);
+              
+              // Calculate consumption between readings
+              const consumption = nextReading.reading - currentReading.reading;
+              const dailyAverage = consumption / daysDiff;
+              
+              console.log(`Consumption: ${consumption} kWh, Daily average: ${dailyAverage} kWh`);
+              
+              // Generate estimated readings for each missing day
+              let currentReadingValue = currentReading.reading;
+              let currentDateToFill = new Date(currentDate);
+              currentDateToFill.setDate(currentDateToFill.getDate() + 1);
+              
+              console.log(`Starting to fill from ${currentDateToFill.toLocaleDateString('en-GB')} to ${nextDate.toLocaleDateString('en-GB')}`);
+              
+              while (currentDateToFill < nextDate) {
+                currentReadingValue += dailyAverage;
+                
+                const estimatedReading = {
+                  meterId: currentReading.meterId,
+                  reading: Math.round(currentReadingValue * 100) / 100,
+                  date: new Date(currentDateToFill),
+                  type: 'ESTIMATED' as const,
+                  notes: `Estimated reading based on consumption between ${currentDate.toLocaleDateString('en-GB')} and ${nextDate.toLocaleDateString('en-GB')}`,
+                  isFirstReading: false
+                };
+                
+                console.log(`Adding estimated reading for ${currentDateToFill.toLocaleDateString('en-GB')}: ${estimatedReading.reading} kWh`);
+                estimatedReadings.push(estimatedReading);
+                
+                currentDateToFill.setDate(currentDateToFill.getDate() + 1);
+              }
             }
+
+            console.log('Generated estimated readings:', estimatedReadings.length);
 
             // Add estimated readings to the store
             if (estimatedReadings.length > 0) {
-              set((state) => ({
-                readings: [...state.readings, ...estimatedReadings].sort((a, b) => 
-                  new Date(a.date).getTime() - new Date(b.date).getTime()
-                ),
-                isLoading: false,
-                error: null,
-              }));
+              console.log('Adding estimated readings to store');
+               set({
+                 readings: [...manualReadings, ...estimatedReadings].sort((a, b) => 
+                   new Date(a.date).getTime() - new Date(b.date).getTime()
+                 ) as MeterReading[],
+                 isLoading: false,
+                 error: null,
+               });
 
               // Recalculate analytics data
               get().calculateConsumptionData();
               get().calculateTimeSeriesData('daily');
               get().calculatePieChartData();
             } else {
-              set({ isLoading: false, error: null });
+              console.log('No estimated readings to add');
+              set({ 
+                readings: manualReadings,
+                isLoading: false, 
+                error: null 
+              });
+              
+              // Still recalculate analytics data even if no estimated readings
+              get().calculateConsumptionData();
+              get().calculateTimeSeriesData('daily');
+              get().calculatePieChartData();
             }
           } catch (error) {
             set({
@@ -447,10 +492,12 @@ export const useElectricityStore = create<ElectricityState>()(
 
         // Data loading actions
         loadMeterReadings: async () => {
+          console.log('Loading meter readings...');
           set({ isLoading: true, error: null });
           
           try {
             const response = await apiService.getMeterReadings();
+            console.log('API response:', response);
 
             if (!response.success || !response.data) {
               throw new Error(response.error?.message || 'Failed to load meter readings');
@@ -463,15 +510,21 @@ export const useElectricityStore = create<ElectricityState>()(
               updatedAt: new Date(reading.updatedAt),
             }));
 
+            const sortedReadings = readings.sort((a, b) => 
+              new Date(a.date).getTime() - new Date(b.date).getTime()
+            );
+            
+            console.log('Setting readings in store:', sortedReadings.length);
             set({
-              readings: readings.sort((a, b) => 
-                new Date(a.date).getTime() - new Date(b.date).getTime()
-              ),
+              readings: sortedReadings,
               isLoading: false,
               error: null,
             });
 
-            // Recalculate analytics data
+            // Generate estimated readings and recalculate analytics data
+            await get().generateEstimatedReadings();
+            
+            // Always recalculate analytics data after loading readings
             get().calculateConsumptionData();
             get().calculateTimeSeriesData('daily');
             get().calculatePieChartData();
@@ -485,7 +538,13 @@ export const useElectricityStore = create<ElectricityState>()(
 
         // Real-time updates
         setupRealtimeUpdates: () => {
-          socketService.connect();
+          console.log('Setting up real-time updates...');
+          try {
+            socketService.connect();
+          } catch (error) {
+            console.warn('Socket connection failed, continuing without real-time updates:', error);
+            return;
+          }
 
           const onAdded = (reading: MeterReading) => {
             const newReading: MeterReading = {
@@ -544,8 +603,24 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculatePieChartData();
           };
 
-          socketService.onMeterReadingAdded(onAdded);
-          socketService.onMeterReadingUpdated(onUpdated);
+           socketService.onMeterReadingAdded((reading) => {
+             const meterReading: MeterReading = {
+               ...reading,
+               date: new Date(reading.date),
+               createdAt: new Date(reading.createdAt),
+               updatedAt: new Date(reading.updatedAt),
+             };
+             onAdded(meterReading);
+           });
+           socketService.onMeterReadingUpdated((reading) => {
+             const meterReading: MeterReading = {
+               ...reading,
+               date: new Date(reading.date),
+               createdAt: new Date(reading.createdAt),
+               updatedAt: new Date(reading.updatedAt),
+             };
+             onUpdated(meterReading);
+           });
           socketService.onMeterReadingDeleted(onDeleted);
 
           (window as any).__elecHandlers = { onAdded, onUpdated, onDeleted };
@@ -566,21 +641,31 @@ export const useElectricityStore = create<ElectricityState>()(
         calculateConsumptionData: () => {
           const { readings } = get();
           
+          console.log('Calculating consumption data. Readings count:', readings.length);
+          
           if (readings.length < 2) {
+            console.log('Not enough readings for consumption calculation');
             set({ chartData: [] });
             return;
           }
 
           const chartData: ChartDataPoint[] = [];
           
+          // Handle first reading - show 0 consumption on the first day
+          const firstReading = readings[0];
+          if (firstReading && firstReading.isFirstReading) {
+            chartData.push({
+              date: firstReading.date.toISOString().split('T')[0],
+              kwh: 0,
+              cost: 0,
+              label: '0.00 kWh',
+            });
+          }
+          
+          // Calculate consumption for all other readings
           for (let i = 1; i < readings.length; i++) {
             const prevReading = readings[i - 1];
             const currentReading = readings[i];
-            
-            // Skip consumption calculation if current reading is marked as first reading
-            if (currentReading.isFirstReading) {
-              continue;
-            }
             
             const consumption = get().getConsumptionBetweenReadings(prevReading, currentReading);
             const cost = get().calculateCost(consumption);

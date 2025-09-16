@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 import { Dashboard } from './components/dashboard/Dashboard';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useElectricityStore } from './store/useElectricityStore';
@@ -10,26 +12,52 @@ function App() {
 
   useEffect(() => {
     // Load initial data and set up real-time updates
-    loadMeterReadings();
-    setupRealtimeUpdates();
+    const initializeApp = async () => {
+      try {
+        console.log('Initializing app...');
+        await loadMeterReadings();
+        console.log('Data loaded, setting up real-time updates...');
+        
+        // Try to set up real-time updates, but don't fail if it doesn't work
+        try {
+          setupRealtimeUpdates();
+          console.log('Real-time updates set up successfully');
+        } catch (socketError) {
+          console.warn('Failed to set up real-time updates (this is OK):', socketError);
+        }
+        
+        console.log('App initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+      }
+    };
+
+    initializeApp();
 
     // Cleanup on unmount
     return () => {
-      cleanupRealtimeUpdates();
+      try {
+        cleanupRealtimeUpdates();
+      } catch (error) {
+        console.warn('Error during cleanup:', error);
+      }
     };
   }, [loadMeterReadings, setupRealtimeUpdates, cleanupRealtimeUpdates]);
 
   return (
-    <ErrorBoundary>
-      <Router>
-        <div className="min-h-screen bg-background text-foreground">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
-        </div>
-      </Router>
-    </ErrorBoundary>
+    <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme">
+      <ErrorBoundary>
+        <Router>
+          <div className="min-h-screen bg-background text-foreground">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </div>
+        </Router>
+        <Toaster />
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }
 

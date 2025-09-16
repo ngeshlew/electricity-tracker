@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/components/ui/button-simple';
+import { Button } from '@/components/ui/button';
 import { 
   CalendarDaysIcon, 
   ClockIcon, 
@@ -31,7 +31,7 @@ export const TimePeriodSelector: React.FC<TimePeriodSelectorProps> = ({
 }) => {
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
-      <div className="flex items-center space-x-1 bg-muted/20 rounded-lg p-1">
+      <div className="flex items-center space-x-1 bg-muted/20  p-1">
         {periodOptions.map((option) => (
           <Button
             key={option.value}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { Button } from '@/components/ui/button-simple';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { 
   ArrowDownTrayIcon,
   DocumentArrowDownIcon,
@@ -142,11 +142,11 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
   return (
     <Card className={`lewis-card lewis-shadow-glow lewis-animation-fade-in ${className}`}>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold lewis-text-gradient flex items-center space-x-2">
+        <CardTitle className="text-base lewis-text-gradient flex items-center space-x-2">
           <ArrowDownTrayIcon className="h-5 w-5" />
           <span>Export Data</span>
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Download your electricity data in various formats
         </p>
       </CardHeader>
@@ -155,7 +155,7 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
         {exportOptions.map((option) => (
           <div
             key={option.title}
-            className={`p-4 rounded-lg border ${
+            className={`p-4  border ${
               option.available 
                 ? 'bg-muted/20 border-border hover:border-electric-purple/50' 
                 : 'bg-muted/10 border-muted-foreground/20 opacity-50'
@@ -167,8 +167,8 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
                   {option.icon}
                 </div>
                 <div>
-                  <h4 className="font-medium">{option.title}</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <h4 className="">{option.title}</h4>
+                  <p className="text-xs text-muted-foreground">
                     {option.description}
                   </p>
                 </div>
@@ -203,8 +203,8 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
         {isExporting && (
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center space-x-2">
-              <div className="h-4 w-4 border-2 border-electric-purple border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm text-muted-foreground">
+              <div className="h-4 w-4 border-2 border-electric-purple border-t-transparent  animate-spin" />
+              <span className="text-xs text-muted-foreground">
                 Preparing download...
               </span>
             </div>
@@ -215,7 +215,7 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ className = '' }) 
           <div className="text-center py-8 text-muted-foreground">
             <ArrowDownTrayIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
             <p>No data available for export</p>
-            <p className="text-sm">Add some meter readings to enable export options</p>
+            <p className="text-xs">Add some meter readings to enable export options</p>
           </div>
         )}
       </CardContent>

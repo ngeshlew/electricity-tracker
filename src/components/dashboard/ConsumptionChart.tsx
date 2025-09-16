@@ -1,8 +1,9 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { formatDateUK, addDays, isSameDay } from '../../utils/dateFormatters';
+import { formatDateUK, addDays } from '../../utils/dateFormatters';
 
 export const ConsumptionChart: React.FC = () => {
   const { chartData } = useElectricityStore();
@@ -49,58 +50,65 @@ export const ConsumptionChart: React.FC = () => {
   const chartDataFormatted = fillMissingDates(chartData);
 
   return (
-    <Card className="lewis-card lewis-card-hover lewis-animation-fade-in">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold lewis-text-gradient">
-          Daily Consumption Trend
-        </CardTitle>
+        <CardTitle>Weekly Consumption</CardTitle>
+        <CardDescription>
+          Your electricity usage over the past week
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartDataFormatted}>
-              <defs>
-                <linearGradient id="lewisGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="hsl(var(--electric-purple))" />
-                  <stop offset="100%" stopColor="hsl(var(--electric-pink))" />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted opacity-30" />
-              <XAxis 
-                dataKey="date" 
-                className="text-xs fill-muted-foreground"
-                tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
-              />
-              <YAxis 
-                className="text-xs fill-muted-foreground"
-                label={{ value: 'kWh', angle: -90, position: 'insideLeft' }}
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '12px',
-                  color: 'hsl(var(--foreground))',
-                  boxShadow: '0 10px 25px -5px hsl(var(--primary) / 0.2)',
-                }}
-                formatter={(value: number, name: string) => [
-                  `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
-                  name === 'consumption' ? 'Consumption' : 'Cost'
-                ]}
-                labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="consumption" 
-                stroke="url(#lewisGradient)" 
-                strokeWidth={3}
-                dot={{ fill: 'hsl(var(--electric-purple))', strokeWidth: 2, r: 5, stroke: 'hsl(var(--background))' }}
-                activeDot={{ r: 8, stroke: 'hsl(var(--electric-pink))', strokeWidth: 3, fill: 'hsl(var(--background))' }}
-                className="lewis-chart-line"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      <CardContent className="pl-2">
+        <Tabs defaultValue="line" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="line">Line Chart</TabsTrigger>
+            <TabsTrigger value="bar">Bar Chart</TabsTrigger>
+          </TabsList>
+          <TabsContent value="line">
+            <ResponsiveContainer width="100%" height={350}>
+              <LineChart data={chartDataFormatted}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
+                />
+                <YAxis />
+                <Tooltip 
+                  formatter={(value: number, name: string) => [
+                    `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
+                    name === 'consumption' ? 'Consumption' : 'Cost'
+                  ]}
+                  labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="consumption" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </TabsContent>
+          <TabsContent value="bar">
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={chartDataFormatted}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
+                />
+                <YAxis />
+                <Tooltip 
+                  formatter={(value: number, name: string) => [
+                    `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
+                    name === 'consumption' ? 'Consumption' : 'Cost'
+                  ]}
+                  labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
+                />
+                <Bar dataKey="consumption" fill="hsl(var(--primary))" />
+              </BarChart>
+            </ResponsiveContainer>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );

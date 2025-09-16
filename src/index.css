@@ -1,58 +1,53 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=OCR+A+Std:wght@400&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Lewis-Linear Design System - Light Theme */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262.1 83.3% 57.8%;
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.5rem;
-    
-    /* Lewis-Linear specific colors */
-    --electric-purple: 262.1 83.3% 57.8%;
-    --electric-pink: 320 100% 70%;
-    --electric-blue: 200 100% 60%;
-    --electric-green: 142 76% 50%;
-    --electric-orange: 25 100% 60%;
-    --electric-red: 0 84% 60%;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--electric-purple)) 0%, hsl(var(--electric-pink)) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--electric-blue)) 0%, hsl(var(--electric-green)) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(var(--electric-orange)) 0%, hsl(var(--electric-red)) 100%);
+    --ring: 222.2 84% 4.9%;
+    --radius: 0rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    /* Lewis-Linear Design System - Dark Theme */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
@@ -63,224 +58,92 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 262.1 83.3% 57.8%;
-    
-    /* Lewis-Linear specific colors for dark theme */
-    --electric-purple: 262.1 83.3% 67.8%;
-    --electric-pink: 320 100% 75%;
-    --electric-blue: 200 100% 70%;
-    --electric-green: 142 76% 60%;
-    --electric-orange: 25 100% 70%;
-    --electric-red: 0 84% 70%;
-    
-    /* Gradients for dark theme */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--electric-purple)) 0%, hsl(var(--electric-pink)) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--electric-blue)) 0%, hsl(var(--electric-green)) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(var(--electric-orange)) 0%, hsl(var(--electric-red)) 100%);
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 94.1%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .mono {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 0%;
+    --chart-1: 0 0% 0%;
+    --chart-2: 0 0% 25%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 0 0% 75%;
+    --chart-5: 0 0% 100%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 0 0% 0%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 0%;
+  }
+
+  .mono * {
+    font-family: "Geist Mono", "Geist Mono Fallback", SF Mono, Monaco, Inconsolata, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    border-radius: 0 !important;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'JetBrains Mono', 'OCR A Std', monospace;
-  }
-}
-
-@layer components {
-  /* Lewis-Linear Design System Components */
-  .lewis-gradient-primary {
-    background: var(--gradient-primary);
-  }
-  
-  .lewis-gradient-secondary {
-    background: var(--gradient-secondary);
-  }
-  
-  .lewis-gradient-accent {
-    background: var(--gradient-accent);
-  }
-  
-  .lewis-text-gradient {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .lewis-card {
-    @apply bg-card border border-border rounded-lg shadow-sm;
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.8) 100%);
-  }
-  
-  .lewis-card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:scale-[1.02];
-  }
-  
-  .lewis-button-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
-    background: var(--gradient-primary);
-    transition: all 0.3s ease;
-  }
-  
-  .lewis-button-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.4);
-  }
-  
-  .lewis-input {
-    @apply bg-background border border-input rounded-md px-3 py-2 text-foreground;
-    transition: all 0.3s ease;
-  }
-  
-  .lewis-input:focus {
-    @apply outline-none ring-2 ring-ring border-transparent;
-    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
-  }
-  
-  .lewis-chart-line {
-    stroke: url(#lewisGradient);
-    stroke-width: 3;
-    fill: none;
-    filter: drop-shadow(0 2px 4px hsl(var(--primary) / 0.3));
-  }
-  
-  .lewis-chart-dot {
-    fill: hsl(var(--primary));
-    stroke: hsl(var(--background));
-    stroke-width: 2;
-    filter: drop-shadow(0 2px 4px hsl(var(--primary) / 0.4));
-  }
-  
-  .lewis-animation-pulse {
-    animation: lewis-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  
-  .lewis-animation-bounce {
-    animation: lewis-bounce 1s infinite;
-  }
-  
-  .lewis-animation-fade-in {
-    animation: lewis-fade-in 0.5s ease-out;
-  }
-  
-  .lewis-animation-slide-up {
-    animation: lewis-slide-up 0.3s ease-out;
   }
 }
 
 @layer utilities {
-  .lewis-shadow-glow {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  .bg-diagonal-lines {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      hsl(var(--background)),
+      hsl(var(--border)) 1px,
+      hsl(var(--background)) 1px,
+      hsl(var(--background)) 8px
+    );
   }
   
-  .lewis-shadow-glow-pink {
-    box-shadow: 0 0 20px hsl(var(--electric-pink) / 0.3);
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(hsl(var(--border)) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
   
-  .lewis-shadow-glow-blue {
-    box-shadow: 0 0 20px hsl(var(--electric-blue) / 0.3);
-  }
-  
-  .lewis-border-gradient {
-    border: 2px solid transparent;
-    background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
-                var(--gradient-primary) border-box;
-  }
-}
-
-@keyframes lewis-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes lewis-bounce {
-  0%, 100% {
-    transform: translateY(-25%);
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-  }
-  50% {
-    transform: translateY(0);
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  }
-}
-
-@keyframes lewis-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes lewis-slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  .lewis-card {
-    @apply mx-2;
-  }
-  
-  .lewis-text-gradient {
-    @apply text-2xl;
-  }
-  
-  .lewis-button-primary {
-    @apply text-sm px-3 py-2;
-  }
-  
-  .lewis-card-hover {
-    @apply p-2;
-  }
-  
-  /* Mobile-specific animations */
-  .lewis-animation-fade-in {
-    animation-duration: 0.3s;
-  }
-  
-  .lewis-animation-slide-up {
-    animation-duration: 0.4s;
-  }
-}
-
-@media (max-width: 640px) {
-  .lewis-text-gradient {
-    @apply text-xl;
-  }
-  
-  .lewis-card {
-    @apply mx-1;
-  }
-  
-  /* Stack elements vertically on very small screens */
-  .grid-cols-2 {
-    @apply grid-cols-1;
-  }
-  
-  .grid-cols-3 {
-    @apply grid-cols-1;
-  }
-  
-  .lg:grid-cols-2 {
-    @apply grid-cols-1;
+  .bg-dot-pattern {
+    background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }

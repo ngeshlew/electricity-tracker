@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { Button } from '@/components/ui/button-simple';
-import { 
-  EyeIcon, 
-  PencilIcon, 
-  TrashIcon,
-  CalendarIcon,
-  BoltIcon,
-  CurrencyPoundIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Eye, Pencil, Trash2, X, MoreHorizontal, Zap } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
 
@@ -22,20 +32,21 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   onEdit,
   onDelete
 }) => {
-  const { readings, isLoading, deleteReading, toggleFirstReading, generateEstimatedReadings, removeEstimatedReadings, removeEstimatedReading } = useElectricityStore();
+  const { readings, isLoading, deleteReading, removeEstimatedReading } = useElectricityStore();
   const [selectedReading, setSelectedReading] = useState<MeterReading | null>(null);
-  const [filterType, setFilterType] = useState<'all' | 'MANUAL' | 'IMPORTED' | 'ESTIMATED'>('all');
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-GB', {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString('en-GB', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     });
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-GB', {
+  const formatTime = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit'
     });
@@ -61,11 +72,12 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     }
   };
 
-  const calculateConsumption = (current: MeterReading, previous?: MeterReading) => {
-    if (!previous) return 0;
+  const calculateConsumption = (current: MeterReading, next?: MeterReading) => {
+    if (!next) return 0;
     // Skip consumption calculation if the current reading is marked as first reading
     if (current.isFirstReading) return 0;
-    return Number(current.reading) - Number(previous.reading);
+    // Calculate consumption as current - next (since current is newer)
+    return Number(current.reading) - Number(next.reading);
   };
 
   const calculateCost = (kwh: number) => {
@@ -75,15 +87,13 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 
   if (isLoading) {
     return (
-      <Card className="lewis-card lewis-animation-fade-in">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold lewis-text-gradient">
-            Meter Readings Log
-          </CardTitle>
+          <CardTitle>Meter Readings Log</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <div className="h-8 w-8 border-2 border-electric-purple border-t-transparent rounded-full animate-spin" />
+            <div className="h-8 w-8 border-2 border-primary border-t-transparent  animate-spin" />
             <span className="ml-2 text-muted-foreground">Loading readings...</span>
           </div>
         </CardContent>
@@ -93,17 +103,15 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 
   if (readings.length === 0) {
     return (
-      <Card className="lewis-card lewis-animation-fade-in">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold lewis-text-gradient">
-            Meter Readings Log
-          </CardTitle>
+          <CardTitle>Meter Readings Log</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <BoltIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <Zap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground">No meter readings found</p>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               Add your first reading to start tracking your electricity consumption
             </p>
           </div>
@@ -112,256 +120,142 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     );
   }
 
-  const filteredReadings = readings.filter(reading => {
-    if (filterType === 'all') return true;
-    return reading.type === filterType;
-  });
-  
-  const sortedReadings = [...filteredReadings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const sortedReadings = [...readings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <Card className="lewis-card lewis-animation-fade-in">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold lewis-text-gradient">
-          Meter Readings Log ({filteredReadings.length} readings)
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <CardTitle>Reading History</CardTitle>
+        <CardDescription>
           View and manage all your meter readings
-        </p>
-        
-        {/* Filter Tabs */}
-        <div className="flex space-x-2 mt-4">
-          <Button
-            variant={filterType === 'all' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setFilterType('all')}
-            className="lewis-button-primary"
-          >
-            All
-          </Button>
-          <Button
-            variant={filterType === 'MANUAL' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setFilterType('MANUAL')}
-            className="lewis-button-primary"
-          >
-            Manual
-          </Button>
-          <Button
-            variant={filterType === 'ESTIMATED' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setFilterType('ESTIMATED')}
-            className="lewis-button-primary"
-          >
-            Estimated
-          </Button>
-          <Button
-            variant={filterType === 'IMPORTED' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setFilterType('IMPORTED')}
-            className="lewis-button-primary"
-          >
-            Imported
-          </Button>
-        </div>
-        
-        {/* Generate Estimated Readings Button */}
-        <div className="mt-4">
-          <Button
-            onClick={generateEstimatedReadings}
-            className="lewis-button-secondary"
-            size="sm"
-          >
-            Generate Estimated Readings
-          </Button>
-        </div>
+        </CardDescription>
       </CardHeader>
       
       <CardContent>
-        <div className="space-y-3">
-          {sortedReadings.map((reading, index) => {
-            const previousReading = index > 0 ? sortedReadings[index - 1] : undefined;
-            const consumption = calculateConsumption(reading, previousReading);
-            const cost = calculateCost(consumption);
-            
-            return (
-              <div
-                key={reading.id}
-                className="flex items-center justify-between p-4 rounded-lg bg-muted/20 border border-border hover:bg-muted/30 transition-colors"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-electric-purple/20 rounded-full flex items-center justify-center">
-                      <BoltIcon className="h-5 w-5 text-electric-purple" />
-                    </div>
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2">
-                      <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">
-                        {formatDate(reading.date)}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatTime(reading.date)}
-                      </span>
-                    </div>
-                    
-                    <div className="mt-1 flex items-center space-x-4">
-                      <div className="flex items-center space-x-1">
-                        <BoltIcon className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">
-                          {Number(reading.reading).toFixed(2)} kWh
-                        </span>
-                      </div>
-                      
-                      {consumption > 0 && (
-                        <div className="flex items-center space-x-1">
-                          <span className="text-xs text-muted-foreground">Usage:</span>
-                          <span className="text-sm font-medium text-electric-purple">
-                            {consumption.toFixed(2)} kWh
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            (£{cost.toFixed(2)})
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {reading.notes && (
-                      <p className="text-xs text-muted-foreground mt-1 truncate">
-                        {reading.notes}
-                      </p>
-                    )}
-                    
-                    <div className="flex items-center space-x-2 mt-1">
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        reading.type === 'MANUAL' 
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                          : reading.type === 'ESTIMATED'
-                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                          : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                      }`}>
-                        {reading.type}
-                        {reading.type === 'ESTIMATED' && ' (Local)'}
-                      </span>
-                      {reading.isFirstReading && (
-                        <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                          First Reading
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSelectedReading(reading)}
-                    className="h-8 w-8 lewis-card-hover"
-                    title="View details"
-                  >
-                    <EyeIcon className="h-4 w-4" />
-                  </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => toggleFirstReading(reading.id)}
-                    className={`h-8 w-8 lewis-card-hover ${
-                      reading.isFirstReading 
-                        ? 'text-purple-600 hover:text-purple-700' 
-                        : 'text-muted-foreground hover:text-purple-600'
-                    }`}
-                    title={reading.isFirstReading ? "Unmark as first reading" : "Mark as first reading"}
-                  >
-                    <BoltIcon className="h-4 w-4" />
-                  </Button>
-                  
-                  {onEdit && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onEdit(reading)}
-                      className="h-8 w-8 lewis-card-hover"
-                      title="Edit reading"
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </Button>
-                  )}
-                  
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(reading.id)}
-                    className="h-8 w-8 lewis-card-hover text-red-500 hover:text-red-700"
-                    title="Delete reading"
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <Table>
+          <TableCaption>Your meter reading history</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Reading</TableHead>
+              <TableHead>Consumption</TableHead>
+              <TableHead>Cost</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedReadings.map((reading, index) => {
+              // For consumption calculation, we need the next reading (chronologically)
+              // Since we're sorted in descending order, the next reading is at index + 1
+              const nextReading = index < sortedReadings.length - 1 ? sortedReadings[index + 1] : undefined;
+              const consumption = calculateConsumption(reading, nextReading);
+              const cost = calculateCost(consumption);
+              
+              return (
+                <TableRow key={reading.id}>
+                  <TableCell>{formatDate(reading.date)}</TableCell>
+                  <TableCell className="">{Number(reading.reading).toFixed(2)} kWh</TableCell>
+                  <TableCell>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
+                  <TableCell>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
+                  <TableCell>
+                    <Badge variant={reading.type === "MANUAL" ? "default" : "secondary"}>
+                      {reading.type === "MANUAL" ? "Manual" : "Estimated"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => setSelectedReading(reading)}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View
+                        </DropdownMenuItem>
+                        {onEdit && (
+                          <DropdownMenuItem onClick={() => onEdit(reading)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleDelete(reading.id)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
         
         {/* Reading Details Modal */}
         {selectedReading && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <Card className="lewis-card max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <Card className="max-w-md w-full max-h-[80vh] overflow-y-auto">
               <CardHeader className="relative">
-                <CardTitle className="text-lg font-semibold lewis-text-gradient pr-10">
+                <CardTitle className="text-base pr-10">
                   Reading Details
                 </CardTitle>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setSelectedReading(null)}
-                  className="absolute top-4 right-4 h-8 w-8 lewis-card-hover z-10"
+                  className="absolute top-4 right-4 h-8 w-8"
                   title="Close"
                 >
-                  <XMarkIcon className="h-4 w-4" />
+                  <X className="h-4 w-4" />
                 </Button>
               </CardHeader>
               
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Date</label>
-                    <p className="text-sm">{formatDate(selectedReading.date)}</p>
+                    <label className="text-xs  text-muted-foreground">Date</label>
+                    <p className="text-xs">{formatDate(selectedReading.date)}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Time</label>
-                    <p className="text-sm">{formatTime(selectedReading.date)}</p>
+                    <label className="text-xs  text-muted-foreground">Time</label>
+                    <p className="text-xs">{formatTime(selectedReading.date)}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Reading</label>
-                    <p className="text-sm font-medium">{Number(selectedReading.reading).toFixed(2)} kWh</p>
+                    <label className="text-xs  text-muted-foreground">Reading</label>
+                    <p className="text-xs ">{Number(selectedReading.reading).toFixed(2)} kWh</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Type</label>
-                    <p className="text-sm">{selectedReading.type}</p>
+                    <label className="text-xs  text-muted-foreground">Type</label>
+                    <p className="text-xs">{selectedReading.type}</p>
                   </div>
                 </div>
                 
                 {selectedReading.notes && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Notes</label>
-                    <p className="text-sm">{selectedReading.notes}</p>
+                    <label className="text-xs  text-muted-foreground">Notes</label>
+                    <p className="text-xs">{selectedReading.notes}</p>
                   </div>
                 )}
                 
                 <div className="pt-4 border-t border-border">
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Created:</span>
-                    <span className="text-sm">
+                    <span className="text-xs text-muted-foreground">Created:</span>
+                    <span className="text-xs">
                       {formatDate(selectedReading.createdAt)} at {formatTime(selectedReading.createdAt)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Updated:</span>
-                    <span className="text-sm">
+                    <span className="text-xs text-muted-foreground">Updated:</span>
+                    <span className="text-xs">
                       {formatDate(selectedReading.updatedAt)} at {formatTime(selectedReading.updatedAt)}
                     </span>
                   </div>

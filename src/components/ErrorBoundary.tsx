@@ -1,6 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
-import { Button } from '@/components/ui/button-simple';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 interface Props {
@@ -43,10 +43,10 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
           <Card className="lewis-card lewis-shadow-glow max-w-md w-full">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-electric-red/20 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-16 h-16 bg-electric-red/20  flex items-center justify-center mb-4">
                 <ExclamationTriangleIcon className="h-8 w-8 text-electric-red" />
               </div>
-              <CardTitle className="text-xl font-semibold lewis-text-gradient">
+              <CardTitle className="text-lg lewis-text-gradient">
                 Something went wrong
               </CardTitle>
             </CardHeader>
@@ -57,8 +57,8 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
               
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="bg-muted/20 rounded-lg p-3">
-                  <summary className="cursor-pointer text-sm font-medium mb-2">
+                <details className="bg-muted/20  p-3">
+                  <summary className="cursor-pointer text-xs  mb-2">
                     Error Details (Development)
                   </summary>
                   <pre className="text-xs text-muted-foreground overflow-auto">

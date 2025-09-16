@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachDayOfInterval, format } from 'date-fns';
 
@@ -61,31 +61,36 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
       }
     }
 
-    // Fill in missing days with zero values
-    return days.map((day, index) => {
-      if (dailyBreakdown[index]) {
-        return dailyBreakdown[index];
-      }
-      return {
-        date: format(day, 'MMM d'),
-        kwh: 0,
-        cost: 0,
-        reading: 0
-      };
-    });
+    // Filter out future dates and fill in missing days with zero values
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today
+    
+    return days
+      .filter(day => day <= today) // Only include days up to today
+      .map((day, index) => {
+        if (dailyBreakdown[index]) {
+          return dailyBreakdown[index];
+        }
+        return {
+          date: format(day, 'MMM d'),
+          kwh: 0,
+          cost: 0,
+          reading: 0
+        };
+      });
   }, [readings, currentMonth, preferences.unitRate]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
-          <p className="font-medium">{label}</p>
-          <p className="text-sm text-muted-foreground">
+        <div className="bg-background/95 backdrop-blur-sm border border-border  p-3 shadow-lg">
+          <p className="">{label}</p>
+          <p className="text-xs text-muted-foreground">
             {viewMode === 'kwh' ? `${data.kwh} kWh` : `£${data.cost.toFixed(2)}`}
           </p>
           {data.reading > 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Meter: {data.reading.toLocaleString()}
             </p>
           )}
@@ -116,14 +121,14 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
     return (
       <Card className="lewis-card lewis-shadow-glow lewis-animation-fade-in">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold lewis-text-gradient">
+          <CardTitle className="text-base lewis-text-gradient">
             Daily Breakdown
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-64 text-muted-foreground">
             <div className="text-center">
-              <div className="text-4xl mb-2">📈</div>
+              <div className="text-3xl mb-2">📈</div>
               <p>No data available for this month</p>
             </div>
           </div>
@@ -138,7 +143,7 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
   return (
     <Card className="lewis-card lewis-shadow-glow lewis-animation-fade-in">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold lewis-text-gradient">
+        <CardTitle className="text-base lewis-text-gradient">
           Daily Breakdown ({viewMode === 'kwh' ? 'kWh' : 'Cost'})
         </CardTitle>
       </CardHeader>
@@ -192,22 +197,22 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
         {/* Summary Stats */}
         <div className="mt-4 grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-lg font-bold lewis-text-gradient">
+            <div className="text-base lewis-text-gradient">
               {dailyData.reduce((sum, day) => sum + day.kwh, 0).toFixed(1)}
             </div>
-            <div className="text-sm text-muted-foreground">Total kWh</div>
+            <div className="text-xs text-muted-foreground">Total kWh</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold lewis-text-gradient">
+            <div className="text-base lewis-text-gradient">
               £{dailyData.reduce((sum, day) => sum + day.cost, 0).toFixed(2)}
             </div>
-            <div className="text-sm text-muted-foreground">Total Cost</div>
+            <div className="text-xs text-muted-foreground">Total Cost</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold lewis-text-gradient">
+            <div className="text-base lewis-text-gradient">
               {(dailyData.reduce((sum, day) => sum + day.kwh, 0) / dailyData.length).toFixed(1)}
             </div>
-            <div className="text-sm text-muted-foreground">Daily Avg</div>
+            <div className="text-xs text-muted-foreground">Daily Avg</div>
           </div>
         </div>
       </CardContent>

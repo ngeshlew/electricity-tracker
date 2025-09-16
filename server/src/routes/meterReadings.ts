@@ -12,9 +12,15 @@ router.get('/', async (_req, res, next) => {
       orderBy: { date: 'desc' }
     });
 
+    // Convert Decimal fields to numbers for JSON response
+    const formattedReadings = readings.map(reading => ({
+      ...reading,
+      reading: Number(reading.reading),
+    }));
+
     res.json({
       success: true,
-      data: readings
+      data: formattedReadings
     });
   } catch (error) {
     next(createError('Failed to fetch meter readings', 500));
@@ -34,9 +40,15 @@ router.get('/:id', async (req, res, next) => {
       return next(createError('Meter reading not found', 404));
     }
 
+    // Convert Decimal fields to numbers for JSON response
+    const formattedReading = {
+      ...reading,
+      reading: Number(reading.reading),
+    };
+
     res.json({
       success: true,
-      data: reading
+      data: formattedReading
     });
   } catch (error) {
     next(createError('Failed to fetch meter reading', 500));
@@ -68,15 +80,21 @@ router.post('/', async (req, res, next) => {
       }
     });
 
+    // Convert Decimal fields to numbers for JSON response
+    const formattedReading = {
+      ...newReading,
+      reading: Number(newReading.reading),
+    };
+
     // Emit real-time update
     const io = req.app.get('io');
     if (io) {
-      io.to('meter-readings').emit('meter-reading-added', newReading);
+      io.to('meter-readings').emit('meter-reading-added', formattedReading);
     }
 
     res.status(201).json({
       success: true,
-      data: newReading
+      data: formattedReading
     });
   } catch (error) {
     // Log underlying error for debugging during development
@@ -89,7 +107,6 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { meterId, reading, date, type, notes, isFirstReading } = req.body;
 
     // Check if reading exists
     const existingReading = await prisma.meterReading.findUnique({
@@ -122,15 +139,21 @@ router.put('/:id', async (req, res, next) => {
       }
     });
 
+    // Convert Decimal fields to numbers for JSON response
+    const formattedReading = {
+      ...updatedReading,
+      reading: Number(updatedReading.reading),
+    };
+
     // Emit real-time update
     const io = req.app.get('io');
     if (io) {
-      io.to('meter-readings').emit('meter-reading-updated', updatedReading);
+      io.to('meter-readings').emit('meter-reading-updated', formattedReading);
     }
 
     res.json({
       success: true,
-      data: updatedReading
+      data: formattedReading
     });
   } catch (error) {
     next(createError('Failed to update meter reading', 500));

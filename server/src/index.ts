@@ -71,6 +71,223 @@ app.get('/test-db', async (_req, res) => {
   }
 });
 
+// Temporary endpoint to restore correct meter readings
+app.post('/restore-correct-readings', async (_req, res) => {
+  try {
+    const { prisma } = await import('./utils/database');
+    
+    console.log('🗑️  Clearing existing meter readings...');
+    await prisma.meterReading.deleteMany({});
+    
+    console.log('📊 Restoring correct meter readings...');
+    
+    // Correct readings based on the image provided
+    const readings = [
+      {
+        id: 'reading-1',
+        meterId: 'main-meter',
+        date: new Date('2025-07-21'),
+        reading: 13901.00,
+        type: 'MANUAL',
+        isFirstReading: true,
+        notes: 'Move-in reading',
+        createdAt: new Date('2025-07-21T10:00:00Z'),
+        updatedAt: new Date('2025-07-21T10:00:00Z')
+      },
+      {
+        id: 'reading-2',
+        meterId: 'main-meter',
+        date: new Date('2025-08-02'),
+        reading: 13969.00,
+        type: 'ESTIMATED',
+        isFirstReading: false,
+        notes: 'Estimated reading',
+        createdAt: new Date('2025-08-02T10:00:00Z'),
+        updatedAt: new Date('2025-08-02T10:00:00Z')
+      },
+      {
+        id: 'reading-3',
+        meterId: 'main-meter',
+        date: new Date('2025-08-08'),
+        reading: 14001.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-08-08T10:00:00Z'),
+        updatedAt: new Date('2025-08-08T10:00:00Z')
+      },
+      {
+        id: 'reading-4',
+        meterId: 'main-meter',
+        date: new Date('2025-08-25'),
+        reading: 14079.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-08-25T10:00:00Z'),
+        updatedAt: new Date('2025-08-25T10:00:00Z')
+      },
+      {
+        id: 'reading-5',
+        meterId: 'main-meter',
+        date: new Date('2025-08-28'),
+        reading: 14090.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-08-28T10:00:00Z'),
+        updatedAt: new Date('2025-08-28T10:00:00Z')
+      },
+      {
+        id: 'reading-6',
+        meterId: 'main-meter',
+        date: new Date('2025-09-01'),
+        reading: 14105.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-01T10:00:00Z'),
+        updatedAt: new Date('2025-09-01T10:00:00Z')
+      },
+      {
+        id: 'reading-7',
+        meterId: 'main-meter',
+        date: new Date('2025-09-02'),
+        reading: 14108.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-02T10:00:00Z'),
+        updatedAt: new Date('2025-09-02T10:00:00Z')
+      },
+      {
+        id: 'reading-8',
+        meterId: 'main-meter',
+        date: new Date('2025-09-03'),
+        reading: 14113.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-03T10:00:00Z'),
+        updatedAt: new Date('2025-09-03T10:00:00Z')
+      },
+      {
+        id: 'reading-9',
+        meterId: 'main-meter',
+        date: new Date('2025-09-05'),
+        reading: 14120.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-05T10:00:00Z'),
+        updatedAt: new Date('2025-09-05T10:00:00Z')
+      },
+      {
+        id: 'reading-10',
+        meterId: 'main-meter',
+        date: new Date('2025-09-06'),
+        reading: 14123.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-06T10:00:00Z'),
+        updatedAt: new Date('2025-09-06T10:00:00Z')
+      },
+      {
+        id: 'reading-11',
+        meterId: 'main-meter',
+        date: new Date('2025-09-07'),
+        reading: 14128.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-07T10:00:00Z'),
+        updatedAt: new Date('2025-09-07T10:00:00Z')
+      },
+      {
+        id: 'reading-12',
+        meterId: 'main-meter',
+        date: new Date('2025-09-08'),
+        reading: 14134.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-08T10:00:00Z'),
+        updatedAt: new Date('2025-09-08T10:00:00Z')
+      },
+      {
+        id: 'reading-13',
+        meterId: 'main-meter',
+        date: new Date('2025-09-09'),
+        reading: 14136.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-09T10:00:00Z'),
+        updatedAt: new Date('2025-09-09T10:00:00Z')
+      },
+      {
+        id: 'reading-14',
+        meterId: 'main-meter',
+        date: new Date('2025-09-10'),
+        reading: 14139.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-10T10:00:00Z'),
+        updatedAt: new Date('2025-09-10T10:00:00Z')
+      },
+      {
+        id: 'reading-15',
+        meterId: 'main-meter',
+        date: new Date('2025-09-14'),
+        reading: 14156.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-14T10:00:00Z'),
+        updatedAt: new Date('2025-09-14T10:00:00Z')
+      },
+      {
+        id: 'reading-16',
+        meterId: 'main-meter',
+        date: new Date('2025-09-15'),
+        reading: 14157.00,
+        type: 'MANUAL',
+        isFirstReading: false,
+        notes: 'Manual reading',
+        createdAt: new Date('2025-09-15T10:00:00Z'),
+        updatedAt: new Date('2025-09-15T10:00:00Z')
+      }
+    ];
+
+    // Insert all readings
+    for (const reading of readings) {
+      await prisma.meterReading.create({
+        data: reading
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully restored ${readings.length} correct meter readings`,
+      data: {
+        count: readings.length,
+        firstReading: readings[0],
+        lastReading: readings[readings.length-1],
+        totalConsumption: readings[readings.length-1].reading - readings[0].reading
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error restoring correct readings:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
 
 // API Routes
 app.use('/api/meter-readings', meterReadingRoutes);

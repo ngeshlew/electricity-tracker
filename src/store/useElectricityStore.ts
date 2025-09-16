@@ -454,6 +454,10 @@ export const useElectricityStore = create<ElectricityState>()(
               error: null,
             }));
 
+            // After removing an estimated reading, regenerate all estimated readings
+            // to ensure consistency and fill any gaps that might have been created
+            await get().generateEstimatedReadings();
+            
             // Recalculate analytics data
             get().calculateConsumptionData();
             get().calculateTimeSeriesData('daily');

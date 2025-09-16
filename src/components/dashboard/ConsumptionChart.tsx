@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { formatDateUK, addDays } from '../../utils/dateFormatters';
 
@@ -58,14 +58,14 @@ export const ConsumptionChart: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="pl-2">
-        <Tabs defaultValue="line" className="w-full">
+        <Tabs defaultValue="area" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="line">Line Chart</TabsTrigger>
+            <TabsTrigger value="area">Area Chart</TabsTrigger>
             <TabsTrigger value="bar">Bar Chart</TabsTrigger>
           </TabsList>
-          <TabsContent value="line">
+          <TabsContent value="area">
             <ResponsiveContainer width="100%" height={350}>
-              <LineChart data={chartDataFormatted}>
+              <AreaChart data={chartDataFormatted}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="date" 
@@ -79,13 +79,15 @@ export const ConsumptionChart: React.FC = () => {
                   ]}
                   labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
                 />
-                <Line 
+                <Area 
                   type="monotone" 
                   dataKey="consumption" 
                   stroke="hsl(var(--primary))" 
+                  fill="hsl(var(--primary))"
+                  fillOpacity={0.3}
                   strokeWidth={2}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </TabsContent>
           <TabsContent value="bar">

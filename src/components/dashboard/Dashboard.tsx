@@ -17,15 +17,8 @@ export const Dashboard: FC = () => {
 
   // Load meter readings when component mounts
   useEffect(() => {
-    console.log('Dashboard mounting, loading meter readings...');
     loadMeterReadings();
   }, [loadMeterReadings]);
-
-  // Debug logging
-  console.log('Dashboard - readings length:', readings.length);
-  console.log('Dashboard - chartData length:', chartData.length);
-  console.log('Dashboard - isLoading:', isLoading);
-  console.log('Dashboard - error:', error);
 
   return (
     <div className="min-h-screen bg-background">
@@ -40,20 +33,6 @@ export const Dashboard: FC = () => {
             <p className="text-muted-foreground mt-2">
               Monitor your electricity consumption and track your energy usage patterns
             </p>
-            {/* Debug info */}
-            <div className="mt-4 p-4 bg-muted rounded-lg">
-              <p className="text-sm">Debug Info:</p>
-              <p className="text-xs">Readings: {readings.length} | Chart Data: {chartData.length} | Loading: {isLoading ? 'Yes' : 'No'} | Error: {error || 'None'}</p>
-              <button 
-                onClick={() => {
-                  console.log('Manual refresh triggered');
-                  loadMeterReadings();
-                }}
-                className="mt-2 px-3 py-1 bg-primary text-primary-foreground text-xs rounded"
-              >
-                Refresh Data
-              </button>
-            </div>
           </div>
 
                 {/* Key Metrics Cards */}

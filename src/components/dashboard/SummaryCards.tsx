@@ -107,14 +107,6 @@ interface SummaryCardsProps {
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   const { chartData, timeSeriesData, readings, isLoading, error } = useElectricityStore();
   
-  // Debug logging
-  console.log('SummaryCards - chartData length:', chartData.length);
-  console.log('SummaryCards - readings length:', readings.length);
-  console.log('SummaryCards - timeSeriesData length:', timeSeriesData.length);
-  console.log('SummaryCards - isLoading:', isLoading);
-  console.log('SummaryCards - error:', error);
-  console.log('SummaryCards - chartData sample:', chartData.slice(0, 3));
-  console.log('SummaryCards - readings sample:', readings.slice(0, 3));
   
   // Use monthly as default time period
   const timePeriod = 'monthly' as TimePeriod;
@@ -160,14 +152,6 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   };
   
   const currentPeriodData = getCurrentPeriodData();
-  
-  console.log('SummaryCards Debug:', {
-    currentMonth: currentMonth.toISOString(),
-    chartDataLength: chartData.length,
-    currentPeriodDataLength: currentPeriodData.length,
-    currentPeriodData: currentPeriodData,
-    timePeriod
-  });
   
   const totalKwh = currentPeriodData.reduce((sum, point) => sum + point.kwh, 0);
   const totalCost = currentPeriodData.reduce((sum, point) => sum + point.cost, 0);

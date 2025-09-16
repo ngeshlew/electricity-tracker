@@ -65,7 +65,7 @@ app.get('/test-db', async (_req, res) => {
     res.status(500).json({
       status: 'ERROR',
       message: 'Database connection failed',
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       timestamp: new Date().toISOString()
     });
   }

@@ -1,10 +1,6 @@
 // API service for communicating with the backend
 const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'https://electricity-tracker-production.up.railway.app';
 
-// Debug logging
-console.log('🔧 API_BASE_URL:', API_BASE_URL);
-console.log('🔧 VITE_SERVER_URL env var:', import.meta.env.VITE_SERVER_URL);
-
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Dashboard } from './components/dashboard/Dashboard';
+import { SettingsLayout } from './components/settings/SettingsLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useElectricityStore } from './store/useElectricityStore';
 import './index.css';
@@ -52,6 +53,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/settings" element={<SettingsLayout />} />
             </Routes>
           </div>
         </Router>

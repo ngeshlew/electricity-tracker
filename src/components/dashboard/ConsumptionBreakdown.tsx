@@ -201,8 +201,8 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                   <AreaChart data={weeklyData}>
                     <defs>
                       <linearGradient id="colorWeeklyConsumption" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
+                        <stop offset="5%" stopColor="oklch(var(--primary))" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="oklch(var(--primary))" stopOpacity={0.1}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -215,11 +215,11 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                     <Area 
                       type="monotone" 
                       dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'} 
-                      stroke="hsl(var(--primary))" 
+                      stroke="oklch(var(--primary))" 
                       strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#colorWeeklyConsumption)"
-                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
+                      dot={{ fill: 'oklch(var(--primary))', strokeWidth: 2, r: 4 }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -238,8 +238,8 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                   <AreaChart data={dailyData}>
                     <defs>
                       <linearGradient id="colorConsumption" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
+                        <stop offset="5%" stopColor="oklch(var(--primary))" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="oklch(var(--primary))" stopOpacity={0.1}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -255,11 +255,11 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                     <Area 
                       type="monotone" 
                       dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'} 
-                      stroke="hsl(var(--primary))" 
+                      stroke="oklch(var(--primary))" 
                       strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#colorConsumption)"
-                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
+                      dot={{ fill: 'oklch(var(--primary))', strokeWidth: 2, r: 4 }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>

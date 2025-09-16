@@ -82,8 +82,8 @@ export const ConsumptionChart: React.FC = () => {
                 <Area 
                   type="monotone" 
                   dataKey="consumption" 
-                  stroke="hsl(var(--primary))" 
-                  fill="hsl(var(--primary))"
+                  stroke="oklch(var(--primary))" 
+                  fill="oklch(var(--primary))"
                   fillOpacity={0.3}
                   strokeWidth={2}
                 />
@@ -106,7 +106,7 @@ export const ConsumptionChart: React.FC = () => {
                   ]}
                   labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
                 />
-                <Bar dataKey="consumption" fill="hsl(var(--primary))" />
+                <Bar dataKey="consumption" fill="oklch(var(--primary))" />
               </BarChart>
             </ResponsiveContainer>
           </TabsContent>

@@ -4,7 +4,8 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
-import { Activity, TrendingUp, TrendingDown } from "lucide-react";
+import { Activity, TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 /**
@@ -60,30 +61,42 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
 }) => {
   
   return (
-    <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
-        <div className="text-muted-foreground text-xs">
-          {title}
-        </div>
-        <div className="text-lg tabular-nums">
-          {value}
-        </div>
-        <div className="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
-          <span className="inline-flex items-center justify-center border px-1.5 py-0.5 text-xs  w-fit whitespace-nowrap shrink-0 gap-1">
-            {icon}
-            {changeValue}
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
-        <div className="line-clamp-1 flex gap-2 ">
-          {change} {trendIcon}
-        </div>
-        <div className="text-muted-foreground text-xs">
-          {description}
-        </div>
-      </CardContent>
-    </Card>
+    <TooltipProvider>
+      <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+          <div className="flex items-center gap-1">
+            <div className="text-muted-foreground text-xs">
+              {title}
+            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{description}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="text-lg tabular-nums">
+            {value}
+          </div>
+          <div className="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
+            <span className="inline-flex items-center justify-center border px-1.5 py-0.5 text-xs  w-fit whitespace-nowrap shrink-0 gap-1">
+              {icon}
+              {changeValue}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+          <div className="line-clamp-1 flex gap-2 ">
+            {change} {trendIcon}
+          </div>
+          <div className="text-muted-foreground text-xs">
+            {description}
+          </div>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   );
 };
 

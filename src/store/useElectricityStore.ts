@@ -303,15 +303,10 @@ export const useElectricityStore = create<ElectricityState>()(
           try {
             const { readings } = get();
             
-            console.log('Generating estimated readings. Current readings:', readings.length);
-            
             // First, remove all existing estimated readings
             const manualReadings = readings.filter(r => r.type !== 'ESTIMATED');
             
-            console.log('Manual readings after filtering:', manualReadings.length);
-            
             if (manualReadings.length < 2) {
-              console.log('Not enough manual readings to generate estimates');
               set({ isLoading: false, error: null });
               return;
             }
@@ -323,19 +318,10 @@ export const useElectricityStore = create<ElectricityState>()(
 
             const estimatedReadings: Omit<MeterReading, 'id' | 'createdAt' | 'updatedAt'>[] = [];
 
-            console.log('Sorted manual readings:', sortedManualReadings.map(r => ({
-              date: r.date,
-              reading: r.reading,
-              type: r.type,
-              isFirstReading: r.isFirstReading
-            })));
-
             // Generate estimated readings between consecutive manual readings
             for (let i = 0; i < sortedManualReadings.length - 1; i++) {
               const currentReading = sortedManualReadings[i];
               const nextReading = sortedManualReadings[i + 1];
-              
-              console.log(`Processing pair ${i}: ${currentReading.date} (${currentReading.isFirstReading ? 'FIRST' : 'MANUAL'}) -> ${nextReading.date} (${nextReading.isFirstReading ? 'FIRST' : 'MANUAL'})`);
               
               const currentDate = new Date(currentReading.date);
               const nextDate = new Date(nextReading.date);
@@ -345,10 +331,7 @@ export const useElectricityStore = create<ElectricityState>()(
                 (nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
               );
               
-              console.log(`Days difference: ${daysDiff}`);
-              
               if (daysDiff <= 1) {
-                console.log('No gap to fill, skipping');
                 continue; // No gap to fill
               }
               
@@ -356,14 +339,10 @@ export const useElectricityStore = create<ElectricityState>()(
               const consumption = nextReading.reading - currentReading.reading;
               const dailyAverage = consumption / daysDiff;
               
-              console.log(`Consumption: ${consumption} kWh, Daily average: ${dailyAverage} kWh`);
-              
               // Generate estimated readings for each missing day
               let currentReadingValue = currentReading.reading;
               let currentDateToFill = new Date(currentDate);
               currentDateToFill.setDate(currentDateToFill.getDate() + 1);
-              
-              console.log(`Starting to fill from ${currentDateToFill.toLocaleDateString('en-GB')} to ${nextDate.toLocaleDateString('en-GB')}`);
               
               while (currentDateToFill < nextDate) {
                 currentReadingValue += dailyAverage;
@@ -377,18 +356,14 @@ export const useElectricityStore = create<ElectricityState>()(
                   isFirstReading: false
                 };
                 
-                console.log(`Adding estimated reading for ${currentDateToFill.toLocaleDateString('en-GB')}: ${estimatedReading.reading} kWh`);
                 estimatedReadings.push(estimatedReading);
                 
                 currentDateToFill.setDate(currentDateToFill.getDate() + 1);
               }
             }
 
-            console.log('Generated estimated readings:', estimatedReadings.length);
-
             // Add estimated readings to the store
             if (estimatedReadings.length > 0) {
-              console.log('Adding estimated readings to store');
                set({
                  readings: [...manualReadings, ...estimatedReadings].sort((a, b) => 
                    new Date(a.date).getTime() - new Date(b.date).getTime()

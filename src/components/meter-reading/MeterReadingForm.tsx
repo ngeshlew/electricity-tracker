@@ -45,7 +45,7 @@ const meterReadingSchema = z.object({
     .max(999999, 'Reading must be less than 999,999'),
   date: z
     .date({ message: 'Date is required' })
-    .max(new Date(Date.now() + 24 * 60 * 60 * 1000), 'Date cannot be more than 1 day in the future'),
+    .max(new Date(), 'Date cannot be in the future'),
   notes: z.string().optional(),
 });
 
@@ -161,9 +161,11 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date(Date.now() + 24 * 60 * 60 * 1000) || date < new Date("1900-01-01")
-                    }
+                    disabled={(date) => {
+                      const today = new Date();
+                      today.setHours(23, 59, 59, 999); // End of today
+                      return date > today || date < new Date("1900-01-01");
+                    }}
                     initialFocus
                   />
                 </PopoverContent>

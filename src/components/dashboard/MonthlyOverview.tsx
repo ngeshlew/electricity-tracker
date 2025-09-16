@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { HelpCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval } from 'date-fns';
 import { formatDateUK, getWeekStart, getWeekEnd, getWeekNumber } from '../../utils/dateFormatters';
@@ -185,12 +187,23 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-4">
-        <CardTitle className="text-base">
-          Monthly Overview
-        </CardTitle>
-      </CardHeader>
+    <TooltipProvider>
+      <Card>
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-base">
+              Monthly Overview
+            </CardTitle>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Monthly electricity consumption summary including estimated readings</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </CardHeader>
       
       <CardContent className="space-y-3">
         {/* Monthly Summary */}
@@ -259,5 +272,6 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
         </div>
       </CardContent>
     </Card>
+    </TooltipProvider>
   );
 };

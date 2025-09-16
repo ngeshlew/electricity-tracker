@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { Button } from '@/components/ui/button';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ModeToggle } from "@/components/mode-toggle";
 import { Zap, Plus } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
@@ -11,8 +12,9 @@ export const Header: FC = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo and Brand */}
+          {/* Sidebar Trigger and Brand */}
           <div className="flex items-center space-x-4">
+            <SidebarTrigger />
             <a href="/" className="flex items-center space-x-2">
               <div className="flex h-8 w-8 items-center justify-center  bg-primary">
                 <Zap className="h-5 w-5 text-primary-foreground" />

@@ -1,6 +1,7 @@
 import { FC, useState, useEffect } from 'react';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { Header } from './Header';
-import { Sidebar } from './Sidebar';
+import { AppSidebar } from './AppSidebar';
 import { SummaryCards } from './SummaryCards';
 import { ConsumptionChart } from './ConsumptionChart';
 import { MonthlyOverview } from './MonthlyOverview';
@@ -14,7 +15,6 @@ import { useElectricityStore } from '../../store/useElectricityStore';
 export const Dashboard: FC = () => {
   const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings, clearCacheAndReload, readings, chartData, isLoading, error } = useElectricityStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Load meter readings when component mounts
   useEffect(() => {
@@ -22,14 +22,11 @@ export const Dashboard: FC = () => {
   }, [loadMeterReadings]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar 
-        collapsible={true}
-        onCollapseChange={setIsSidebarCollapsed}
-      />
-      <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-16' : 'md:pl-64'}`}>
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="flex-1">
         <Header />
-        <main className="flex-1 p-6">
+        <div className="p-6">
         <div className="mx-auto max-w-7xl">
           {/* Page Header */}
           <div className="mb-6">
@@ -86,14 +83,14 @@ export const Dashboard: FC = () => {
             <MeterReadingsLog />
           </div>
         </div>
-        </main>
+        </div>
 
         <MeterReadingPanel
           isOpen={isMeterPanelOpen}
           onClose={() => toggleMeterPanel(false)}
         />
         <UserGuide />
-      </div>
-    </div>
+      </main>
+    </SidebarProvider>
   );
 };

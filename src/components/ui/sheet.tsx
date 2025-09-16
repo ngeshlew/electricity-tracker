@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -106,7 +108,7 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn("text-lg  text-foreground", className)}
+    className={cn("text-lg font-semibold text-foreground", className)}
     {...props}
   />
 ))

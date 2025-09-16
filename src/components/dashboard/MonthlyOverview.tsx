@@ -62,7 +62,7 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
       const actualWeekStart = getWeekStart(weekStart);
       const actualWeekEnd = getWeekEnd(weekStart);
       
-      // Get all readings that fall within this week
+      // Get all readings that fall within this week (including boundary dates)
       const weekReadings = monthReadings.filter(reading => {
         const readingDate = new Date(reading.date);
         return readingDate >= actualWeekStart && readingDate <= actualWeekEnd;
@@ -93,18 +93,18 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
         }
       }
       
-      // If no readings in this week, try to find consumption from previous week's last reading
+      // If no readings in this week, try to find consumption from readings that span this week
       if (sortedWeekReadings.length === 0) {
-        // Find the last reading before this week
+        // Find the last reading before or on the start of this week
         const previousReadings = monthReadings.filter(reading => {
           const readingDate = new Date(reading.date);
-          return readingDate < actualWeekStart;
+          return readingDate <= actualWeekStart;
         }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         
-        // Find the first reading after this week
+        // Find the first reading after or on the end of this week
         const nextReadings = monthReadings.filter(reading => {
           const readingDate = new Date(reading.date);
-          return readingDate > actualWeekEnd;
+          return readingDate >= actualWeekEnd;
         }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         
         if (previousReadings.length > 0 && nextReadings.length > 0) {
@@ -119,6 +119,33 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
               const totalDays = Math.ceil((new Date(firstReadingAfterWeek.date).getTime() - new Date(lastReadingBeforeWeek.date).getTime()) / (1000 * 60 * 60 * 24));
               const weekDays = 7;
               const weekPortion = Math.min(weekDays / totalDays, 1);
+              
+              weekKwh = consumption * weekPortion;
+              weekCost = weekKwh * preferences.unitRate;
+            }
+          }
+        }
+      } else if (sortedWeekReadings.length === 1) {
+        // If there's only one reading in the week, we need to find the previous reading to calculate consumption
+        const currentReading = sortedWeekReadings[0];
+        
+        // Find the last reading before this week
+        const previousReadings = monthReadings.filter(reading => {
+          const readingDate = new Date(reading.date);
+          return readingDate < actualWeekStart;
+        }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        
+        if (previousReadings.length > 0) {
+          const lastReadingBeforeWeek = previousReadings[0];
+          
+          // Only calculate if current reading is not a first reading
+          if (!currentReading.isFirstReading) {
+            const consumption = currentReading.reading - lastReadingBeforeWeek.reading;
+            if (consumption > 0) {
+              // Calculate the portion of consumption that belongs to this week
+              const totalDays = Math.ceil((new Date(currentReading.date).getTime() - new Date(lastReadingBeforeWeek.date).getTime()) / (1000 * 60 * 60 * 24));
+              const weekDays = Math.min(7, totalDays);
+              const weekPortion = weekDays / totalDays;
               
               weekKwh = consumption * weekPortion;
               weekCost = weekKwh * preferences.unitRate;

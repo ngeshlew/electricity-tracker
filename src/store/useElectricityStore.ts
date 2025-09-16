@@ -120,6 +120,9 @@ export const useElectricityStore = create<ElectricityState>()(
               updatedAt: new Date(response.data.updatedAt),
             };
 
+            // Remove any estimated readings for the same date BEFORE adding the new reading
+            await get().removeEstimatedReadings(readingData.date);
+
             set((state) => {
               const exists = state.readings.some(r => r.id === newReading.id);
               const nextReadings = exists
@@ -133,9 +136,6 @@ export const useElectricityStore = create<ElectricityState>()(
                 error: null,
               };
             });
-
-            // Remove any estimated readings for the same date before generating new ones
-            await get().removeEstimatedReadings(readingData.date);
             
             // Generate estimated readings and recalculate analytics data
             await get().generateEstimatedReadings();
@@ -151,6 +151,9 @@ export const useElectricityStore = create<ElectricityState>()(
               updatedAt: new Date(),
             };
 
+            // Remove any estimated readings for the same date BEFORE adding the new reading
+            await get().removeEstimatedReadings(readingData.date);
+
             set((state) => {
               const nextReadings = [...state.readings, newReading];
               return {
@@ -161,9 +164,6 @@ export const useElectricityStore = create<ElectricityState>()(
                 error: null,
               };
             });
-
-            // Remove any estimated readings for the same date before generating new ones
-            await get().removeEstimatedReadings(readingData.date);
             
             // Generate estimated readings and recalculate analytics data
             await get().generateEstimatedReadings();
@@ -345,18 +345,28 @@ export const useElectricityStore = create<ElectricityState>()(
               currentDateToFill.setDate(currentDateToFill.getDate() + 1);
               
               while (currentDateToFill < nextDate) {
-                currentReadingValue += dailyAverage;
+                // Check if there's already a manual reading for this date
+                const hasManualReading = manualReadings.some(r => {
+                  const readingDate = new Date(r.date);
+                  const fillDate = new Date(currentDateToFill);
+                  return readingDate.toDateString() === fillDate.toDateString();
+                });
                 
-                const estimatedReading = {
-                  meterId: currentReading.meterId,
-                  reading: Math.round(currentReadingValue * 100) / 100,
-                  date: new Date(currentDateToFill),
-                  type: 'ESTIMATED' as const,
-                  notes: `Estimated reading based on consumption between ${currentDate.toLocaleDateString('en-GB')} and ${nextDate.toLocaleDateString('en-GB')}`,
-                  isFirstReading: false
-                };
-                
-                estimatedReadings.push(estimatedReading);
+                // Only create estimated reading if there's no manual reading for this date
+                if (!hasManualReading) {
+                  currentReadingValue += dailyAverage;
+                  
+                  const estimatedReading = {
+                    meterId: currentReading.meterId,
+                    reading: Math.round(currentReadingValue * 100) / 100,
+                    date: new Date(currentDateToFill),
+                    type: 'ESTIMATED' as const,
+                    notes: `Estimated reading based on consumption between ${currentDate.toLocaleDateString('en-GB')} and ${nextDate.toLocaleDateString('en-GB')}`,
+                    isFirstReading: false
+                  };
+                  
+                  estimatedReadings.push(estimatedReading);
+                }
                 
                 currentDateToFill.setDate(currentDateToFill.getDate() + 1);
               }

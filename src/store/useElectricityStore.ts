@@ -40,6 +40,7 @@ interface ElectricityState {
   
   // Data loading
   loadMeterReadings: () => Promise<void>;
+  clearCacheAndReload: () => Promise<void>;
   
   // Real-time updates
   setupRealtimeUpdates: () => void;
@@ -534,6 +535,14 @@ export const useElectricityStore = create<ElectricityState>()(
               error: error instanceof Error ? error.message : 'Failed to load meter readings',
             });
           }
+        },
+
+        clearCacheAndReload: async () => {
+          console.log('Clearing cache and reloading data...');
+          // Clear the current readings to force fresh data load
+          set({ readings: [], chartData: [], timeSeriesData: [], pieChartData: [] });
+          // Load fresh data from API
+          await get().loadMeterReadings();
         },
 
         // Real-time updates

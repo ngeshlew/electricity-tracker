@@ -12,7 +12,7 @@ import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Dashboard: FC = () => {
-  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings, readings, chartData, isLoading, error } = useElectricityStore();
+  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings, clearCacheAndReload, readings, chartData, isLoading, error } = useElectricityStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Load meter readings when component mounts
@@ -33,6 +33,20 @@ export const Dashboard: FC = () => {
             <p className="text-muted-foreground mt-2">
               Monitor your electricity consumption and track your energy usage patterns
             </p>
+            
+            {/* Debug Info */}
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <h3 className="text-sm font-medium mb-2">Debug Info:</h3>
+              <p className="text-xs text-muted-foreground">
+                Readings: {readings.length} | Chart Data: {chartData.length} | Loading: {isLoading ? 'Yes' : 'No'} | Error: {error || 'None'}
+              </p>
+              <button 
+                onClick={clearCacheAndReload}
+                className="mt-2 px-3 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+              >
+                Clear Cache & Reload
+              </button>
+            </div>
           </div>
 
                 {/* Key Metrics Cards */}

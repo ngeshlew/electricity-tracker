@@ -7,6 +7,9 @@ export interface MeterReading {
   date: Date;
   type: 'MANUAL' | 'IMPORTED' | 'ESTIMATED';
   notes?: string;
+  // Derived fields for analytics; may be absent depending on source
+  consumption?: number; // kWh delta from previous reading
+  cost?: number; // Calculated cost for the interval
   isFirstReading?: boolean; // Flag to mark the initial move-in reading
   createdAt: Date;
   updatedAt: Date;

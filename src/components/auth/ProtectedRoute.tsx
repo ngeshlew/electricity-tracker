@@ -20,9 +20,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
   }, [requireAuth, isAuthenticated]);
 
-  const handleAuthSuccess = () => {
-    setShowAuthModal(false);
-  };
+  // No-op handlers retained for future use
 
   const handleAuthClose = () => {
     setShowAuthModal(false);

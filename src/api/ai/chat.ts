@@ -9,11 +9,10 @@ export interface ChatMessage {
 export interface ChatRequest {
   messages: ChatMessage[];
   readings: any[];
-  chartData: any[];
 }
 
 export const generateAIResponse = async (request: ChatRequest): Promise<string> => {
-  const { messages, readings, chartData } = request;
+  const { messages, readings } = request;
   const lastMessage = messages[messages.length - 1];
   
   // Simulate AI processing delay

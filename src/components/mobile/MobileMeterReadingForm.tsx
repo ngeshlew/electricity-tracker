@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { 
   CalendarIcon, 
   Calculator, 
@@ -28,13 +28,18 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
   isOpen,
   onClose
 }) => {
-  const { addReading, readings, isLoading, error } = useElectricityStore();
+  const { addReading, readings, error } = useElectricityStore();
   const { currentTariff } = useTariffStore();
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    reading: string;
+    date: Date;
+    type: 'MANUAL' | 'ESTIMATED';
+    notes: string;
+  }>({
     reading: '',
     date: new Date(),
-    type: 'MANUAL' as 'MANUAL' | 'ESTIMATED',
+    type: 'MANUAL',
     notes: ''
   });
   const [showCalendar, setShowCalendar] = useState(false);
@@ -68,8 +73,9 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
     setIsSubmitting(true);
     try {
       await addReading({
+        meterId: 'default',
         reading: Number(formData.reading),
-        date: formData.date.toISOString().split('T')[0],
+        date: formData.date,
         type: formData.type,
         notes: formData.notes || undefined
       });
@@ -180,7 +186,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
                     selected={formData.date}
                     onSelect={(date) => {
                       if (date) {
-                        setFormData({ ...formData, date });
+                        setFormData({ ...formData, date: new Date(date) });
                         setShowCalendar(false);
                       }
                     }}

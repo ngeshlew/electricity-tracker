@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { 
   FileText, 
-  Upload, 
   Download, 
   Calendar, 
   DollarSign,
   Plus,
   Search,
-  Filter,
-  Eye,
-  Trash2,
-  Edit
+  Eye
 } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -36,7 +32,7 @@ interface Statement {
 }
 
 export const StatementsPage: React.FC = () => {
-  const { readings, chartData } = useElectricityStore();
+  const { readings } = useElectricityStore();
   const [statements, setStatements] = useState<Statement[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());

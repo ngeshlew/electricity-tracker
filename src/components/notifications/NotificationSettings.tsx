@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+// import { Separator } from '@/components/ui/separator';
 import { 
   Bell, 
   Mail, 
@@ -35,7 +35,7 @@ export const NotificationSettings: React.FC = () => {
     const newSettings = {
       ...localSettings,
       [parentKey]: {
-        ...localSettings[parentKey as keyof typeof settings],
+        ...(localSettings[parentKey as keyof typeof settings] as any),
         [childKey]: value
       }
     };

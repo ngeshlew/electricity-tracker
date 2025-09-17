@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { 
   Plus, 
   Zap, 
@@ -22,11 +22,8 @@ export const MobileDashboard: React.FC = () => {
   const { 
     readings, 
     chartData, 
-    timeSeriesData, 
     isLoading, 
-    error,
-    toggleMeterPanel,
-    isMeterPanelOpen
+    error
   } = useElectricityStore();
   const { getMonthlyTargets } = useTariffStore();
   
@@ -267,7 +264,7 @@ export const MobileDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {readings.slice(-5).reverse().map((reading, index) => (
+              {readings.slice(-5).reverse().map((reading) => (
                 <div key={reading.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
@@ -303,7 +300,7 @@ export const MobileDashboard: React.FC = () => {
                 <span className="text-sm font-medium">Error</span>
               </div>
               <p className="text-sm text-destructive mt-1">{error}</p>
-            </div>
+            </CardContent>
           </Card>
         )}
       </div>

@@ -6,10 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { 
   BarChart3, 
   TrendingUp, 
-  Calendar, 
   Download,
-  Filter,
-  RefreshCw,
   Target,
   Zap,
   DollarSign
@@ -22,7 +19,7 @@ import { SeasonalAnalytics } from './SeasonalAnalytics';
 import { TariffAnalytics } from './TariffAnalytics';
 
 export const AnalyticsPage: React.FC = () => {
-  const { readings, chartData, timeSeriesData, isLoading } = useElectricityStore();
+  const { readings } = useElectricityStore();
   const [selectedPeriod, setSelectedPeriod] = useState('30d');
   const [selectedView, setSelectedView] = useState('consumption');
 
@@ -189,11 +186,11 @@ export const AnalyticsPage: React.FC = () => {
 
         <TabsContent value="consumption" className="space-y-6">
           <ConsumptionChart />
-          <MonthlyOverview />
+          <MonthlyOverview currentMonth={new Date()} />
         </TabsContent>
 
         <TabsContent value="cost" className="space-y-6">
-          <ConsumptionBreakdown />
+          <ConsumptionBreakdown currentMonth={new Date()} viewMode="kwh" />
           <Card>
             <CardHeader>
               <CardTitle>Cost Breakdown</CardTitle>

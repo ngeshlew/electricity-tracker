@@ -9,10 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { 
   User, 
-  Mail, 
-  Calendar, 
   Settings,
-  Bell,
   Shield,
   Loader2,
   CheckCircle,

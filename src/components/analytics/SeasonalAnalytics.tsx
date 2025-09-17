@@ -48,7 +48,7 @@ export const SeasonalAnalytics: React.FC = () => {
   const getSeasonalData = (): SeasonalData[] => {
     if (readings.length === 0) return [];
 
-    const monthlyTargets = getMonthlyTargets();
+    // monthlyTargets not needed in seasonal grouping
     
     // Group readings by season
     const seasonalGroups: { [key: string]: any[] } = {
@@ -252,8 +252,8 @@ export const SeasonalAnalytics: React.FC = () => {
                   label={{ value: 'Consumption (kWh)', angle: -90, position: 'insideLeft' }}
                 />
                 <Tooltip 
-                  formatter={(value, name) => [
-                    `${value.toFixed(1)} kWh`, 
+                  formatter={(value) => [
+                    `${Number(value).toFixed(1)} kWh`, 
                     'Consumption'
                   ]}
                   labelFormatter={(label) => `Season: ${label}`}
@@ -271,7 +271,7 @@ export const SeasonalAnalytics: React.FC = () => {
 
       {/* Seasonal Breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {seasonalData.map((season, index) => {
+        {seasonalData.map((season) => {
           const IconComponent = season.icon;
           const TrendIcon = season.trend === 'up' ? TrendingUp : 
                            season.trend === 'down' ? TrendingDown : 
@@ -344,20 +344,20 @@ export const SeasonalAnalytics: React.FC = () => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ season, consumption, percent }) => 
-                    `${season}: ${(percent * 100).toFixed(0)}%`
+                  label={({ season, percent }: any) => 
+                    `${season}: ${(Number(percent) * 100).toFixed(0)}%`
                   }
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="consumption"
                 >
-                  {seasonalData.map((entry, index) => (
+                  {seasonalData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value, name) => [
-                    `${value.toFixed(1)} kWh`, 
+                  formatter={(value) => [
+                    `${Number(value).toFixed(1)} kWh`, 
                     'Consumption'
                   ]}
                 />

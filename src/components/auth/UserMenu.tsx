@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -24,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 export const UserMenu: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
-  const [showProfile, setShowProfile] = useState(false);
+  // removed unused showProfile state
 
   if (!isAuthenticated || !user) {
     return null;

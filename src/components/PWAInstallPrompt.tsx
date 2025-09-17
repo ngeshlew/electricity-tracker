@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 import { 
   Download, 
   X, 
   Smartphone, 
-  Monitor,
+
   CheckCircle,
   Zap
 } from 'lucide-react';
@@ -25,7 +25,7 @@ export const PWAInstallPrompt: React.FC = () => {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  // const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     // Check if app is already installed
@@ -35,7 +35,7 @@ export const PWAInstallPrompt: React.FC = () => {
                               (window.navigator as any).standalone ||
                               document.referrer.includes('android-app://');
       
-      setIsStandalone(isStandaloneMode);
+      // setIsStandalone(isStandaloneMode);
       setIsInstalled(isStandaloneMode);
 
       // Check if iOS

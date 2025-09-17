@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
@@ -14,8 +14,7 @@ import {
   Bell, 
   Check, 
   X, 
-  MoreVertical, 
-  Settings,
+  MoreVertical,
   AlertCircle,
   Info,
   AlertTriangle,
@@ -74,9 +73,7 @@ export const NotificationCenter: React.FC = () => {
     }
   });
 
-  const getCategoryCount = (category: string) => {
-    return notifications.filter(n => n.category === category).length;
-  };
+  // removed unused getCategoryCount
 
   const getUnreadCategoryCount = (category: string) => {
     return notifications.filter(n => n.category === category && !n.read).length;

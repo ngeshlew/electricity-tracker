@@ -15,7 +15,7 @@ import {
   Bell, 
   Database, 
   Download, 
-  Upload,
+
   Trash2,
   Save,
   RefreshCw,
@@ -30,7 +30,7 @@ export const Settings: React.FC = () => {
   const { 
     settings, 
     isLoading, 
-    error,
+    // error,
     updateGeneralSettings,
     updateDisplaySettings,
     updateNotificationSettings,

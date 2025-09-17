@@ -17,7 +17,7 @@ interface AIChatbotProps {
 }
 
 export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
-  const { readings, chartData } = useElectricityStore();
+  const { readings } = useElectricityStore();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{id: string, role: 'user' | 'assistant', content: string}>>([
     {
@@ -67,8 +67,7 @@ What would you like to know about your energy usage?`
     try {
       const response = await generateAIResponse({
         messages: [...messages, userMessage],
-        readings: readings.slice(-30),
-        chartData: chartData.slice(-30)
+        readings: readings.slice(-30)
       });
 
       const assistantMessage = {

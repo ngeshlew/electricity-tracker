@@ -9,7 +9,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   Bell, 
-  Check, 
+ 
   X, 
   Settings,
   AlertCircle,
@@ -32,7 +32,8 @@ const notificationIcons = {
   consumption: Zap,
   cost: DollarSign,
   system: Cog,
-  reminder: Clock
+  reminder: Clock,
+  alert: AlertCircle
 };
 
 const notificationColors = {

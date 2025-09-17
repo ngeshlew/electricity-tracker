@@ -1,9 +1,9 @@
 import React from 'react';
 import { AIInsights } from '../ai/AIInsights';
 import { AIPromptInput } from '../ai/AIPromptInput';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, TrendingUp, Target, Zap, MessageSquare, Sparkles } from "lucide-react";
+import { Brain, TrendingUp, Target, MessageSquare, Sparkles } from "lucide-react";
 
 export const InsightsPage: React.FC = () => {
   return (
@@ -88,9 +88,6 @@ export const InsightsPage: React.FC = () => {
                 <MessageSquare className="h-5 w-5" />
                 AI Energy Assistant
               </CardTitle>
-              <CardDescription>
-                Chat with our AI assistant about your energy usage patterns and get personalized recommendations
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">

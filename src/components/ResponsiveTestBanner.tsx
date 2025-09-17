@@ -23,11 +23,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
     setIsVisible(import.meta.env.DEV);
   }, []);
 
-  const viewportSizes = {
-    desktop: { width: '100%', maxWidth: 'none' },
-    tablet: { width: '768px', maxWidth: '768px' },
-    mobile: { width: '375px', maxWidth: '375px' }
-  };
+  // viewportSizes: inline literals used in handlers
 
   const handleViewportChange = (viewport: ViewportSize) => {
     setCurrentViewport(viewport);

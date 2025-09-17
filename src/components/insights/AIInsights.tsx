@@ -6,15 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Brain, 
   TrendingUp, 
-  TrendingDown, 
   AlertTriangle, 
   Lightbulb, 
-  DollarSign,
-  Calendar,
-  Zap,
+
   RefreshCw,
   ChevronRight,
-  Target,
   BarChart3,
   PieChart
 } from "lucide-react";
@@ -43,11 +39,13 @@ interface ConsumptionPattern {
 }
 
 export const AIInsights: React.FC = () => {
-  const { readings, chartData, timeSeriesData } = useElectricityStore();
+  const { readings } = useElectricityStore();
   const [insights, setInsights] = useState<Insight[]>([]);
   const [patterns, setPatterns] = useState<ConsumptionPattern | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  const handleTabChange = (val: string) => setSelectedCategory(val);
 
   // Analyze consumption patterns and generate insights
   const analyzeConsumption = async () => {
@@ -57,8 +55,8 @@ export const AIInsights: React.FC = () => {
       // Simulate AI analysis delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const newInsights = generateInsights(readings, chartData);
-      const newPatterns = analyzePatterns(readings, chartData);
+      const newInsights = generateInsights(readings, []);
+      const newPatterns = analyzePatterns(readings, []);
       
       setInsights(newInsights);
       setPatterns(newPatterns);
@@ -70,7 +68,7 @@ export const AIInsights: React.FC = () => {
   };
 
   // Generate AI insights based on consumption data
-  const generateInsights = (readings: any[], chartData: any[]): Insight[] => {
+  const generateInsights = (readings: any[], _chartData: any[]): Insight[] => {
     const insights: Insight[] = [];
     
     if (readings.length < 7) {
@@ -156,16 +154,11 @@ export const AIInsights: React.FC = () => {
     }
 
     // Seasonal trend analysis
-    const monthlyData = chartData.reduce((acc, data) => {
-      const month = new Date(data.date).getMonth();
-      if (!acc[month]) acc[month] = [];
-      acc[month].push(data.kwh);
-      return acc;
-    }, {} as { [key: number]: number[] });
+    const monthlyData = {} as { [key: number]: number[] };
 
     const monthlyAverages = Object.entries(monthlyData).map(([month, values]) => ({
       month: parseInt(month),
-      average: values.reduce((sum, val) => sum + val, 0) / values.length
+      average: (values as number[]).reduce((sum: number, val: number) => sum + val, 0) / (values as number[]).length
     }));
 
     if (monthlyAverages.length >= 2) {
@@ -217,7 +210,7 @@ export const AIInsights: React.FC = () => {
   };
 
   // Analyze consumption patterns
-  const analyzePatterns = (readings: any[], chartData: any[]): ConsumptionPattern => {
+  const analyzePatterns = (readings: any[], _chartData: any[]): ConsumptionPattern => {
     const totalConsumption = readings.reduce((sum, reading) => sum + (reading.consumption || 0), 0);
     const days = readings.length;
     const avgDailyUsage = totalConsumption / days;
@@ -359,7 +352,7 @@ export const AIInsights: React.FC = () => {
       )}
 
       {/* Insights Tabs */}
-      <Tabs defaultValue="all" className="w-full">
+      <Tabs value={selectedCategory} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="cost">Cost</TabsTrigger>

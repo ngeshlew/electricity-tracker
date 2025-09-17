@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   LineChart, 
   Line, 
@@ -12,23 +9,20 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  BarChart,
-  Bar,
+
   Area,
   AreaChart
 } from 'recharts';
 import { 
-  CreditCard, 
-  Calendar, 
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  DollarSign,
-  Zap,
-  Building2,
-  FileText,
-  Target
+CreditCard, 
+TrendingUp,
+AlertTriangle,
+Clock,
+DollarSign,
+Zap,
+Building2,
+FileText,
+Target
 } from "lucide-react";
 import { useTariffStore } from '../../store/useTariffStore';
 import { useElectricityStore } from '../../store/useElectricityStore';
@@ -55,6 +49,8 @@ export const TariffAnalytics: React.FC = () => {
   const [isLoadingPrices, setIsLoadingPrices] = useState(false);
   const [selectedDNO, setSelectedDNO] = useState('12'); // Default to London
   const [priceComparison, setPriceComparison] = useState<TariffComparison[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // removed unused totalCost
 
   // Fetch UK electricity prices
   useEffect(() => {
@@ -103,7 +99,7 @@ export const TariffAnalytics: React.FC = () => {
 
     Object.entries(monthlyGroups).forEach(([month, monthReadings]) => {
       const totalConsumption = monthReadings.reduce((sum, r) => sum + (r.consumption || 0), 0);
-      const totalCost = monthReadings.reduce((sum, r) => sum + (r.cost || 0), 0);
+      // const totalCost = monthReadings.reduce((sum, r) => sum + (r.cost || 0), 0);
       
       // Get tariff for this month
       const tariff = getTariffForDate(new Date(month + '-01'));
@@ -352,8 +348,8 @@ export const TariffAnalytics: React.FC = () => {
                     label={{ value: 'Cost (£)', angle: -90, position: 'insideLeft' }}
                   />
                   <Tooltip 
-                    formatter={(value, name) => [
-                      `£${value.toFixed(2)}`, 
+                    formatter={(value: any, name: any) => [
+                      `£${Number(value).toFixed(2)}`, 
                       name === 'current' ? 'Current Tariff' : 
                       name === 'previous' ? 'Previous Tariff' : 'Savings'
                     ]}

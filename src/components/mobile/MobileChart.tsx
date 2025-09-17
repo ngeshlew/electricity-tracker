@@ -96,7 +96,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               label={{ value: 'kWh', angle: -90, position: 'insideLeft' }}
             />
             <Tooltip 
-              formatter={(value, name) => [`${value} kWh`, 'Consumption']}
+              formatter={(value: any, _name: any) => [`${value} kWh`, 'Consumption']}
               labelFormatter={(label) => {
                 const date = new Date(label);
                 return date.toLocaleDateString();
@@ -136,7 +136,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               label={{ value: 'kWh', angle: -90, position: 'insideLeft' }}
             />
             <Tooltip 
-              formatter={(value, name) => [`${value} kWh`, 'Consumption']}
+              formatter={(value: any, _name: any) => [`${value} kWh`, 'Consumption']}
               labelFormatter={(label) => {
                 const date = new Date(label);
                 return date.toLocaleDateString();
@@ -169,7 +169,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               label={{ value: 'kWh', angle: -90, position: 'insideLeft' }}
             />
             <Tooltip 
-              formatter={(value, name) => [`${value} kWh`, 'Consumption']}
+              formatter={(value: any, _name: any) => [`${value} kWh`, 'Consumption']}
               labelFormatter={(label) => {
                 const date = new Date(label);
                 return date.toLocaleDateString();
@@ -193,7 +193,14 @@ export const MobileChart: React.FC<MobileChartProps> = ({
         );
 
       default:
-        return null;
+        return (
+          <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--border))" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Area dataKey={dataKey} stroke={color} fill={color} fillOpacity={0.3} />
+          </AreaChart>
+        );
     }
   };
 

@@ -43,6 +43,16 @@ app.use(express.urlencoded({ extended: true }));
 // Static serving for uploaded statements
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
+// Root info endpoint
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    service: 'electricity-tracker-backend',
+    endpoints: ['/health', '/api/ai/health', '/api/meter-readings', '/api/analytics'],
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check endpoint
 app.get('/health', (_req, res) => {
   res.status(200).json({

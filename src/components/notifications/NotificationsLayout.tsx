@@ -2,11 +2,11 @@ import React from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Header } from '../dashboard/Header';
 import { AppSidebar } from '../dashboard/AppSidebar';
-import { Settings } from './Settings';
-import { UserProfile } from '../auth/UserProfile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { NotificationCenter } from './NotificationCenter';
+import { NotificationSettings } from './NotificationSettings';
 
-export const SettingsLayout: React.FC = () => {
+export const NotificationsLayout: React.FC = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -14,18 +14,25 @@ export const SettingsLayout: React.FC = () => {
         <Header />
         <div className="p-6">
           <div className="mx-auto max-w-4xl">
-            <Tabs defaultValue="profile" className="space-y-6">
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold">Notifications</h1>
+              <p className="text-muted-foreground mt-2">
+                Manage your notifications and alerts
+              </p>
+            </div>
+            
+            <Tabs defaultValue="center" className="space-y-6">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="profile">Profile</TabsTrigger>
+                <TabsTrigger value="center">Notification Center</TabsTrigger>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="profile">
-                <UserProfile />
+              <TabsContent value="center">
+                <NotificationCenter />
               </TabsContent>
               
               <TabsContent value="settings">
-                <Settings />
+                <NotificationSettings />
               </TabsContent>
             </Tabs>
           </div>

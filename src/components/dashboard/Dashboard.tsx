@@ -10,6 +10,8 @@ import { MonthSelector } from './MonthSelector';
 import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
+import { MobileNavigation } from '../mobile/MobileNavigation';
+import { MobileDashboard } from '../mobile/MobileDashboard';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Dashboard: FC = () => {
@@ -22,12 +24,18 @@ export const Dashboard: FC = () => {
   }, [loadMeterReadings]);
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main className="flex-1">
-        <Header />
-        <div className="p-6">
-        <div className="mx-auto max-w-7xl">
+    <>
+      {/* Mobile Navigation */}
+      <MobileNavigation />
+      
+      {/* Desktop Layout */}
+      <div className="hidden lg:block">
+        <SidebarProvider>
+          <AppSidebar />
+          <main className="flex-1">
+            <Header />
+            <div className="p-6">
+            <div className="mx-auto max-w-7xl">
           {/* Page Header */}
           <div className="mb-6">
             <h1 className="text-2xl tracking-tight">Dashboard</h1>
@@ -89,8 +97,15 @@ export const Dashboard: FC = () => {
           isOpen={isMeterPanelOpen}
           onClose={() => toggleMeterPanel(false)}
         />
-        <UserGuide />
-      </main>
-    </SidebarProvider>
+          <UserGuide />
+        </main>
+      </SidebarProvider>
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="lg:hidden">
+        <MobileDashboard />
+      </div>
+    </>
   );
 };

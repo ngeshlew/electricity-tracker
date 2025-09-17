@@ -4,7 +4,8 @@ import {
   ChartBarIcon, 
   DocumentTextIcon, 
   Cog6ToothIcon,
-  BoltIcon
+  BoltIcon,
+  BellIcon
 } from '@heroicons/react/24/outline';
 import {
   Sidebar,
@@ -24,6 +25,7 @@ const navigationItems = [
   { name: 'Insights', url: '/insights', icon: BoltIcon, current: false },
   { name: 'Analytics', url: '/analytics', icon: ChartBarIcon, current: false },
   { name: 'Statements', url: '/statements', icon: DocumentTextIcon, current: false },
+  { name: 'Notifications', url: '/notifications', icon: BellIcon, current: false },
   { name: 'Settings', url: '/settings', icon: Cog6ToothIcon, current: false },
 ];
 

@@ -1,12 +1,18 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ModeToggle } from "@/components/mode-toggle";
-import { Zap, Plus } from "lucide-react";
+import { UserMenu } from '../auth/UserMenu';
+import { AuthModal } from '../auth/AuthModal';
+import { NotificationBell } from '../notifications/NotificationBell';
+import { useAuthStore } from '../../store/useAuthStore';
+import { Zap, Plus, LogIn } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Header: FC = () => {
   const { toggleMeterPanel } = useElectricityStore();
+  const { isAuthenticated } = useAuthStore();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -35,9 +41,33 @@ export const Header: FC = () => {
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Add Reading</span>
             </Button>
+            
+            {/* Notifications */}
+            {isAuthenticated && <NotificationBell />}
+            
+            {/* Authentication */}
+            {isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <Button
+                variant="outline"
+                onClick={() => setShowAuthModal(true)}
+                className="flex items-center space-x-2"
+              >
+                <LogIn className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign In</span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
+      
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode="login"
+      />
     </header>
   );
 };

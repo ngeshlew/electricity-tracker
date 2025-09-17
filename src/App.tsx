@@ -3,11 +3,13 @@ import { useEffect } from 'react';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { ResponsiveTestBanner } from './components/ResponsiveTestBanner';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { SettingsLayout } from './components/settings/SettingsLayout';
 import { InsightsLayout } from './components/insights/InsightsLayout';
 import { AnalyticsLayout } from './components/analytics/AnalyticsLayout';
 import { StatementsLayout } from './components/statements/StatementsLayout';
+import { NotificationsLayout } from './components/notifications/NotificationsLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useElectricityStore } from './store/useElectricityStore';
 import './index.css';
@@ -29,6 +31,17 @@ function App() {
           console.log('Real-time updates set up successfully');
         } catch (socketError) {
           console.warn('Failed to set up real-time updates (this is OK):', socketError);
+        }
+        
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
         }
         
         console.log('App initialized successfully');
@@ -62,11 +75,13 @@ function App() {
               <Route path="/insights" element={<InsightsLayout />} />
               <Route path="/analytics" element={<AnalyticsLayout />} />
               <Route path="/statements" element={<StatementsLayout />} />
+              <Route path="/notifications" element={<NotificationsLayout />} />
               <Route path="/settings" element={<SettingsLayout />} />
               </Routes>
             </div>
           </div>
         </Router>
+        <PWAInstallPrompt />
         <Toaster />
       </ErrorBoundary>
     </ThemeProvider>

@@ -18,6 +18,8 @@ import { useElectricityStore } from '../../store/useElectricityStore';
 import { ConsumptionChart } from '../dashboard/ConsumptionChart';
 import { MonthlyOverview } from '../dashboard/MonthlyOverview';
 import { ConsumptionBreakdown } from '../dashboard/ConsumptionBreakdown';
+import { SeasonalAnalytics } from './SeasonalAnalytics';
+import { TariffAnalytics } from './TariffAnalytics';
 
 export const AnalyticsPage: React.FC = () => {
   const { readings, chartData, timeSeriesData, isLoading } = useElectricityStore();
@@ -176,10 +178,12 @@ export const AnalyticsPage: React.FC = () => {
 
       {/* Analytics Tabs */}
       <Tabs value={selectedView} onValueChange={setSelectedView} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="consumption">Consumption</TabsTrigger>
           <TabsTrigger value="cost">Cost Analysis</TabsTrigger>
           <TabsTrigger value="comparison">UK Comparison</TabsTrigger>
+          <TabsTrigger value="seasonal">Seasonal</TabsTrigger>
+          <TabsTrigger value="tariff">Tariff</TabsTrigger>
           <TabsTrigger value="forecast">Forecast</TabsTrigger>
         </TabsList>
 
@@ -277,6 +281,14 @@ export const AnalyticsPage: React.FC = () => {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="seasonal" className="space-y-6">
+          <SeasonalAnalytics />
+        </TabsContent>
+
+        <TabsContent value="tariff" className="space-y-6">
+          <TariffAnalytics />
         </TabsContent>
 
         <TabsContent value="forecast" className="space-y-6">

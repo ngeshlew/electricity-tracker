@@ -23,8 +23,9 @@ router.get('/health', async (_req, res) => {
       return res.status(502).json({ status: 'ERROR', message: 'OpenAI check failed', code: response.status, body: text });
     }
 
-    const json = await response.json();
-    return res.status(200).json({ status: 'OK', modelCount: Array.isArray(json?.data) ? json.data.length : 0, timestamp: new Date().toISOString() });
+    const json = (await response.json()) as any;
+    const modelCount = Array.isArray(json?.data) ? json.data.length : 0;
+    return res.status(200).json({ status: 'OK', modelCount, timestamp: new Date().toISOString() });
   } catch (error) {
     return res.status(500).json({ status: 'ERROR', message: error instanceof Error ? error.message : String(error) });
   }

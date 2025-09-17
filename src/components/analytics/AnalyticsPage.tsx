@@ -113,61 +113,81 @@ export const AnalyticsPage: React.FC = () => {
 
       {/* Key Metrics */}
       {analytics && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Consumption</CardTitle>
-              <Zap className="h-4 w-4 text-muted-foreground" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-8">
+          <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+              <div className="flex items-center gap-1">
+                <div className="text-muted-foreground text-xs">
+                  Total Consumption
+                </div>
+                <Zap className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <div className="text-lg tabular-nums">
+                {analytics.totalConsumption.toFixed(1)} kWh
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{analytics.totalConsumption.toFixed(1)} kWh</div>
-              <p className="text-xs text-muted-foreground">
+            <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+              <div className="text-muted-foreground text-xs">
                 {analytics.avgDailyConsumption.toFixed(1)} kWh/day average
-              </p>
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+              <div className="flex items-center gap-1">
+                <div className="text-muted-foreground text-xs">
+                  Total Cost
+                </div>
+                <DollarSign className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <div className="text-lg tabular-nums">
+                £{analytics.totalCost.toFixed(2)}
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">£{analytics.totalCost.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">
+            <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+              <div className="text-muted-foreground text-xs">
                 £{analytics.avgDailyCost.toFixed(2)}/day average
-              </p>
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">vs UK Average</CardTitle>
-              <Target className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
+          <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+              <div className="flex items-center gap-1">
+                <div className="text-muted-foreground text-xs">
+                  vs UK Average
+                </div>
+                <Target className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <div className="text-lg tabular-nums">
                 {analytics.efficiencyRatio > 1 ? '+' : ''}
                 {((analytics.efficiencyRatio - 1) * 100).toFixed(0)}%
               </div>
-              <p className="text-xs text-muted-foreground">
+            </CardHeader>
+            <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+              <div className="text-muted-foreground text-xs">
                 {analytics.efficiencyRatio > 1 ? 'Above' : 'Below'} average
-              </p>
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Trend</CardTitle>
-              {trendData && <trendData.icon className="h-4 w-4 text-muted-foreground" />}
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${trendData?.color}`}>
+          <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+              <div className="flex items-center gap-1">
+                <div className="text-muted-foreground text-xs">
+                  Trend
+                </div>
+                {trendData && <trendData.icon className="h-3 w-3 text-muted-foreground" />}
+              </div>
+              <div className={`text-lg tabular-nums ${trendData?.color}`}>
                 {analytics.trendPercentage > 0 ? '+' : ''}{analytics.trendPercentage.toFixed(1)}%
               </div>
-              <p className="text-xs text-muted-foreground">
+            </CardHeader>
+            <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+              <div className="text-muted-foreground text-xs">
                 {trendData?.label} trend
-              </p>
+              </div>
             </CardContent>
           </Card>
         </div>

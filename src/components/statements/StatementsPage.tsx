@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -172,64 +172,82 @@ export const StatementsPage: React.FC = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Statements</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-8">
+        <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+            <div className="flex items-center gap-1">
+              <div className="text-muted-foreground text-xs">
+                Total Statements
+              </div>
+              <FileText className="h-3 w-3 text-muted-foreground" />
+            </div>
+            <div className="text-lg tabular-nums">
+              {statements.length}
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{statements.length}</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+            <div className="text-muted-foreground text-xs">
               Generated statements
-            </p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Year</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+        <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+            <div className="flex items-center gap-1">
+              <div className="text-muted-foreground text-xs">
+                This Year
+              </div>
+              <Calendar className="h-3 w-3 text-muted-foreground" />
+            </div>
+            <div className="text-lg tabular-nums">
               {statements.filter(s => s.year === new Date().getFullYear()).length}
             </div>
-            <p className="text-xs text-muted-foreground">
+          </CardHeader>
+          <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+            <div className="text-muted-foreground text-xs">
               Statements in {new Date().getFullYear()}
-            </p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+        <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+            <div className="flex items-center gap-1">
+              <div className="text-muted-foreground text-xs">
+                Total Cost
+              </div>
+              <DollarSign className="h-3 w-3 text-muted-foreground" />
+            </div>
+            <div className="text-lg tabular-nums">
               £{statements.reduce((sum, s) => sum + s.totalCost, 0).toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">
+          </CardHeader>
+          <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+            <div className="text-muted-foreground text-xs">
               All time total
-            </p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Efficiency</CardTitle>
-            <div className="h-4 w-4 text-muted-foreground">⚡</div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+        <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
+            <div className="flex items-center gap-1">
+              <div className="text-muted-foreground text-xs">
+                Avg Efficiency
+              </div>
+              <div className="h-3 w-3 text-muted-foreground">⚡</div>
+            </div>
+            <div className="text-lg tabular-nums">
               {statements.length > 0 
                 ? (statements.reduce((sum, s) => sum + s.efficiencyScore, 0) / statements.length).toFixed(0)
                 : 0}%
             </div>
-            <p className="text-xs text-muted-foreground">
+          </CardHeader>
+          <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
+            <div className="text-muted-foreground text-xs">
               Average efficiency score
-            </p>
+            </div>
           </CardContent>
         </Card>
       </div>

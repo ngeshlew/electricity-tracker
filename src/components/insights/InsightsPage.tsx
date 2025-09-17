@@ -10,7 +10,15 @@ export const InsightsPage: React.FC = () => {
   const [aiHealth, setAiHealth] = useState<AIHealthResponse | null>(null);
 
   useEffect(() => {
-    getAIHealth().then(setAiHealth).catch(() => setAiHealth({ status: 'ERROR' } as AIHealthResponse));
+    getAIHealth()
+      .then((health) => {
+        console.log('AI Health response:', health);
+        setAiHealth(health);
+      })
+      .catch((error) => {
+        console.error('AI Health check failed:', error);
+        setAiHealth({ status: 'ERROR' } as AIHealthResponse);
+      });
   }, []);
 
   return (

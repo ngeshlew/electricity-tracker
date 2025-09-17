@@ -1,7 +1,9 @@
 import React from 'react';
-import { AIInsights } from './AIInsights';
+import { AIInsights } from '../ai/AIInsights';
+import { AIPromptInput } from '../ai/AIPromptInput';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, TrendingUp, Target, Zap } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Brain, TrendingUp, Target, Zap, MessageSquare, Sparkles } from "lucide-react";
 
 export const InsightsPage: React.FC = () => {
   return (
@@ -58,8 +60,56 @@ export const InsightsPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* AI Insights Component */}
-      <AIInsights />
+      {/* AI Features Tabs */}
+      <Tabs defaultValue="insights" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="insights" className="flex items-center gap-2">
+            <Brain className="h-4 w-4" />
+            AI Insights
+          </TabsTrigger>
+          <TabsTrigger value="chat" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            AI Chat
+          </TabsTrigger>
+          <TabsTrigger value="prompt" className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            Ask AI
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="insights">
+          <AIInsights />
+        </TabsContent>
+
+        <TabsContent value="chat">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                AI Energy Assistant
+              </CardTitle>
+              <CardDescription>
+                Chat with our AI assistant about your energy usage patterns and get personalized recommendations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-muted-foreground">
+                <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Click the chat button in the bottom right to start a conversation with our AI assistant!</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="prompt">
+          <AIPromptInput 
+            onPromptSubmit={(prompt) => {
+              console.log('AI Prompt submitted:', prompt);
+              // This would trigger the AI chatbot
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

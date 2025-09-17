@@ -21,6 +21,7 @@ import {
 
 const navigationItems = [
   { name: 'Dashboard', url: '/', icon: HomeIcon, current: true },
+  { name: 'Insights', url: '/insights', icon: BoltIcon, current: false },
   { name: 'Analytics', url: '/analytics', icon: ChartBarIcon, current: false },
   { name: 'Statements', url: '/statements', icon: DocumentTextIcon, current: false },
   { name: 'Settings', url: '/settings', icon: Cog6ToothIcon, current: false },

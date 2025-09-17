@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { ResponsiveTestBanner } from './components/ResponsiveTestBanner';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { SettingsLayout } from './components/settings/SettingsLayout';
 import { InsightsLayout } from './components/insights/InsightsLayout';
@@ -53,14 +54,17 @@ function App() {
       <ErrorBoundary>
         <Router>
           <div className="min-h-screen bg-background text-foreground">
-            <Routes>
+            <ResponsiveTestBanner />
+            <div className="pt-10">
+              <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/insights" element={<InsightsLayout />} />
               <Route path="/analytics" element={<AnalyticsLayout />} />
               <Route path="/statements" element={<StatementsLayout />} />
               <Route path="/settings" element={<SettingsLayout />} />
-            </Routes>
+              </Routes>
+            </div>
           </div>
         </Router>
         <Toaster />

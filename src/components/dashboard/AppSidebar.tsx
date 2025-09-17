@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   HomeIcon, 
   ChartBarIcon, 
@@ -21,15 +22,16 @@ import {
 } from '@/components/ui/sidebar';
 
 const navigationItems = [
-  { name: 'Dashboard', url: '/', icon: HomeIcon, current: true },
-  { name: 'Insights', url: '/insights', icon: BoltIcon, current: false },
-  { name: 'Analytics', url: '/analytics', icon: ChartBarIcon, current: false },
-  { name: 'Statements', url: '/statements', icon: DocumentTextIcon, current: false },
-  { name: 'Notifications', url: '/notifications', icon: BellIcon, current: false },
-  { name: 'Settings', url: '/settings', icon: Cog6ToothIcon, current: false },
+  { name: 'Dashboard', url: '/', icon: HomeIcon },
+  { name: 'Insights', url: '/insights', icon: BoltIcon },
+  { name: 'Analytics', url: '/analytics', icon: ChartBarIcon },
+  { name: 'Statements', url: '/statements', icon: DocumentTextIcon },
+  { name: 'Notifications', url: '/notifications', icon: BellIcon },
+  { name: 'Settings', url: '/settings', icon: Cog6ToothIcon },
 ];
 
 export const AppSidebar: React.FC = () => {
+  const location = useLocation();
   return (
     <Sidebar>
       <SidebarHeader>
@@ -48,16 +50,19 @@ export const AppSidebar: React.FC = () => {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild isActive={item.current}>
-                    <a href={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.name}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {navigationItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <a href={item.url}>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.name}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

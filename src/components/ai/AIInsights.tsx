@@ -29,7 +29,7 @@ interface AIInsight {
 }
 
 export const AIInsights: React.FC = () => {
-  const { readings } = useElectricityStore();
+  const { chartData } = useElectricityStore();
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -41,8 +41,10 @@ export const AIInsights: React.FC = () => {
       // Simulate AI analysis
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const recentReadings = readings.slice(-30);
-      const avgConsumption = recentReadings.reduce((sum, r) => sum + (r.reading || 0), 0) / recentReadings.length;
+      const recentData = chartData.slice(-30);
+      const avgConsumption = recentData.length > 0 
+        ? recentData.reduce((sum, point) => sum + point.kwh, 0) / recentData.length 
+        : 0;
       
       const generatedInsights: AIInsight[] = [
         {
@@ -106,10 +108,10 @@ export const AIInsights: React.FC = () => {
   };
 
   useEffect(() => {
-    if (readings.length > 0) {
+    if (chartData.length > 0) {
       generateInsights();
     }
-  }, [readings.length]);
+  }, [chartData.length]);
 
   const getInsightIcon = (type: AIInsight['type']) => {
     switch (type) {

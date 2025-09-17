@@ -44,7 +44,7 @@ export const TariffAnalytics: React.FC = () => {
     calculateCostForPeriod,
     getAnnualTargets 
   } = useTariffStore();
-  const { readings } = useElectricityStore();
+  const { chartData } = useElectricityStore();
   const [ukPrices, setUkPrices] = useState<any[]>([]);
   const [isLoadingPrices, setIsLoadingPrices] = useState(false);
   const [selectedDNO, setSelectedDNO] = useState('12'); // Default to London
@@ -82,24 +82,24 @@ export const TariffAnalytics: React.FC = () => {
 
   // Calculate tariff comparisons
   useEffect(() => {
-    if (readings.length === 0) return;
+    if (chartData.length === 0) return;
 
     const comparisons: TariffComparison[] = [];
-    const monthlyGroups = readings.reduce((groups, reading) => {
-      const date = new Date(reading.date);
+    const monthlyGroups = chartData.reduce((groups, point) => {
+      const date = new Date(point.date);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       
       if (!groups[monthKey]) {
         groups[monthKey] = [];
       }
-      groups[monthKey].push(reading);
+      groups[monthKey].push(point);
       
       return groups;
     }, {} as { [key: string]: any[] });
 
-    Object.entries(monthlyGroups).forEach(([month, monthReadings]) => {
-      const totalConsumption = monthReadings.reduce((sum, r) => sum + (r.consumption || 0), 0);
-      // const totalCost = monthReadings.reduce((sum, r) => sum + (r.cost || 0), 0);
+    Object.entries(monthlyGroups).forEach(([month, monthData]) => {
+      const totalConsumption = monthData.reduce((sum, point) => sum + point.kwh, 0);
+      // const totalCost = monthData.reduce((sum, point) => sum + point.cost, 0);
       
       // Get tariff for this month
       const tariff = getTariffForDate(new Date(month + '-01'));
@@ -139,7 +139,7 @@ export const TariffAnalytics: React.FC = () => {
     });
 
     setPriceComparison(comparisons.sort((a, b) => a.period.localeCompare(b.period)));
-  }, [readings, currentTariff, historicalTariffs, getTariffForDate, calculateCostForPeriod]);
+  }, [chartData, currentTariff, historicalTariffs, getTariffForDate, calculateCostForPeriod]);
 
   // Calculate cost impact of tariff changes
   const calculateTariffImpact = () => {
@@ -156,15 +156,15 @@ export const TariffAnalytics: React.FC = () => {
 
   // Calculate current year progress
   const currentYear = new Date().getFullYear();
-  const yearReadings = readings.filter(r => new Date(r.date).getFullYear() === currentYear);
-  const yearConsumption = yearReadings.reduce((sum, r) => sum + (r.consumption || 0), 0);
-  const yearCost = yearReadings.reduce((sum, r) => sum + (r.cost || 0), 0);
+  const yearData = chartData.filter(point => new Date(point.date).getFullYear() === currentYear);
+  const yearConsumption = yearData.reduce((sum, point) => sum + point.kwh, 0);
+  const yearCost = yearData.reduce((sum, point) => sum + point.cost, 0);
 
   const usageProgress = (yearConsumption / annualTargets.usage) * 100;
   const costProgress = (yearCost / annualTargets.cost) * 100;
 
   // Prepare chart data
-  const chartData = priceComparison.map(comp => ({
+  const comparisonChartData = priceComparison.map(comp => ({
     period: comp.period,
     current: comp.currentTariff,
     previous: comp.previousTariff,
@@ -337,7 +337,7 @@ export const TariffAnalytics: React.FC = () => {
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
+                <AreaChart data={comparisonChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="period" 

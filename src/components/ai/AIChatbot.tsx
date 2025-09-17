@@ -9,17 +9,15 @@ import {
   User, 
   Loader2
 } from 'lucide-react';
-import { useElectricityStore } from '../../store/useElectricityStore';
-import { generateAIResponse } from '../../api/ai/chat';
+import { sendChatMessage, ChatMessage } from '../../services/aiService';
 
 interface AIChatbotProps {
   className?: string;
 }
 
 export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
-  const { readings } = useElectricityStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Array<{id: string, role: 'user' | 'assistant', content: string}>>([
+  const [messages, setMessages] = useState<Array<{id: string, role: 'user' | 'assistant' | 'system', content: string}>>([
     {
       id: '1',
       role: 'assistant',
@@ -54,35 +52,51 @@ What would you like to know about your energy usage?`
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const userMessage = {
-      id: Date.now().toString(),
-      role: 'user' as const,
+    const userMessage: ChatMessage = {
+      role: 'user',
       content: input.trim()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => [...prev, { ...userMessage, id: Date.now().toString() }]);
     setInput('');
     setIsLoading(true);
 
     try {
-      const response = await generateAIResponse({
-        messages: [...messages, userMessage],
-        readings: readings.slice(-30)
+      const currentMessages: ChatMessage[] = messages.map(msg => ({ role: msg.role, content: msg.content }));
+      const response = await sendChatMessage({
+        messages: [...currentMessages, userMessage],
       });
 
-      const assistantMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant' as const,
-        content: response
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
+      if (response.status === 'OK' && response.response) {
+        const assistantMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant' as const,
+          content: response.response
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+      } else {
+        console.error('AI chat response error:', response.message);
+        let errorContent = 'Sorry, I encountered an error. Please try again.';
+        
+        if (response.code === 429) {
+          errorContent = 'I\'m currently experiencing high demand and my API quota has been exceeded. Please try again later or contact support if this persists.';
+        } else if (response.message) {
+          errorContent = response.message;
+        }
+        
+        const errorMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant' as const,
+          content: errorContent
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      }
     } catch (error) {
-      console.error('AI response error:', error);
+      console.error('AI chat network error:', error);
       const errorMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant' as const,
-        content: 'Sorry, I encountered an error. Please try again.'
+        content: 'Sorry, I encountered a network error. Please try again.'
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {

@@ -9,8 +9,10 @@ import {
   Download,
   Target,
   Zap,
-  DollarSign
+  DollarSign,
+  HelpCircle
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { ConsumptionChart } from '../dashboard/ConsumptionChart';
 import { MonthlyOverview } from '../dashboard/MonthlyOverview';
@@ -19,18 +21,18 @@ import { SeasonalAnalytics } from './SeasonalAnalytics';
 import { TariffAnalytics } from './TariffAnalytics';
 
 export const AnalyticsPage: React.FC = () => {
-  const { readings } = useElectricityStore();
+  const { chartData } = useElectricityStore();
   const [selectedPeriod, setSelectedPeriod] = useState('30d');
   const [selectedView, setSelectedView] = useState('consumption');
 
   // Calculate analytics data
   const calculateAnalytics = () => {
-    if (readings.length === 0) return null;
+    if (chartData.length === 0) return null;
 
-    const totalConsumption = readings.reduce((sum, reading) => sum + (reading.consumption || 0), 0);
-    const totalCost = readings.reduce((sum, reading) => sum + (reading.cost || 0), 0);
-    const avgDailyConsumption = totalConsumption / readings.length;
-    const avgDailyCost = totalCost / readings.length;
+    const totalConsumption = chartData.reduce((sum, point) => sum + point.kwh, 0);
+    const totalCost = chartData.reduce((sum, point) => sum + point.cost, 0);
+    const avgDailyConsumption = totalConsumption / chartData.length;
+    const avgDailyCost = totalCost / chartData.length;
 
     // UK average data
     const ukAverageDaily = 8.5; // kWh
@@ -40,12 +42,12 @@ export const AnalyticsPage: React.FC = () => {
     const costRatio = avgDailyCost / ukAverageCost;
 
     // Trend analysis
-    const recentReadings = readings.slice(-7);
-    const olderReadings = readings.slice(-14, -7);
+    const recentData = chartData.slice(-7);
+    const olderData = chartData.slice(-14, -7);
     
-    const recentAvg = recentReadings.reduce((sum, r) => sum + (r.consumption || 0), 0) / recentReadings.length;
-    const olderAvg = olderReadings.length > 0 
-      ? olderReadings.reduce((sum, r) => sum + (r.consumption || 0), 0) / olderReadings.length 
+    const recentAvg = recentData.reduce((sum, point) => sum + point.kwh, 0) / recentData.length;
+    const olderAvg = olderData.length > 0 
+      ? olderData.reduce((sum, point) => sum + point.kwh, 0) / olderData.length 
       : recentAvg;
 
     const trendPercentage = olderAvg > 0 ? ((recentAvg - olderAvg) / olderAvg) * 100 : 0;
@@ -210,7 +212,7 @@ export const AnalyticsPage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="cost" className="space-y-6">
-          <ConsumptionBreakdown currentMonth={new Date()} viewMode="kwh" />
+          <ConsumptionBreakdown currentMonth={new Date()} viewMode="cost" />
           <Card>
             <CardHeader>
               <CardTitle>Cost Breakdown</CardTitle>
@@ -253,48 +255,70 @@ export const AnalyticsPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               {analytics && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-semibold mb-3">Daily Consumption</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span>Your Average</span>
-                          <span className="font-semibold">{analytics.avgDailyConsumption.toFixed(1)} kWh</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>UK Average</span>
-                          <span className="font-semibold">{analytics.ukAverageDaily} kWh</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full" 
-                            style={{ width: `${Math.min(100, (analytics.efficiencyRatio * 50))}%` }}
-                          ></div>
+                <TooltipProvider>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          Daily Consumption
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>UK average data sourced from Ofgem's annual energy consumption statistics (8.5 kWh/day for average UK household)</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </h4>
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span>Your Average</span>
+                            <span className="font-semibold">{analytics.avgDailyConsumption.toFixed(1)} kWh</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>UK Average</span>
+                            <span className="font-semibold">{analytics.ukAverageDaily} kWh</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-primary h-2 rounded-full" 
+                              style={{ width: `${Math.min(100, (analytics.efficiencyRatio * 50))}%` }}
+                            ></div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-3">Daily Cost</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span>Your Average</span>
-                          <span className="font-semibold">£{analytics.avgDailyCost.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>UK Average</span>
-                          <span className="font-semibold">£{analytics.ukAverageCost}</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full" 
-                            style={{ width: `${Math.min(100, (analytics.costRatio * 50))}%` }}
-                          ></div>
+                      <div>
+                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          Daily Cost
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>UK average cost calculated using Ofgem's average unit rate (£0.30/kWh) × average consumption (8.5 kWh/day) = £2.55/day</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </h4>
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span>Your Average</span>
+                            <span className="font-semibold">£{analytics.avgDailyCost.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>UK Average</span>
+                            <span className="font-semibold">£{analytics.ukAverageCost}</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-primary h-2 rounded-full" 
+                              style={{ width: `${Math.min(100, (analytics.costRatio * 50))}%` }}
+                            ></div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </TooltipProvider>
               )}
             </CardContent>
           </Card>

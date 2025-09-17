@@ -41,16 +41,16 @@ interface SeasonalData {
 }
 
 export const SeasonalAnalytics: React.FC = () => {
-  const { readings } = useElectricityStore();
+  const { chartData } = useElectricityStore();
   const { getMonthlyTargets } = useTariffStore();
 
   // Calculate seasonal data
   const getSeasonalData = (): SeasonalData[] => {
-    if (readings.length === 0) return [];
+    if (chartData.length === 0) return [];
 
     // monthlyTargets not needed in seasonal grouping
     
-    // Group readings by season
+    // Group chart data by season
     const seasonalGroups: { [key: string]: any[] } = {
       'Winter': [],
       'Spring': [],
@@ -58,8 +58,8 @@ export const SeasonalAnalytics: React.FC = () => {
       'Autumn': []
     };
 
-    readings.forEach(reading => {
-      const date = new Date(reading.date);
+    chartData.forEach(point => {
+      const date = new Date(point.date);
       const month = date.getMonth() + 1; // 1-12
       
       let season: string;
@@ -68,12 +68,12 @@ export const SeasonalAnalytics: React.FC = () => {
       else if (month >= 6 && month <= 8) season = 'Summer';
       else season = 'Autumn';
 
-      seasonalGroups[season].push(reading);
+      seasonalGroups[season].push(point);
     });
 
     // Calculate seasonal metrics
-    const seasons: SeasonalData[] = Object.entries(seasonalGroups).map(([season, readings]) => {
-      if (readings.length === 0) {
+    const seasons: SeasonalData[] = Object.entries(seasonalGroups).map(([season, dataPoints]) => {
+      if (dataPoints.length === 0) {
         return {
           season,
           consumption: 0,
@@ -88,9 +88,9 @@ export const SeasonalAnalytics: React.FC = () => {
         };
       }
 
-      const totalConsumption = readings.reduce((sum, r) => sum + (r.consumption || 0), 0);
-      const totalCost = readings.reduce((sum, r) => sum + (r.cost || 0), 0);
-      const days = readings.length;
+      const totalConsumption = dataPoints.reduce((sum, point) => sum + point.kwh, 0);
+      const totalCost = dataPoints.reduce((sum, point) => sum + point.cost, 0);
+      const days = dataPoints.length;
       const avgDailyConsumption = totalConsumption / days;
       const avgDailyCost = totalCost / days;
 
@@ -138,16 +138,16 @@ export const SeasonalAnalytics: React.FC = () => {
     // Simple trend calculation - compare with other seasons
     const otherSeasons = Object.entries(seasonalGroups)
       .filter(([s]) => s !== season)
-      .map(([, readings]) => readings);
+      .map(([, dataPoints]) => dataPoints);
     
     if (otherSeasons.length === 0) {
       return { trend: 'stable' as const, percentage: 0 };
     }
 
-    const otherAvg = otherSeasons.reduce((sum, readings) => {
-      if (readings.length === 0) return sum;
-      const total = readings.reduce((s, r) => s + (r.consumption || 0), 0);
-      return sum + (total / readings.length);
+    const otherAvg = otherSeasons.reduce((sum, dataPoints) => {
+      if (dataPoints.length === 0) return sum;
+      const total = dataPoints.reduce((s, point) => s + point.kwh, 0);
+      return sum + (total / dataPoints.length);
     }, 0) / otherSeasons.length;
 
     const percentage = ((currentAvg - otherAvg) / otherAvg) * 100;

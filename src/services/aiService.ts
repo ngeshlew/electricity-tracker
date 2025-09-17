@@ -23,6 +23,8 @@ export interface ChatResponse {
   response?: string;
   usage?: any;
   message?: string;
+  code?: number;
+  body?: string;
   timestamp?: string;
 }
 

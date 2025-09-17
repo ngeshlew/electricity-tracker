@@ -13,6 +13,7 @@ dotenv.config();
 import meterReadingRoutes from './routes/meterReadings';
 import analyticsRoutes from './routes/analytics';
 import path from 'path';
+import aiRoutes from './routes/ai';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -76,6 +77,7 @@ app.get('/test-db', async (_req, res) => {
 // API Routes
 app.use('/api/meter-readings', meterReadingRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Error handling middleware
 app.use(notFound);

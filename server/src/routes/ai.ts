@@ -175,49 +175,45 @@ async function callOllama(messages: ChatMessage[], maxTokens: number, temperatur
   };
 }
 
-// Helper function to call Hugging Face
-async function callHuggingFace(messages: ChatMessage[], maxTokens: number, temperature: number) {
-  const apiUrl = process.env['HUGGINGFACE_API_URL'] || 'https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct';
-  const apiKey = process.env['HUGGINGFACE_API_KEY'];
+// Helper function to call Together.ai (more reliable than Hugging Face)
+async function callTogetherAI(messages: ChatMessage[], maxTokens: number, temperature: number) {
+  const apiKey = process.env['TOGETHER_API_KEY'];
   
   if (!apiKey) {
-    throw new Error('HUGGINGFACE_API_KEY is not set');
+    throw new Error('TOGETHER_API_KEY is not set');
   }
 
-  // Convert messages to single prompt
-  const systemMessage = messages.find(m => m.role === 'system');
-  const userMessages = messages.filter(m => m.role !== 'system');
-  
-  const prompt = systemMessage 
-    ? `${systemMessage.content}\n\n${userMessages.map(m => `${m.role}: ${m.content}`).join('\n')}`
-    : userMessages.map(m => `${m.role}: ${m.content}`).join('\n');
-
-  const response = await fetch(apiUrl, {
+  const response = await fetch('https://api.together.xyz/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      inputs: prompt,
-      parameters: {
-        max_new_tokens: maxTokens,
-        temperature: temperature,
-        return_full_text: false
-      }
+      model: 'meta-llama/Llama-3.2-3B-Instruct',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an AI assistant specialized in electricity consumption analysis and energy efficiency. Help users understand their energy usage patterns and provide actionable recommendations for saving money and reducing consumption.'
+        },
+        ...messages
+      ],
+      max_tokens: maxTokens,
+      temperature: temperature,
+      stream: false
     }),
   });
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`Hugging Face API failed: ${response.status} - ${text}`);
+    throw new Error(`Together.ai API failed: ${response.status} - ${text}`);
   }
 
   const json = (await response.json()) as any;
   return {
-    response: json[0]?.generated_text || 'No response generated',
-    usage: { total_tokens: maxTokens }, // HF doesn't provide exact token count
-    provider: 'huggingface'
+    response: json.choices?.[0]?.message?.content || 'No response generated',
+    usage: json.usage,
+    provider: 'together'
   };
 }
 
@@ -242,8 +238,8 @@ router.post('/chat', async (req, res) => {
         result = await callOpenAI(messages, maxTokens, temperature);
       } else if (primaryProvider === 'ollama') {
         result = await callOllama(messages, maxTokens, temperature);
-      } else if (primaryProvider === 'huggingface') {
-        result = await callHuggingFace(messages, maxTokens, temperature);
+      } else if (primaryProvider === 'together') {
+        result = await callTogetherAI(messages, maxTokens, temperature);
       } else {
         throw new Error(`Unknown primary provider: ${primaryProvider}`);
       }
@@ -256,8 +252,8 @@ router.post('/chat', async (req, res) => {
           result = await callOpenAI(messages, maxTokens, temperature);
         } else if (fallbackProvider === 'ollama') {
           result = await callOllama(messages, maxTokens, temperature);
-        } else if (fallbackProvider === 'huggingface') {
-          result = await callHuggingFace(messages, maxTokens, temperature);
+        } else if (fallbackProvider === 'together') {
+          result = await callTogetherAI(messages, maxTokens, temperature);
         } else {
           throw new Error(`Unknown fallback provider: ${fallbackProvider}`);
         }

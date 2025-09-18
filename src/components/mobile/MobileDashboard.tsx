@@ -30,23 +30,21 @@ export const MobileDashboard: React.FC = () => {
   const [showMeterForm, setShowMeterForm] = useState(false);
   const [currentPeriod, setCurrentPeriod] = useState<'7d' | '30d' | '90d'>('30d');
 
-  // Calculate analytics
+  // Calculate analytics based on derived chartData (consumption per day)
   const calculateAnalytics = () => {
-    if (readings.length === 0) return null;
+    if (chartData.length === 0) return null;
 
-    const totalConsumption = readings.reduce((sum, reading) => sum + (reading.consumption || 0), 0);
-    const totalCost = readings.reduce((sum, reading) => sum + (reading.cost || 0), 0);
-    const avgDailyConsumption = totalConsumption / readings.length;
-    const avgDailyCost = totalCost / readings.length;
+    const totalConsumption = chartData.reduce((sum, point) => sum + point.kwh, 0);
+    const totalCost = chartData.reduce((sum, point) => sum + point.cost, 0);
+    const avgDailyConsumption = totalConsumption / chartData.length;
+    const avgDailyCost = totalCost / chartData.length;
 
     // Recent trend (last 7 days vs previous 7 days)
-    const recentReadings = readings.slice(-7);
-    const previousReadings = readings.slice(-14, -7);
-    
-    const recentAvg = recentReadings.reduce((sum, r) => sum + (r.consumption || 0), 0) / recentReadings.length;
-    const previousAvg = previousReadings.length > 0 
-      ? previousReadings.reduce((sum, r) => sum + (r.consumption || 0), 0) / previousReadings.length 
-      : recentAvg;
+    const recent = chartData.slice(-7);
+    const previous = chartData.slice(-14, -7);
+
+    const recentAvg = recent.length > 0 ? recent.reduce((s, p) => s + p.kwh, 0) / recent.length : 0;
+    const previousAvg = previous.length > 0 ? previous.reduce((s, p) => s + p.kwh, 0) / previous.length : recentAvg;
 
     const trendPercentage = previousAvg > 0 ? ((recentAvg - previousAvg) / previousAvg) * 100 : 0;
 
@@ -67,7 +65,8 @@ export const MobileDashboard: React.FC = () => {
   // Filter data based on current period
   const getFilteredData = () => {
     const days = currentPeriod === '7d' ? 7 : currentPeriod === '30d' ? 30 : 90;
-    return chartData.slice(-days);
+    // Map chartData to include `consumption` key expected by charts
+    return chartData.slice(-days).map(d => ({ ...d, consumption: d.kwh }));
   };
 
   const filteredData = getFilteredData();

@@ -175,47 +175,6 @@ async function callOllama(messages: ChatMessage[], maxTokens: number, temperatur
   };
 }
 
-// Helper function to call Together.ai (more reliable than Hugging Face)
-async function callTogetherAI(messages: ChatMessage[], maxTokens: number, temperature: number) {
-  const apiKey = process.env['TOGETHER_API_KEY'];
-  
-  if (!apiKey) {
-    throw new Error('TOGETHER_API_KEY is not set');
-  }
-
-  const response = await fetch('https://api.together.xyz/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'meta-llama/Llama-3.2-3B-Instruct',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an AI assistant specialized in electricity consumption analysis and energy efficiency. Help users understand their energy usage patterns and provide actionable recommendations for saving money and reducing consumption.'
-        },
-        ...messages
-      ],
-      max_tokens: maxTokens,
-      temperature: temperature,
-      stream: false
-    }),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Together.ai API failed: ${response.status} - ${text}`);
-  }
-
-  const json = (await response.json()) as any;
-  return {
-    response: json.choices?.[0]?.message?.content || 'No response generated',
-    usage: json.usage,
-    provider: 'together'
-  };
-}
 
 // POST /api/ai/chat - proxy chat completions through server with fallback
 router.post('/chat', async (req, res) => {
@@ -238,8 +197,6 @@ router.post('/chat', async (req, res) => {
         result = await callOpenAI(messages, maxTokens, temperature);
       } else if (primaryProvider === 'ollama') {
         result = await callOllama(messages, maxTokens, temperature);
-      } else if (primaryProvider === 'together') {
-        result = await callTogetherAI(messages, maxTokens, temperature);
       } else {
         throw new Error(`Unknown primary provider: ${primaryProvider}`);
       }
@@ -252,8 +209,6 @@ router.post('/chat', async (req, res) => {
           result = await callOpenAI(messages, maxTokens, temperature);
         } else if (fallbackProvider === 'ollama') {
           result = await callOllama(messages, maxTokens, temperature);
-        } else if (fallbackProvider === 'together') {
-          result = await callTogetherAI(messages, maxTokens, temperature);
         } else {
           throw new Error(`Unknown fallback provider: ${fallbackProvider}`);
         }

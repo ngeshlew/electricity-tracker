@@ -147,11 +147,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
         });
       }
       case 'monthly': {
-        return chartData.filter(point => {
-          const pointDate = new Date(point.date);
-          return pointDate.getMonth() === currentMonth.getMonth() && 
-                 pointDate.getFullYear() === currentMonth.getFullYear();
-        });
+        const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+        // Use date-only comparisons to avoid timezone edge cases
+        const startKey = monthStart.toISOString().split('T')[0];
+        const endKey = monthEnd.toISOString().split('T')[0];
+        return chartData.filter(point => point.date >= startKey && point.date <= endKey);
       }
       case 'yearly': {
         return chartData.filter(point => {

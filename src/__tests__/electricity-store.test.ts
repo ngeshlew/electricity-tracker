@@ -85,6 +85,31 @@ describe('Electricity Store', () => {
     expect(result.current.chartData[0].cost).toBe(15); // 50 * 0.30
   });
 
+  it('aggregates consumption per date across multiple meters and skips cross-meter deltas', async () => {
+    const { result } = renderHook(() => useElectricityStore());
+
+    // Meter A
+    await act(async () => {
+      await result.current.addReading({ meterId: 'A', reading: 1000, date: new Date('2024-02-01'), type: 'MANUAL' as const });
+      await result.current.addReading({ meterId: 'A', reading: 1010, date: new Date('2024-02-02'), type: 'MANUAL' as const });
+    });
+
+    // Meter B, interleaved
+    await act(async () => {
+      await result.current.addReading({ meterId: 'B', reading: 2000, date: new Date('2024-02-01'), type: 'MANUAL' as const });
+      await result.current.addReading({ meterId: 'B', reading: 2005, date: new Date('2024-02-02'), type: 'MANUAL' as const });
+    });
+
+    // Expect two dates: 2024-02-01 (seed 0) and 2024-02-02 with combined delta (10 + 5)
+    const data = result.current.chartData;
+    const byDate: Record<string, { kwh: number; cost: number }> = {};
+    data.forEach(p => { byDate[p.date] = { kwh: p.kwh, cost: p.cost }; });
+
+    expect(Object.keys(byDate).length).toBeGreaterThanOrEqual(2);
+    expect(byDate['2024-02-02'].kwh).toBe(15);
+    expect(byDate['2024-02-02'].cost).toBeCloseTo(4.5);
+  });
+
   it('should calculate cost correctly', () => {
     const { result } = renderHook(() => useElectricityStore());
 

@@ -634,7 +634,7 @@ export const useElectricityStore = create<ElectricityState>()(
 
         // Analytics calculations
         calculateConsumptionData: () => {
-          const { readings } = get();
+          const { readings, preferences } = get();
 
           // No readings
           if (readings.length === 0) {
@@ -642,38 +642,59 @@ export const useElectricityStore = create<ElectricityState>()(
             return;
           }
 
-          const chartData: ChartDataPoint[] = [];
-
-          // Always include the first reading day with 0 kWh so charts aren't empty
-          const firstReading = readings[0];
-          chartData.push({
-            date: new Date(firstReading.date as unknown as string | Date).toISOString().split('T')[0],
-            kwh: 0,
-            cost: 0,
-            label: '0.00 kWh',
-          });
-
-          // If only one reading, stop here (no delta to compute)
-          if (readings.length === 1) {
-            set({ chartData });
-            return;
+          // Group readings by meter and sort each group by date (ascending)
+          const meterIdToReadings = new Map<string, typeof readings>();
+          for (const r of readings) {
+            const list = meterIdToReadings.get(r.meterId) ?? [];
+            list.push(r);
+            meterIdToReadings.set(r.meterId, list);
+          }
+          for (const [meterId, list] of meterIdToReadings) {
+            meterIdToReadings.set(
+              meterId,
+              list.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            );
           }
 
-          // Calculate consumption for all subsequent readings
-          for (let i = 1; i < readings.length; i++) {
-            const prevReading = readings[i - 1];
-            const currentReading = readings[i];
+          // Aggregate consumption per date across meters
+          const dateToTotals = new Map<string, { kwh: number; cost: number }>();
 
-            const consumption = get().getConsumptionBetweenReadings(prevReading, currentReading);
-            const cost = get().calculateCost(consumption);
+          for (const [, list] of meterIdToReadings) {
+            if (list.length === 0) continue;
 
-            chartData.push({
-              date: new Date(currentReading.date as unknown as string | Date).toISOString().split('T')[0],
-              kwh: consumption,
-              cost: cost,
-              label: `${consumption.toFixed(2)} kWh`,
-            });
+            // Seed first day with 0 for each meter (ensures charts don't look empty)
+            const first = list[0];
+            const firstDateOnly = new Date(first.date as unknown as string | Date).toISOString().split('T')[0];
+            const seedTotals = dateToTotals.get(firstDateOnly) ?? { kwh: 0, cost: 0 };
+            dateToTotals.set(firstDateOnly, seedTotals);
+
+            for (let i = 1; i < list.length; i++) {
+              const prev = list[i - 1];
+              const curr = list[i];
+              if (curr.isFirstReading) {
+                continue; // skip deltas into first readings
+              }
+              const diff = new Decimal(curr.reading).minus(prev.reading).toNumber();
+              if (diff <= 0 || !Number.isFinite(diff)) {
+                continue; // skip negative or invalid deltas
+              }
+              const dateOnly = new Date(curr.date as unknown as string | Date).toISOString().split('T')[0];
+              const existing = dateToTotals.get(dateOnly) ?? { kwh: 0, cost: 0 };
+              const kwh = existing.kwh + diff;
+              const cost = existing.cost + diff * preferences.unitRate;
+              dateToTotals.set(dateOnly, { kwh, cost });
+            }
           }
+
+          // Build sorted chart data
+          const chartData: ChartDataPoint[] = Array.from(dateToTotals.entries())
+            .sort(([d1], [d2]) => new Date(d1).getTime() - new Date(d2).getTime())
+            .map(([date, totals]) => ({
+              date,
+              kwh: Math.round(totals.kwh * 100) / 100,
+              cost: Math.round(totals.cost * 100) / 100,
+              label: `${Math.round(totals.kwh * 100) / 100} kWh`,
+            }));
 
           set({ chartData });
         },
@@ -759,14 +780,15 @@ export const useElectricityStore = create<ElectricityState>()(
 
         // Utility functions
         getConsumptionBetweenReadings: (reading1, reading2) => {
+          // Skip across different meters
+          if (reading1.meterId !== reading2.meterId) return 0;
           // Skip consumption calculation if reading2 is marked as first reading
-          if (reading2.isFirstReading) {
-            return 0;
-          }
+          if (reading2.isFirstReading) return 0;
           const r1 = new Decimal(reading1.reading);
           const r2 = new Decimal(reading2.reading);
-          const consumption = r2.minus(r1);
-          return consumption.toNumber();
+          const diff = r2.minus(r1).toNumber();
+          if (!Number.isFinite(diff) || diff <= 0) return 0;
+          return diff;
         },
 
         calculateCost: (kwh) => {

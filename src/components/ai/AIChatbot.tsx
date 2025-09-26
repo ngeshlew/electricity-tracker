@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,32 +9,15 @@ import {
   User, 
   Loader2
 } from 'lucide-react';
-import { sendChatMessage, ChatMessage } from '../../services/aiService';
+import { useAIChatStore } from '@/store/useAIChatStore';
 
 interface AIChatbotProps {
   className?: string;
 }
 
 export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Array<{id: string, role: 'user' | 'assistant' | 'system', content: string}>>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: `Hello! I'm your AI energy assistant. I can help you analyze your electricity consumption patterns, provide energy-saving recommendations, and answer questions about your usage data. 
-
-Here's what I can help you with:
-• 📊 Analyze your consumption trends
-• 💡 Suggest energy-saving tips
-• 💰 Calculate potential cost savings
-• 🔍 Identify unusual usage patterns
-• 📈 Predict future consumption
-
-What would you like to know about your energy usage?`
-    }
-  ]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { isOpen, open, close, messages, send, isLoading } = useAIChatStore();
+  const [input, setInput] = React.useState('');
 
   const quickQuestions = [
     "How is my energy usage trending?",
@@ -51,57 +34,9 @@ What would you like to know about your energy usage?`
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-
-    const userMessage: ChatMessage = {
-      role: 'user',
-      content: input.trim()
-    };
-
-    setMessages(prev => [...prev, { ...userMessage, id: Date.now().toString() }]);
+    const content = input.trim();
     setInput('');
-    setIsLoading(true);
-
-    try {
-      const currentMessages: ChatMessage[] = messages.map(msg => ({ role: msg.role, content: msg.content }));
-      const response = await sendChatMessage({
-        messages: [...currentMessages, userMessage],
-      });
-
-      if (response.status === 'OK' && response.response) {
-        const assistantMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant' as const,
-          content: response.response
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      } else {
-        console.error('AI chat response error:', response.message);
-        let errorContent = 'Sorry, I encountered an error. Please try again.';
-        
-        if (response.code === 429) {
-          errorContent = 'I\'m currently experiencing high demand and my API quota has been exceeded. Please try again later or contact support if this persists.';
-        } else if (response.message) {
-          errorContent = response.message;
-        }
-        
-        const errorMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant' as const,
-          content: errorContent
-        };
-        setMessages(prev => [...prev, errorMessage]);
-      }
-    } catch (error) {
-      console.error('AI chat network error:', error);
-      const errorMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant' as const,
-        content: 'Sorry, I encountered a network error. Please try again.'
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
+    await send(content);
   };
 
   const handleQuickQuestion = (question: string) => {
@@ -111,7 +46,7 @@ What would you like to know about your energy usage?`
   if (!isOpen) {
     return (
       <Button
-        onClick={() => setIsOpen(true)}
+        onClick={() => open()}
         className={`fixed bottom-4 right-4 z-50 rounded-full h-14 w-14 shadow-lg ${className}`}
         size="icon"
       >
@@ -136,7 +71,7 @@ What would you like to know about your energy usage?`
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsOpen(false)}
+            onClick={() => close()}
             className="h-8 w-8 p-0"
           >
             ×

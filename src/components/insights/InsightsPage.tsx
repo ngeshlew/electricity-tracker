@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Brain, TrendingUp, Target, MessageSquare, Sparkles } from "lucide-react";
 import { getAIHealth, AIHealthResponse } from '@/services/aiService';
+import { useAIChatStore } from '@/store/useAIChatStore';
 
 export const InsightsPage: React.FC = () => {
   const [aiHealth, setAiHealth] = useState<AIHealthResponse | null>(null);
+  const { open, send } = useAIChatStore();
 
   useEffect(() => {
     getAIHealth()
@@ -144,9 +146,9 @@ export const InsightsPage: React.FC = () => {
 
         <TabsContent value="prompt">
           <AIPromptInput 
-            onPromptSubmit={(prompt) => {
-              console.log('AI Prompt submitted:', prompt);
-              // This would trigger the AI chatbot
+            onPromptSubmit={async (prompt) => {
+              open();
+              await send(prompt);
             }}
           />
         </TabsContent>

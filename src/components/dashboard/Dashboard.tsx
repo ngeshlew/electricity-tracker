@@ -1,133 +1,111 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { Header } from './Header';
+import { AppSidebar } from './AppSidebar';
 import { SummaryCards } from './SummaryCards';
 import { ConsumptionChart } from './ConsumptionChart';
 import { MonthlyOverview } from './MonthlyOverview';
-import { WeeklyPieChart } from './WeeklyPieChart';
-import { DailyBreakdown } from './DailyBreakdown';
-import { ViewToggle } from './ViewToggle';
-import { TimePeriodSelector } from '../analytics/TimePeriodSelector';
-import { ExportOptions } from '../analytics/ExportOptions';
-import { StatementUpload } from '../statements/StatementUpload';
+import { ConsumptionBreakdown } from './ConsumptionBreakdown';
+import { MonthSelector } from './MonthSelector';
+import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
+import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
+import { MobileNavigation } from '../mobile/MobileNavigation';
+import { MobileDashboard } from '../mobile/MobileDashboard';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Dashboard: FC = () => {
-  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
-  const [currentMonth] = useState(new Date());
-  const [viewMode, setViewMode] = useState<'kwh' | 'cost'>('kwh');
-  const [timePeriod, setTimePeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('monthly');
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'statements'>('overview');
+  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings, clearCacheAndReload, readings, chartData, isLoading, error } = useElectricityStore();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const handleRefresh = () => {
+  // Load meter readings when component mounts
+  useEffect(() => {
     loadMeterReadings();
-  };
+  }, [loadMeterReadings]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 lewis-animation-fade-in">
-          <h1 className="text-4xl font-bold lewis-text-gradient mb-3">
-            Electricity Tracker
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Monitor your electricity consumption and costs in real-time
-          </p>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="mb-6 lewis-animation-fade-in">
-          <div className="flex space-x-1 bg-muted/20 rounded-lg p-1 w-fit">
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'analytics', label: 'Analytics' },
-              { id: 'statements', label: 'Statements' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  activeTab === tab.id
-                    ? 'lewis-button-primary shadow-md'
-                    : 'lewis-card-hover text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            <SummaryCards />
+    <>
+      {/* Mobile Navigation */}
+      <MobileNavigation />
+      
+      {/* Desktop Layout */}
+      <div className="hidden lg:block">
+        <SidebarProvider>
+          <AppSidebar />
+          <main className="flex-1">
+            <Header />
+            <div className="p-6">
+            <div className="mx-auto max-w-7xl">
+          {/* Page Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground mt-2">
+              Monitor your electricity consumption and track your energy usage patterns
+            </p>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ConsumptionChart />
-              <MonthlyOverview />
+            {/* Debug Info */}
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <h3 className="text-sm font-medium mb-2">Debug Info:</h3>
+              <p className="text-xs text-muted-foreground">
+                Readings: {readings.length} | Chart Data: {chartData.length} | Loading: {isLoading ? 'Yes' : 'No'} | Error: {error || 'None'}
+              </p>
+              <button 
+                onClick={clearCacheAndReload}
+                className="mt-2 px-3 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+              >
+                Clear Cache & Reload
+              </button>
             </div>
           </div>
-        )}
 
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <TimePeriodSelector
-                selectedPeriod={timePeriod}
-                onPeriodChange={setTimePeriod}
-                onRefresh={handleRefresh}
-              />
-              <ViewToggle
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-              />
-            </div>
+                {/* Key Metrics Cards */}
+                <div className="mb-6">
+                  <SummaryCards currentMonth={currentMonth} />
+                </div>
 
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <WeeklyPieChart
+          {/* Main Content Grid */}
+          <div className="space-y-6">
+            <ConsumptionChart />
+            
+            {/* Month Selector */}
+            <div className="flex justify-center">
+              <MonthSelector
                 currentMonth={currentMonth}
-                viewMode={viewMode}
-              />
-              <DailyBreakdown
-                currentMonth={currentMonth}
-                viewMode={viewMode}
+                onMonthChange={setCurrentMonth}
               />
             </div>
-
-            {/* Export Options */}
-            <ExportOptions />
+            
+                   <div className="grid gap-6 md:grid-cols-3">
+                     <ConsumptionBreakdown
+                       currentMonth={currentMonth}
+                       viewMode="kwh"
+                     />
+                     <MonthlyOverview
+                       currentMonth={currentMonth}
+                     />
+                   </div>
           </div>
-        )}
 
-        {/* Statements Tab */}
-        {activeTab === 'statements' && (
-          <div className="space-y-8 lewis-animation-fade-in">
-            <StatementUpload
-              onFileUpload={async (files) => {
-                console.log('Files uploaded:', files);
-                // TODO: Implement file processing
-              }}
-              onFileRemove={(fileId) => {
-                console.log('File removed:', fileId);
-                // TODO: Implement file removal
-              }}
-              uploadedFiles={[]}
-              isUploading={false}
-            />
+          {/* Recent Readings */}
+          <div className="mt-8">
+            <MeterReadingsLog />
           </div>
-        )}
-      </main>
+        </div>
+        </div>
 
-      <MeterReadingPanel
-        isOpen={isMeterPanelOpen}
-        onClose={() => toggleMeterPanel(false)}
-      />
-    </div>
+        <MeterReadingPanel
+          isOpen={isMeterPanelOpen}
+          onClose={() => toggleMeterPanel(false)}
+        />
+          <UserGuide />
+        </main>
+      </SidebarProvider>
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="lg:hidden">
+        <MobileDashboard />
+      </div>
+    </>
   );
 };

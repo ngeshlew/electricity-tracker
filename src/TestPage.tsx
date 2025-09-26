@@ -1,13 +1,13 @@
 import React from 'react';
-import { Button } from '@/components/ui/button-simple';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card-simple';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const TestPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+          <h1 className="text-4xl text-foreground mb-4">
             🎉 shadcn/ui Setup Complete!
           </h1>
           <p className="text-muted-foreground text-lg">

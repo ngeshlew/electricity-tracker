@@ -12,6 +12,8 @@ dotenv.config();
 // Import routes
 import meterReadingRoutes from './routes/meterReadings';
 import analyticsRoutes from './routes/analytics';
+import path from 'path';
+import aiRoutes from './routes/ai';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -21,7 +23,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env['CLIENT_URL'] || "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"]
   }
 });
@@ -31,12 +33,25 @@ const PORT = process.env['PORT'] || 3001;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env['CLIENT_URL'] || "http://localhost:5173",
+  origin: "*",
   credentials: true
 }));
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Static serving for uploaded statements
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
+
+// Root info endpoint
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    service: 'electricity-tracker-backend',
+    endpoints: ['/health', '/api/ai/health', '/api/meter-readings', '/api/analytics'],
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Health check endpoint
 app.get('/health', (_req, res) => {
@@ -47,9 +62,32 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Database test endpoint
+app.get('/test-db', async (_req, res) => {
+  try {
+    const { prisma } = await import('./utils/database');
+    await prisma.$connect();
+    res.status(200).json({
+      status: 'OK',
+      message: 'Database connection successful',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Database connection failed',
+      error: error instanceof Error ? error.message : String(error),
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+
+
 // API Routes
 app.use('/api/meter-readings', meterReadingRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Error handling middleware
 app.use(notFound);

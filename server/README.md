@@ -1,12 +1,11 @@
 # 🔌 Electricity Tracker - Backend Server
 
-Express.js backend server with TypeScript, PostgreSQL, and Socket.io for real-time updates.
+Express.js backend server with TypeScript, SQLite (via Prisma), and Socket.io for real-time updates.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- PostgreSQL 12+
+- Node.js 18+
 - npm or yarn
 
 ### Installation
@@ -22,7 +21,7 @@ Express.js backend server with TypeScript, PostgreSQL, and Socket.io for real-ti
    # Edit .env with your database configuration
    ```
 
-3. **Set up the database:**
+3. **Set up the database (SQLite):**
    ```bash
    npm run db:setup
    ```
@@ -32,12 +31,12 @@ Express.js backend server with TypeScript, PostgreSQL, and Socket.io for real-ti
    npm run dev
    ```
 
-## 📊 Database Setup
+## 📊 Database Setup (SQLite)
 
-The server uses PostgreSQL with Prisma ORM. Make sure you have PostgreSQL running and update the `DATABASE_URL` in your `.env` file:
+The server uses SQLite with Prisma ORM. Create a `.env` file (see `.env.example`) with:
 
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/electricity_tracker?schema=public"
+DATABASE_URL="file:./dev.db"
 ```
 
 ### Available Scripts

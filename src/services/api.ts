@@ -1,7 +1,5 @@
 // API service for communicating with the backend
-const API_BASE_URL = process.env.NODE_ENV === 'test' 
-  ? 'http://localhost:3001' 
-  : 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'https://electricity-tracker-production.up.railway.app';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -17,8 +15,9 @@ export interface MeterReading {
   meterId: string;
   reading: number;
   date: string;
-  type: 'MANUAL' | 'IMPORTED';
+  type: 'MANUAL' | 'IMPORTED' | 'ESTIMATED';
   notes?: string;
+  isFirstReading?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -185,6 +184,35 @@ class ApiService {
     uptime: number;
   }>> {
     return this.request('/health');
+  }
+
+  // Statements endpoints
+  async uploadStatements(files: File[]): Promise<ApiResponse<any>> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+
+    try {
+      const response = await fetch(`${this.baseURL}/api/analytics/statements/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error?.message || 'Upload failed');
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        error: { message: error instanceof Error ? error.message : 'Unknown error' },
+      };
+    }
+  }
+
+  async listStatements(): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>('/api/analytics/statements');
+  }
+
+  async deleteStatement(id: string): Promise<ApiResponse<{ message: string }>> {
+    return this.request<{ message: string }>(`/api/analytics/statements/${id}`, { method: 'DELETE' });
   }
 }
 

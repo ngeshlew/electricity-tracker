@@ -1,6 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { ResponsiveTestBanner } from './components/ResponsiveTestBanner';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { Dashboard } from './components/dashboard/Dashboard';
+import { SettingsLayout } from './components/settings/SettingsLayout';
+import { InsightsLayout } from './components/insights/InsightsLayout';
+import { AnalyticsLayout } from './components/analytics/AnalyticsLayout';
+import { StatementsLayout } from './components/statements/StatementsLayout';
+import { NotificationsLayout } from './components/notifications/NotificationsLayout';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useElectricityStore } from './store/useElectricityStore';
 import './index.css';
 
@@ -9,24 +19,72 @@ function App() {
 
   useEffect(() => {
     // Load initial data and set up real-time updates
-    loadMeterReadings();
-    setupRealtimeUpdates();
+    const initializeApp = async () => {
+      try {
+        console.log('Initializing app...');
+        await loadMeterReadings();
+        console.log('Data loaded, setting up real-time updates...');
+        
+        // Try to set up real-time updates, but don't fail if it doesn't work
+        try {
+          setupRealtimeUpdates();
+          console.log('Real-time updates set up successfully');
+        } catch (socketError) {
+          console.warn('Failed to set up real-time updates (this is OK):', socketError);
+        }
+        
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        }
+        
+        console.log('App initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+      }
+    };
+
+    initializeApp();
 
     // Cleanup on unmount
     return () => {
-      cleanupRealtimeUpdates();
+      try {
+        cleanupRealtimeUpdates();
+      } catch (error) {
+        console.warn('Error during cleanup:', error);
+      }
     };
   }, [loadMeterReadings, setupRealtimeUpdates, cleanupRealtimeUpdates]);
 
   return (
-    <Router>
-      <div className="min-h-screen bg-background text-foreground">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme">
+      <ErrorBoundary>
+        <Router>
+          <div className="min-h-screen bg-background text-foreground">
+            <ResponsiveTestBanner />
+            <div className="pt-10">
+              <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/insights" element={<InsightsLayout />} />
+              <Route path="/analytics" element={<AnalyticsLayout />} />
+              <Route path="/statements" element={<StatementsLayout />} />
+              <Route path="/notifications" element={<NotificationsLayout />} />
+              <Route path="/settings" element={<SettingsLayout />} />
+              </Routes>
+            </div>
+          </div>
+        </Router>
+        <PWAInstallPrompt />
+        <Toaster />
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }
 

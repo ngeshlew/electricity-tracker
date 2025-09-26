@@ -6,19 +6,20 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model MeterReading {
-  id        String   @id @default(cuid())
-  meterId   String
-  reading   Decimal
-  date      DateTime
-  type      ReadingType
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  meterId       String
+  reading       Decimal
+  date          DateTime
+  type          ReadingType
+  notes         String?
+  isFirstReading Boolean @default(false) @map("is_first_reading")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("meter_readings")
 }
@@ -68,6 +69,7 @@ model UserPreferences {
 enum ReadingType {
   MANUAL
   IMPORTED
+  ESTIMATED
 }
 
 enum PeriodType {

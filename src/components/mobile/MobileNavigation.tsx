@@ -34,12 +34,17 @@ export const MobileNavigation: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
-  // Update current page based on location
-  const updatedNavigationItems = navigationItems.map(item => ({
-    ...item,
-    current: location.pathname === item.href || 
-             (item.href === '/' && location.pathname === '/dashboard')
-  }));
+  // Update current page based on location (handle nested routes)
+  const updatedNavigationItems = navigationItems.map(item => {
+    const isRoot = item.href === '/';
+    const isExactMatch = location.pathname === item.href;
+    const isNestedMatch = !isRoot && location.pathname.startsWith(item.href + '/');
+    const isDashboardAlias = isRoot && location.pathname === '/dashboard';
+    return {
+      ...item,
+      current: isExactMatch || isNestedMatch || isDashboardAlias,
+    };
+  });
 
   // Handle scroll to add shadow
   useEffect(() => {

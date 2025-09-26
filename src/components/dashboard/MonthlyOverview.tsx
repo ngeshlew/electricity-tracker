@@ -32,8 +32,20 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
       return readingDate >= monthStart && readingDate <= monthEnd;
     });
 
+    // If fewer than 2 readings in the month, attempt to include the last reading before the month
+    // to compute a delta for the first in-month reading.
+    let workingReadings = monthReadings;
+    if (workingReadings.length < 2) {
+      const priorReadings = readings
+        .filter(r => new Date(r.date) < monthStart)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      const lastBeforeMonth = priorReadings[0];
+      if (lastBeforeMonth && workingReadings.length === 1) {
+        workingReadings = [lastBeforeMonth, ...workingReadings].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      }
+    }
 
-    if (monthReadings.length < 2) {
+    if (workingReadings.length < 2) {
       return {
         totalKwh: 0,
         totalCost: 0,
@@ -47,8 +59,8 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
     let totalKwh = 0;
     let totalCost = 0;
     
-    for (let i = 1; i < monthReadings.length; i++) {
-      const consumption = monthReadings[i].reading - monthReadings[i - 1].reading;
+    for (let i = 1; i < workingReadings.length; i++) {
+      const consumption = workingReadings[i].reading - workingReadings[i - 1].reading;
       if (consumption > 0) {
         totalKwh += consumption;
         totalCost += consumption * preferences.unitRate;
@@ -63,7 +75,7 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
       const actualWeekEnd = getWeekEnd(weekStart);
       
       // Get all readings that fall within this week (including boundary dates)
-      const weekReadings = monthReadings.filter(reading => {
+      const weekReadings = workingReadings.filter(reading => {
         const readingDate = new Date(reading.date);
         return readingDate >= actualWeekStart && readingDate <= actualWeekEnd;
       });
@@ -96,13 +108,13 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
       // If no readings in this week, try to find consumption from readings that span this week
       if (sortedWeekReadings.length === 0) {
         // Find the last reading before or on the start of this week
-        const previousReadings = monthReadings.filter(reading => {
+        const previousReadings = workingReadings.filter(reading => {
           const readingDate = new Date(reading.date);
           return readingDate <= actualWeekStart;
         }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         
         // Find the first reading after or on the end of this week
-        const nextReadings = monthReadings.filter(reading => {
+        const nextReadings = workingReadings.filter(reading => {
           const readingDate = new Date(reading.date);
           return readingDate >= actualWeekEnd;
         }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -130,7 +142,7 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
         const currentReading = sortedWeekReadings[0];
         
         // Find the last reading before this week
-        const previousReadings = monthReadings.filter(reading => {
+        const previousReadings = workingReadings.filter(reading => {
           const readingDate = new Date(reading.date);
           return readingDate < actualWeekStart;
         }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

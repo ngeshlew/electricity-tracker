@@ -635,34 +635,38 @@ export const useElectricityStore = create<ElectricityState>()(
         // Analytics calculations
         calculateConsumptionData: () => {
           const { readings } = get();
-          
-          if (readings.length < 2) {
+
+          // No readings
+          if (readings.length === 0) {
             set({ chartData: [] });
             return;
           }
 
           const chartData: ChartDataPoint[] = [];
-          
-          // Handle first reading - show 0 consumption on the first day
+
+          // Always include the first reading day with 0 kWh so charts aren't empty
           const firstReading = readings[0];
-          
-          if (firstReading && firstReading.isFirstReading) {
-            chartData.push({
-              date: new Date(firstReading.date as unknown as string | Date).toISOString().split('T')[0],
-              kwh: 0,
-              cost: 0,
-              label: '0.00 kWh',
-            });
+          chartData.push({
+            date: new Date(firstReading.date as unknown as string | Date).toISOString().split('T')[0],
+            kwh: 0,
+            cost: 0,
+            label: '0.00 kWh',
+          });
+
+          // If only one reading, stop here (no delta to compute)
+          if (readings.length === 1) {
+            set({ chartData });
+            return;
           }
-          
-          // Calculate consumption for all other readings
+
+          // Calculate consumption for all subsequent readings
           for (let i = 1; i < readings.length; i++) {
             const prevReading = readings[i - 1];
             const currentReading = readings[i];
-            
+
             const consumption = get().getConsumptionBetweenReadings(prevReading, currentReading);
             const cost = get().calculateCost(consumption);
-            
+
             chartData.push({
               date: new Date(currentReading.date as unknown as string | Date).toISOString().split('T')[0],
               kwh: consumption,

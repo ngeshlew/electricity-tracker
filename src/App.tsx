@@ -11,6 +11,7 @@ import { AnalyticsLayout } from './components/analytics/AnalyticsLayout';
 import { StatementsLayout } from './components/statements/StatementsLayout';
 import { NotificationsLayout } from './components/notifications/NotificationsLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { useElectricityStore } from './store/useElectricityStore';
 import './index.css';
 
@@ -70,13 +71,13 @@ function App() {
             <ResponsiveTestBanner />
             <div className="pt-10">
               <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/insights" element={<InsightsLayout />} />
-              <Route path="/analytics" element={<AnalyticsLayout />} />
-              <Route path="/statements" element={<StatementsLayout />} />
-              <Route path="/notifications" element={<NotificationsLayout />} />
-              <Route path="/settings" element={<SettingsLayout />} />
+              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/insights" element={<ProtectedRoute><InsightsLayout /></ProtectedRoute>} />
+              <Route path="/analytics" element={<ProtectedRoute><AnalyticsLayout /></ProtectedRoute>} />
+              <Route path="/statements" element={<ProtectedRoute><StatementsLayout /></ProtectedRoute>} />
+              <Route path="/notifications" element={<ProtectedRoute><NotificationsLayout /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><SettingsLayout /></ProtectedRoute>} />
               </Routes>
             </div>
           </div>

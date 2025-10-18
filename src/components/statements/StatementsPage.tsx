@@ -32,44 +32,44 @@ interface Statement {
 }
 
 export const StatementsPage: React.FC = () => {
-  const { readings } = useElectricityStore();
+  const { chartData } = useElectricityStore();
   const [statements, setStatements] = useState<Statement[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Generate monthly statements from readings
+  // Generate monthly statements from chartData
   const generateStatements = () => {
-    if (readings.length === 0) return [];
+    if (chartData.length === 0) return [];
 
-    const monthlyData = readings.reduce((acc, reading) => {
-      const date = new Date(reading.date);
+    const monthlyData = chartData.reduce((acc, point) => {
+      const date = new Date(point.date);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       
       if (!acc[monthKey]) {
         acc[monthKey] = {
-          readings: [],
+          points: [],
           totalConsumption: 0,
           totalCost: 0
         };
       }
       
-      acc[monthKey].readings.push(reading);
-      acc[monthKey].totalConsumption += reading.consumption || 0;
-      acc[monthKey].totalCost += reading.cost || 0;
+      acc[monthKey].points.push(point);
+      acc[monthKey].totalConsumption += point.kwh;
+      acc[monthKey].totalCost += point.cost;
       
       return acc;
-    }, {} as { [key: string]: { readings: any[], totalConsumption: number, totalCost: number } });
+    }, {} as { [key: string]: { points: any[], totalConsumption: number, totalCost: number } });
 
     const generatedStatements: Statement[] = Object.entries(monthlyData).map(([monthKey, data]) => {
       const [year, month] = monthKey.split('-');
-      const daysInMonth = data.readings.length;
+      const daysInMonth = data.points.length;
       const avgDailyConsumption = data.totalConsumption / daysInMonth;
       const avgDailyCost = data.totalCost / daysInMonth;
       
       // Find peak day
-      const peakReading = data.readings.reduce((max, reading) => 
-        (reading.consumption || 0) > (max.consumption || 0) ? reading : max
+      const peakPoint = data.points.reduce((max, point) => 
+        point.kwh > max.kwh ? point : max
       );
       
       // Calculate efficiency score (0-100)
@@ -84,8 +84,8 @@ export const StatementsPage: React.FC = () => {
         totalCost: data.totalCost,
         averageDailyConsumption: avgDailyConsumption,
         averageDailyCost: avgDailyCost,
-        peakDay: new Date(peakReading.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
-        peakConsumption: peakReading.consumption || 0,
+        peakDay: new Date(peakPoint.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+        peakConsumption: peakPoint.kwh,
         efficiencyScore,
         generatedAt: new Date(),
         status: 'final' as const
@@ -99,7 +99,7 @@ export const StatementsPage: React.FC = () => {
   React.useEffect(() => {
     const generatedStatements = generateStatements();
     setStatements(generatedStatements);
-  }, [readings]);
+  }, [chartData]);
 
   // Filter statements based on search and year
   const filteredStatements = statements.filter(statement => {

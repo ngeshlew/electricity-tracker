@@ -12,6 +12,7 @@ import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { MobileNavigation } from '../mobile/MobileNavigation';
 import { MobileDashboard } from '../mobile/MobileDashboard';
+import { AIChatbot } from '../ai/AIChatbot';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Dashboard: FC = () => {
@@ -98,6 +99,7 @@ export const Dashboard: FC = () => {
           onClose={() => toggleMeterPanel(false)}
         />
           <UserGuide />
+          <AIChatbot />
         </main>
       </SidebarProvider>
       </div>

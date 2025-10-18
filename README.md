@@ -345,4 +345,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ for energy efficiency, sustainability, and AI-powered insights**
 
-*Track your electricity usage, optimize your consumption, and save money with intelligent analytics and personalized recommendations.*
+*Track your electricity usage, optimize your consumption, and save money with intelligent analytics and personalized recommendations.*# Railway deployment trigger

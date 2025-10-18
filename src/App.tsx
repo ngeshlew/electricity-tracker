@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { ResponsiveTestBanner } from './components/ResponsiveTestBanner';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { SettingsLayout } from './components/settings/SettingsLayout';
@@ -68,8 +67,7 @@ function App() {
       <ErrorBoundary>
         <Router>
           <div className="min-h-screen bg-background text-foreground">
-            <ResponsiveTestBanner />
-            <div className="pt-10">
+            <div>
               <Routes>
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

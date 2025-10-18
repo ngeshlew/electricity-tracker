@@ -306,7 +306,7 @@ export const useElectricityStore = create<ElectricityState>()(
             // First, remove all existing estimated readings
             const manualReadings = readings.filter(r => r.type !== 'ESTIMATED');
             
-            if (manualReadings.length < 2) {
+            if (manualReadings.length < 1) {
               set({ isLoading: false, error: null });
               return;
             }
@@ -316,7 +316,7 @@ export const useElectricityStore = create<ElectricityState>()(
               new Date(a.date).getTime() - new Date(b.date).getTime()
             );
 
-            const estimatedReadings: Omit<MeterReading, 'id' | 'createdAt' | 'updatedAt'>[] = [];
+            const estimatedReadings: MeterReading[] = [];
 
             // Generate estimated readings between consecutive manual readings
             for (let i = 0; i < sortedManualReadings.length - 1; i++) {
@@ -347,13 +347,63 @@ export const useElectricityStore = create<ElectricityState>()(
               while (currentDateToFill < nextDate) {
                 currentReadingValue += dailyAverage;
                 
-                const estimatedReading = {
+                const estimatedReading: MeterReading = {
+                  id: `est-${currentDateToFill.getTime()}-${Math.random().toString(36).substr(2, 9)}`,
                   meterId: currentReading.meterId,
                   reading: Math.round(currentReadingValue * 100) / 100,
                   date: new Date(currentDateToFill),
                   type: 'ESTIMATED' as const,
                   notes: `Estimated reading based on consumption between ${currentDate.toLocaleDateString('en-GB')} and ${nextDate.toLocaleDateString('en-GB')}`,
-                  isFirstReading: false
+                  isFirstReading: false,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                };
+                
+                estimatedReadings.push(estimatedReading);
+                
+                currentDateToFill.setDate(currentDateToFill.getDate() + 1);
+              }
+            }
+
+            // Generate forward estimates from last manual reading to yesterday (UK time)
+            if (sortedManualReadings.length >= 2) {
+              const lastReading = sortedManualReadings[sortedManualReadings.length - 1];
+              const secondLastReading = sortedManualReadings[sortedManualReadings.length - 2];
+              
+              // Calculate daily average from the last interval
+              const lastIntervalDays = Math.ceil(
+                (new Date(lastReading.date).getTime() - new Date(secondLastReading.date).getTime()) / (1000 * 60 * 60 * 24)
+              );
+              const lastIntervalConsumption = lastReading.reading - secondLastReading.reading;
+              const dailyAverage = lastIntervalConsumption / lastIntervalDays;
+              
+              // Get yesterday in UK timezone
+              const ukNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/London' }));
+              const yesterday = new Date(ukNow);
+              yesterday.setDate(yesterday.getDate() - 1);
+              yesterday.setHours(0, 0, 0, 0);
+              
+              const lastReadingDate = new Date(lastReading.date);
+              lastReadingDate.setHours(0, 0, 0, 0);
+              
+              // Generate estimates from day after last reading to yesterday
+              let currentReadingValue = lastReading.reading;
+              let currentDateToFill = new Date(lastReadingDate);
+              currentDateToFill.setDate(currentDateToFill.getDate() + 1);
+              
+              while (currentDateToFill <= yesterday) {
+                currentReadingValue += dailyAverage;
+                
+                const estimatedReading: MeterReading = {
+                  id: `est-${currentDateToFill.getTime()}-${Math.random().toString(36).substr(2, 9)}`,
+                  meterId: lastReading.meterId,
+                  reading: Math.round(currentReadingValue * 100) / 100,
+                  date: new Date(currentDateToFill),
+                  type: 'ESTIMATED' as const,
+                  notes: `Estimated reading based on average daily consumption (${dailyAverage.toFixed(2)} kWh/day)`,
+                  isFirstReading: false,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
                 };
                 
                 estimatedReadings.push(estimatedReading);
@@ -367,7 +417,7 @@ export const useElectricityStore = create<ElectricityState>()(
                set({
                  readings: [...manualReadings, ...estimatedReadings].sort((a, b) => 
                    new Date(a.date).getTime() - new Date(b.date).getTime()
-                 ) as MeterReading[],
+                 ),
                  isLoading: false,
                  error: null,
                });

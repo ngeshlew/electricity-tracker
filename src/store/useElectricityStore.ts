@@ -559,10 +559,17 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculateTimeSeriesData('daily');
             get().calculatePieChartData();
           } catch (error) {
-            set({
-              isLoading: false,
-              error: error instanceof Error ? error.message : 'Failed to load meter readings',
-            });
+            console.warn('Falling back to persisted/local readings after API load failure:', error);
+            // Ensure we still compute analytics from whatever readings we have
+            try {
+              await get().generateEstimatedReadings();
+            } catch {
+              // ignore
+            }
+            get().calculateConsumptionData();
+            get().calculateTimeSeriesData('daily');
+            get().calculatePieChartData();
+            set({ isLoading: false, error: error instanceof Error ? error.message : 'Failed to load meter readings' });
           }
         },
 
@@ -691,7 +698,7 @@ export const useElectricityStore = create<ElectricityState>()(
           
           if (firstReading && firstReading.isFirstReading) {
             chartData.push({
-              date: firstReading.date.toISOString().split('T')[0],
+              date: new Date(firstReading.date as unknown as string | Date).toISOString().split('T')[0],
               kwh: 0,
               cost: 0,
               label: '0.00 kWh',
@@ -707,7 +714,7 @@ export const useElectricityStore = create<ElectricityState>()(
             const cost = get().calculateCost(consumption);
             
             chartData.push({
-              date: currentReading.date.toISOString().split('T')[0],
+              date: new Date(currentReading.date as unknown as string | Date).toISOString().split('T')[0],
               kwh: consumption,
               cost: cost,
               label: `${consumption.toFixed(2)} kWh`,
@@ -802,7 +809,9 @@ export const useElectricityStore = create<ElectricityState>()(
           if (reading2.isFirstReading) {
             return 0;
           }
-          const consumption = new Decimal(reading2.reading).minus(reading1.reading);
+          const r1 = new Decimal(reading1.reading);
+          const r2 = new Decimal(reading2.reading);
+          const consumption = r2.minus(r1);
           return consumption.toNumber();
         },
 
@@ -835,6 +844,8 @@ export const useElectricityStore = create<ElectricityState>()(
           readings: state.readings,
           preferences: state.preferences,
         }),
+        // Note: we avoid mutating state during rehydration here; calculations
+        // are resilient to string dates by normalizing where needed.
       }
     ),
     {

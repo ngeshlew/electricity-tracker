@@ -679,15 +679,46 @@ export const useElectricityStore = create<ElectricityState>()(
         calculateConsumptionData: () => {
           const { readings } = get();
           
-          if (readings.length < 2) {
+          // Handle edge cases: no readings or single reading
+          if (readings.length === 0) {
             set({ chartData: [] });
             return;
+          }
+          
+          if (readings.length === 1) {
+            const singleReading = readings[0];
+            if (singleReading.isFirstReading) {
+              set({ 
+                chartData: [{
+                  date: singleReading.date.toISOString().split('T')[0],
+                  kwh: 0,
+                  cost: 0,
+                  label: '0.00 kWh',
+                }]
+              });
+            } else {
+              // Single reading that's not first reading - no consumption to calculate
+              set({ chartData: [] });
+            }
+            return;
+          }
+
+          // Explicitly sort readings by date to ensure chronological order
+          // This is critical for proper consumption calculation, especially with estimated readings
+          const sortedReadings = [...readings].sort((a, b) => 
+            new Date(a.date).getTime() - new Date(b.date).getTime()
+          );
+
+          // Validate readings have valid dates
+          const invalidReadings = sortedReadings.filter(r => !r.date || isNaN(new Date(r.date).getTime()));
+          if (invalidReadings.length > 0 && process.env.NODE_ENV === 'development') {
+            console.warn('Found readings with invalid dates:', invalidReadings);
           }
 
           const chartData: ChartDataPoint[] = [];
           
           // Handle first reading - show 0 consumption on the first day
-          const firstReading = readings[0];
+          const firstReading = sortedReadings[0];
           
           if (firstReading && firstReading.isFirstReading) {
             chartData.push({
@@ -698,19 +729,51 @@ export const useElectricityStore = create<ElectricityState>()(
             });
           }
           
-          // Calculate consumption for all other readings
-          for (let i = 1; i < readings.length; i++) {
-            const prevReading = readings[i - 1];
-            const currentReading = readings[i];
+          // Calculate consumption for all other readings (including estimated readings)
+          // This ensures every reading date gets a chart data point
+          for (let i = 1; i < sortedReadings.length; i++) {
+            const prevReading = sortedReadings[i - 1];
+            const currentReading = sortedReadings[i];
+            
+            // Validate readings have valid data
+            if (!prevReading || !currentReading) {
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('Skipping invalid reading pair:', { prevReading, currentReading });
+              }
+              continue;
+            }
+            
+            // Skip if current reading is marked as first reading (already handled above)
+            if (currentReading.isFirstReading) {
+              continue;
+            }
             
             const consumption = get().getConsumptionBetweenReadings(prevReading, currentReading);
-            const cost = get().calculateCost(consumption);
             
+            // Ensure consumption is non-negative (handle edge cases like meter resets)
+            // Negative consumption can occur if meter was reset or reading error
+            const validConsumption = Math.max(0, consumption);
+            
+            // Log warning in development if negative consumption detected (potential data issue)
+            if (consumption < 0 && process.env.NODE_ENV === 'development') {
+              console.warn(
+                `Negative consumption detected between readings:`,
+                `Previous: ${prevReading.date.toISOString().split('T')[0]} (${prevReading.reading} kWh),`,
+                `Current: ${currentReading.date.toISOString().split('T')[0]} (${currentReading.reading} kWh),`,
+                `Consumption: ${consumption.toFixed(2)} kWh.`,
+                `This may indicate a meter reset or data error.`
+              );
+            }
+            
+            const cost = get().calculateCost(validConsumption);
+            
+            // Create chart data point for this reading date
+            // This includes estimated readings, ensuring they appear in charts
             chartData.push({
               date: currentReading.date.toISOString().split('T')[0],
-              kwh: consumption,
+              kwh: validConsumption,
               cost: cost,
-              label: `${consumption.toFixed(2)} kWh`,
+              label: `${validConsumption.toFixed(2)} kWh`,
             });
           }
 

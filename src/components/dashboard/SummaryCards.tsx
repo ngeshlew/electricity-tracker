@@ -54,8 +54,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   value, 
   change, 
   changeValue,
-  description,
-  icon,
   trendIcon
 }) => {
   // Determine if change is positive/negative for color coding

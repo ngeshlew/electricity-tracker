@@ -6,7 +6,7 @@ import { UserMenu } from '../auth/UserMenu';
 import { AuthModal } from '../auth/AuthModal';
 import { NotificationBell } from '../notifications/NotificationBell';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Zap, Plus, LogIn } from "lucide-react";
+import { Plus, LogIn } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Header: FC = () => {

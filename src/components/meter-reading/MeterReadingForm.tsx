@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { toast } from "@/hooks/use-toast";
+import { useToastStore } from '../../store/useToastStore';
 import { cn } from '@/lib/utils';
 
 /**
@@ -57,6 +57,7 @@ interface MeterReadingFormProps {
 
 export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess }) => {
   const { addReading, isLoading, readings } = useElectricityStore();
+  const { showToast } = useToastStore();
   
   // State for first reading checkbox - only show if no first reading exists
   const [showFirstReadingCheckbox, setShowFirstReadingCheckbox] = useState(false);
@@ -93,18 +94,12 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       form.reset();
       onSuccess();
       
-      // Show success message
-      toast({
-        title: "Meter reading added successfully!",
-        description: `Reading of ${data.reading} kWh recorded for ${data.date.toLocaleDateString()}`,
-      });
+      // Show success toast
+      showToast('READING ADDED SUCCESSFULLY', 'success');
     } catch (error) {
       console.error('Failed to add meter reading:', error);
-      toast({
-        title: "Failed to add meter reading",
-        description: "Please try again.",
-        variant: "destructive",
-      });
+      // Show error toast
+      showToast('ERROR ADDING READING', 'error');
     }
   };
 

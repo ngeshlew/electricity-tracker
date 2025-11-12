@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { ToastContainer } from "@/components/ui/toast-container";
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { SettingsLayout } from './components/settings/SettingsLayout';
@@ -82,6 +83,7 @@ function App() {
         </Router>
         <PWAInstallPrompt />
         <Toaster />
+        <ToastContainer />
       </ErrorBoundary>
     </ThemeProvider>
   );

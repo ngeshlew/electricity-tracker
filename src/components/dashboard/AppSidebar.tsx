@@ -53,8 +53,17 @@ export const AppSidebar: React.FC = () => {
                   (item.url === '/analytics' && location.pathname === '/insights');
                 return (
                   <SidebarMenuItem key={item.name}>
-                    <SidebarMenuButton asChild isActive={isActive}>
+                    <SidebarMenuButton asChild isActive={isActive} className="relative">
                       <a href={item.url}>
+                        {isActive && (
+                          <span 
+                            className="absolute left-[-12px] text-lg"
+                            style={{ color: 'var(--color-accent-red)' }}
+                            aria-hidden="true"
+                          >
+                            •
+                          </span>
+                        )}
                         <item.icon className="h-5 w-5" />
                         <span>{item.name}</span>
                       </a>
@@ -68,19 +77,10 @@ export const AppSidebar: React.FC = () => {
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="flex items-center p-4 cursor-pointer hover:bg-sidebar-accent/50 transition-colors rounded-md">
-          <div className="flex-shrink-0">
-            <div className="h-8 w-8 bg-sidebar-accent flex items-center justify-center rounded-full">
-              <span className="text-xs font-medium text-sidebar-accent-foreground">U</span>
-            </div>
-          </div>
-          <div className="ml-3 flex-1 min-w-0">
-            <p className="text-sm font-medium text-sidebar-foreground truncate">User</p>
-            <p className="text-xs text-sidebar-muted-foreground truncate">user@example.com</p>
-          </div>
-          <svg className="h-4 w-4 text-sidebar-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+        <div className="p-4">
+          <p className="text-xs uppercase tracking-tight text-sidebar-muted-foreground truncate">
+            user@example.com
+          </p>
         </div>
       </SidebarFooter>
     </Sidebar>

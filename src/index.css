@@ -32,6 +32,47 @@
     --shadow-md: 0 4px 6px -1px oklch(0.554 0.041 257.417 / 0.1), 0 2px 4px -2px oklch(0.554 0.041 257.417 / 0.1);
     --shadow-xl: 0 20px 25px -5px oklch(0.000 0.000 0.000 / 0.1), 0 8px 10px -6px oklch(0.554 0.041 257.417 / 0.1);
     --shadow-2xl: 0 25px 50px -12px oklch(0.554 0.041 257.417 / 0.15);
+
+    /* Design System Variables - Timezone-inspired */
+    /* Typography */
+    --font-mono: "Geist Mono", "Geist Mono Fallback", SF Mono, Monaco, Inconsolata, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-base: 14px;
+    --text-lg: 18px;
+    --text-xl: 24px;
+    --text-2xl: 32px;
+    --text-3xl: 40px;
+    --letter-spacing-tight: 0.5px;
+    --letter-spacing-normal: 1px;
+    --letter-spacing-wide: 2px;
+
+    /* Spacing Scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    --space-3xl: 64px;
+
+    /* Borders */
+    --border-width: 1px;
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease-in-out;
+    --transition-base: 200ms ease-in-out;
+    --transition-slow: 300ms ease-in-out;
+
+    /* Accent Colors */
+    --color-accent-red: #FF0000;
+    --color-success: #00AA00;
+    --color-warning: #FF6600;
+    --color-error: #FF0000;
   }
 
   .dark {
@@ -67,6 +108,12 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Design System Variables - Dark Mode */
+    --color-accent-red: #FF4444;
+    --color-success: #44AA44;
+    --color-warning: #FF8844;
+    --color-error: #FF4444;
   }
 
   .mono {

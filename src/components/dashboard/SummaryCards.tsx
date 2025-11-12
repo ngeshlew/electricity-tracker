@@ -53,48 +53,46 @@ interface SummaryCardProps {
 const SummaryCard: React.FC<SummaryCardProps> = ({ 
   title, 
   value, 
-  change, 
   changeValue,
   trendIcon
 }) => {
   // Determine if change is positive/negative for color coding
+  // Use semantic colors: red for increases (cost/consumption), muted for stable
   const isPositive = changeValue.startsWith('+');
   const isNegative = changeValue.startsWith('-');
   const changeColor = isPositive 
-    ? 'text-red-600 dark:text-red-400' 
+    ? 'text-[var(--color-accent-red)]' 
     : isNegative 
-    ? 'text-green-600 dark:text-green-400' 
+    ? 'text-[var(--color-success)]' 
     : 'text-muted-foreground';
   
   return (
-    <Card className="bg-card text-card-foreground flex flex-col border shadow-sm hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="px-4 pt-4 pb-2">
+    <Card className="bg-card text-card-foreground flex flex-col border shadow-sm hover:shadow-md transition-shadow duration-200" role="region" aria-label={`${title} statistics`}>
+      <CardHeader className="px-4 pt-4 pb-4 text-center">
         {/* Label - Uppercase, small, muted */}
-        <div className="text-muted-foreground text-xs uppercase tracking-wider mb-3">
+        <div className="text-muted-foreground text-xs uppercase tracking-wider mb-6" aria-label={`Metric: ${title}`}>
           {title.replace('Total ', '').replace('Daily ', '')}
         </div>
         
-        {/* Primary Value - Large, prominent */}
-        <div className="text-3xl font-semibold tabular-nums mb-2">
+        {/* Primary Value - Largest element (40px) */}
+        <div className="text-4xl font-normal tabular-nums mb-6" style={{ fontSize: 'var(--text-3xl)', lineHeight: '1' }} aria-label={`Current value: ${value}`}>
           {value}
         </div>
         
-        {/* Secondary: Percentage change */}
-        <div className={`flex items-center gap-1.5 text-sm font-medium ${changeColor}`}>
-          {trendIcon}
+        {/* Secondary: Percentage change (16-18px) */}
+        <div className={`flex items-center justify-center gap-1.5 text-base font-medium mb-4 ${changeColor}`} aria-label={`Change: ${changeValue} compared to last month`}>
+          <span aria-hidden="true">{trendIcon}</span>
           <span>{changeValue}</span>
-          <span className="text-muted-foreground font-normal text-xs">
-            vs last month
-          </span>
+        </div>
+        
+        {/* Dashed divider */}
+        <div className="border-t border-dashed border-border mb-4 mx-[-16px]" aria-hidden="true"></div>
+        
+        {/* Context label - VS LAST MONTH (11px) */}
+        <div className="text-xs uppercase tracking-normal text-muted-foreground" aria-label="Comparison period">
+          VS LAST MONTH
         </div>
       </CardHeader>
-      
-      <CardContent className="px-4 pb-4 pt-0">
-        {/* Trend description - subtle */}
-        <div className="text-xs text-muted-foreground">
-          {change}
-        </div>
-      </CardContent>
     </Card>
   );
 };
@@ -256,6 +254,14 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   
   const averageTrend = getTrendFromChange(averageDailyChange);
 
+  // Calculate average consumption for insights
+  const allTimeAverage = chartData.length > 0 
+    ? chartData.reduce((sum, point) => sum + point.kwh, 0) / chartData.length 
+    : 0;
+  const comparisonToAverage = allTimeAverage > 0 
+    ? ((currentAverageDaily - allTimeAverage) / allTimeAverage) * 100 
+    : 0;
+
   // Determine trend icons based on change direction
   const getTrendIcon = (change: number) => {
     if (change > 0) return <TrendingUp className="h-4 w-4" />;
@@ -303,19 +309,33 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   ];
 
   return (
-    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card, index) => (
-        <SummaryCard
-          key={index}
-          title={card.title}
-          value={card.value}
-          change={card.change}
-          changeValue={card.changeValue}
-          description={card.description}
-          icon={card.icon}
-          trendIcon={card.trendIcon}
-        />
-      ))}
+    <div className="space-y-4">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        {cards.map((card, index) => (
+          <SummaryCard
+            key={index}
+            title={card.title}
+            value={card.value}
+            change={card.change}
+            changeValue={card.changeValue}
+            description={card.description}
+            icon={card.icon}
+            trendIcon={card.trendIcon}
+          />
+        ))}
+      </div>
+      
+      {/* Insights Section */}
+      {allTimeAverage > 0 && Math.abs(comparisonToAverage) > 1 && (
+        <div className="text-center py-3 px-4 border-t border-dashed border-border">
+          <p className="text-xs uppercase tracking-normal text-muted-foreground font-mono">
+            {comparisonToAverage < 0 
+              ? `YOU'RE USING ${Math.abs(comparisonToAverage).toFixed(0)}% LESS THAN AVERAGE`
+              : `YOU'RE USING ${comparisonToAverage.toFixed(0)}% MORE THAN AVERAGE`
+            }
+          </p>
+        </div>
+      )}
     </div>
   );
 };

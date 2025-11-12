@@ -18,12 +18,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, Pencil, Trash2, X, MoreHorizontal, Zap, Search, Filter, Plus } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Eye, Pencil, Trash2, X, MoreHorizontal, Zap, Search, Filter, Plus, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
+import { exportToCSV, exportToJSON } from '../../utils/exportData';
 
 interface MeterReadingsLogProps {
   onEdit?: (reading: MeterReading) => void;
@@ -164,6 +171,36 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 
   const sortedReadings = [...filteredReadings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+  // Group readings by month
+  const groupReadingsByMonth = (readings: MeterReading[]) => {
+    const groups: { [key: string]: MeterReading[] } = {};
+    
+    readings.forEach(reading => {
+      const date = new Date(reading.date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!groups[monthKey]) {
+        groups[monthKey] = [];
+      }
+      groups[monthKey].push(reading);
+    });
+    
+    // Convert to array and sort by date (newest first)
+    return Object.entries(groups)
+      .map(([key, readings]) => {
+        const date = new Date(readings[0].date);
+        const monthLabel = date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }).toUpperCase();
+        return {
+          key,
+          label: monthLabel,
+          readings: readings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        };
+      })
+      .sort((a, b) => b.key.localeCompare(a.key)); // Sort months newest first
+  };
+
+  const monthGroups = groupReadingsByMonth(sortedReadings);
+
   if (!isLoading && readings.length === 0) {
     return (
       <Card>
@@ -253,9 +290,35 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   }
 
   return (
-    <Card>
+    <Card role="region" aria-label="Meter reading history">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-4">Reading History</CardTitle>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>
+          
+          {/* Export Buttons */}
+          <div className="flex gap-2" role="group" aria-label="Export options">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => exportToCSV(sortedReadings)}
+              className="h-9 text-xs uppercase tracking-normal font-mono"
+              aria-label="Export readings as CSV"
+            >
+              <Download className="h-3 w-3 mr-2" aria-hidden="true" />
+              CSV
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => exportToJSON(sortedReadings)}
+              className="h-9 text-xs uppercase tracking-normal font-mono"
+              aria-label="Export readings as JSON"
+            >
+              <Download className="h-3 w-3 mr-2" aria-hidden="true" />
+              JSON
+            </Button>
+          </div>
+        </div>
         
         {/* Search and Filter Controls */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
@@ -291,86 +354,103 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         {/* Mobile: Horizontal scroll wrapper */}
         <div className="overflow-x-auto -mx-6 sm:mx-0">
           <div className="inline-block min-w-full align-middle px-6 sm:px-0">
-            <Table>
-          <TableCaption className="text-xs text-muted-foreground">
-            {sortedReadings.length} of {readings.length} {readings.length === 1 ? 'reading' : 'readings'}
-            {searchQuery && ` matching "${searchQuery}"`}
-          </TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Reading</TableHead>
-              <TableHead>Consumption</TableHead>
-              <TableHead>Cost</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedReadings.map((reading, index) => {
-              // For consumption calculation, we need the next reading (chronologically)
-              // Since we're sorted in descending order, the next reading is at index + 1
-              const nextReading = index < sortedReadings.length - 1 ? sortedReadings[index + 1] : undefined;
-              const consumption = calculateConsumption(reading, nextReading);
-              const cost = calculateCost(consumption);
-              
-              return (
-                <TableRow key={reading.id}>
-                  <TableCell>{formatDate(reading.date)}</TableCell>
-                  <TableCell className="">{Number(reading.reading).toFixed(2)} kWh</TableCell>
-                  <TableCell>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
-                  <TableCell>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
-                  <TableCell>
-                    <span className="text-xs uppercase tracking-wide">
-                      {reading.type === "MANUAL" ? (
-                        <span className="inline-flex items-center gap-1">
-                          <span className="inline-block w-2 h-2 rounded-full bg-foreground"></span>
-                          Manual
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-muted-foreground">
-                          <span className="inline-block w-2 h-2 rounded-full border border-current"></span>
-                          Estimated
-                        </span>
-                      )}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => setSelectedReading(reading)}>
-                          <Eye className="mr-2 h-4 w-4" />
-                          View
-                        </DropdownMenuItem>
-                        {onEdit && (
-                          <DropdownMenuItem onClick={() => onEdit(reading)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
+            <TableCaption className="text-xs text-muted-foreground mb-4">
+              {sortedReadings.length} of {readings.length} {readings.length === 1 ? 'reading' : 'readings'}
+              {searchQuery && ` matching "${searchQuery}"`}
+            </TableCaption>
+            
+            {monthGroups.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                No readings found
+              </div>
+            ) : (
+              <Accordion type="multiple" defaultValue={monthGroups.map(g => g.key)} className="w-full">
+                {monthGroups.map((group, groupIndex) => (
+                  <AccordionItem key={group.key} value={group.key} className="border-none">
+                    <AccordionTrigger className="py-4 hover:no-underline">
+                      <h3 className="text-base uppercase tracking-wide font-mono">{group.label}</h3>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-4">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Date</TableHead>
+                              <TableHead>Reading</TableHead>
+                              <TableHead>Consumption</TableHead>
+                              <TableHead>Cost</TableHead>
+                              <TableHead>Status</TableHead>
+                              <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {group.readings.map((reading, index) => {
+                              // For consumption calculation, we need the next reading (chronologically)
+                              // Since we're sorted in descending order, the next reading is at index + 1
+                              const nextReading = index < group.readings.length - 1 ? group.readings[index + 1] : undefined;
+                              const consumption = calculateConsumption(reading, nextReading);
+                              const cost = calculateCost(consumption);
+                              
+                              return (
+                                <TableRow key={reading.id}>
+                                  <TableCell>{formatDate(reading.date)}</TableCell>
+                                  <TableCell className="">{Number(reading.reading).toFixed(2)} kWh</TableCell>
+                                  <TableCell>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
+                                  <TableCell>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
+                                  <TableCell>
+                                    <span className="text-xs uppercase tracking-normal font-mono">
+                                      {reading.type === "MANUAL" ? (
+                                        <span className="text-foreground">■ MANUAL</span>
+                                      ) : (
+                                        <span className="text-muted-foreground">○ ESTIMATED</span>
+                                      )}
+                                    </span>
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="h-8 w-8 p-0">
+                                          <span className="sr-only">Open menu</span>
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuItem onClick={() => setSelectedReading(reading)}>
+                                          <Eye className="mr-2 h-4 w-4" />
+                                          View
+                                        </DropdownMenuItem>
+                                        {onEdit && (
+                                          <DropdownMenuItem onClick={() => onEdit(reading)}>
+                                            <Pencil className="mr-2 h-4 w-4" />
+                                            Edit
+                                          </DropdownMenuItem>
+                                        )}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem 
+                                          className="text-destructive"
+                                          onClick={() => handleDelete(reading.id)}
+                                        >
+                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          Delete
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                        {groupIndex < monthGroups.length - 1 && (
+                          <div className="border-t border-dashed border-border my-6"></div>
                         )}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          className="text-destructive"
-                          onClick={() => handleDelete(reading.id)}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </div>
         </div>
         

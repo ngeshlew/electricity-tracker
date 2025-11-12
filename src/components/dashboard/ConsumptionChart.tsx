@@ -1,8 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartSkeleton } from "@/components/ui/skeleton";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { formatDateUK, addDays } from '../../utils/dateFormatters';
 
@@ -117,82 +116,84 @@ export const ConsumptionChart: React.FC = () => {
   // Transform chart data for Recharts with filled gaps
   const chartDataFormatted = fillMissingDates(chartData);
 
+  // Determine time period context for subtitle
+  const getTimePeriodContext = () => {
+    if (chartDataFormatted.length === 0) return 'NO DATA';
+    const firstDate = new Date(chartDataFormatted[0].date);
+    const lastDate = new Date(chartDataFormatted[chartDataFormatted.length - 1].date);
+    const daysDiff = Math.ceil((lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysDiff <= 7) return 'LAST 7 DAYS';
+    if (daysDiff <= 30) return 'LAST 30 DAYS';
+    return `${formatDateUK(firstDate, 'short')} - ${formatDateUK(lastDate, 'short')}`;
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold uppercase tracking-wide">Weekly Consumption</CardTitle>
+    <Card role="region" aria-label="Consumption chart">
+      <CardHeader className="text-center">
+        <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-2">Weekly Consumption</CardTitle>
+        <p className="text-xs uppercase tracking-normal text-muted-foreground" aria-label={`Time period: ${getTimePeriodContext()}`}>
+          {getTimePeriodContext()}
+        </p>
       </CardHeader>
       <CardContent className="pl-2">
-        <Tabs defaultValue="area" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="area">Area Chart</TabsTrigger>
-            <TabsTrigger value="bar">Bar Chart</TabsTrigger>
-          </TabsList>
-          <TabsContent value="area">
-            <ResponsiveContainer width="100%" height={350}>
-              <AreaChart data={chartDataFormatted}>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--border))" opacity={0.3} />
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
-                  stroke="oklch(var(--muted-foreground))"
-                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
-                />
-                <YAxis 
-                  stroke="oklch(var(--muted-foreground))"
-                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
-                  label={{ value: 'kWh', angle: -90, position: 'insideLeft', fill: 'oklch(var(--muted-foreground))' }}
-                />
-                <Tooltip 
-                  formatter={(value: number) => [`${value.toFixed(2)} kWh`, 'Consumption']}
-                  labelFormatter={(value) => formatDateUK(new Date(value), 'long')}
-                  contentStyle={{ 
-                    backgroundColor: 'oklch(var(--card))',
-                    border: '1px solid oklch(var(--border))',
-                    borderRadius: '4px'
-                  }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="consumption" 
-                  stroke="oklch(var(--primary))" 
-                  fill="none"
-                  strokeWidth={3}
-                  dot={{ fill: "oklch(var(--primary))", r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </TabsContent>
-          <TabsContent value="bar">
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={chartDataFormatted}>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--border))" opacity={0.3} />
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
-                  stroke="oklch(var(--muted-foreground))"
-                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
-                />
-                <YAxis 
-                  stroke="oklch(var(--muted-foreground))"
-                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
-                  label={{ value: 'kWh', angle: -90, position: 'insideLeft', fill: 'oklch(var(--muted-foreground))' }}
-                />
-                <Tooltip 
-                  formatter={(value: number) => [`${value.toFixed(2)} kWh`, 'Consumption']}
-                  labelFormatter={(value) => formatDateUK(new Date(value), 'long')}
-                  contentStyle={{ 
-                    backgroundColor: 'oklch(var(--card))',
-                    border: '1px solid oklch(var(--border))',
-                    borderRadius: '4px'
-                  }}
-                />
-                <Bar dataKey="consumption" fill="oklch(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </TabsContent>
-        </Tabs>
+        <ResponsiveContainer width="100%" height={350} aria-label="Electricity consumption over time">
+          <AreaChart data={chartDataFormatted} aria-label="Consumption chart">
+            <CartesianGrid strokeDasharray="4 4" stroke="oklch(var(--border))" opacity={0.5} />
+            <XAxis 
+              dataKey="date" 
+              tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
+              stroke="oklch(var(--muted-foreground))"
+              tick={{ 
+                fill: 'oklch(var(--muted-foreground))', 
+                fontSize: 11,
+                fontFamily: 'var(--font-mono)'
+              }}
+            />
+            <YAxis 
+              stroke="oklch(var(--muted-foreground))"
+              tick={{ 
+                fill: 'oklch(var(--muted-foreground))', 
+                fontSize: 11,
+                fontFamily: 'var(--font-mono)'
+              }}
+              label={{ 
+                value: 'kWh', 
+                angle: -90, 
+                position: 'insideLeft', 
+                fill: 'oklch(var(--muted-foreground))',
+                style: { fontFamily: 'var(--font-mono)', fontSize: 11 }
+              }}
+            />
+            <Tooltip 
+              formatter={(value: number) => [`${value.toFixed(2)} kWh`, 'Consumption']}
+              labelFormatter={(value) => formatDateUK(new Date(value), 'long')}
+              contentStyle={{ 
+                backgroundColor: 'oklch(var(--card))',
+                border: '1px solid oklch(var(--border))',
+                borderRadius: '8px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '13px',
+                padding: '8px 12px'
+              }}
+              labelStyle={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}
+            />
+            <Area 
+              type="monotone" 
+              dataKey="consumption" 
+              stroke="oklch(var(--foreground))" 
+              fill="none"
+              strokeWidth={2}
+              dot={{ fill: "oklch(var(--foreground))", r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );

@@ -11,7 +11,6 @@ import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { MobileNavigation } from '../mobile/MobileNavigation';
-import { MobileDashboard } from '../mobile/MobileDashboard';
 import { AIChatbot } from '../ai/AIChatbot';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -29,75 +28,75 @@ export const Dashboard: FC = () => {
       {/* Mobile Navigation */}
       <MobileNavigation />
       
-      {/* Desktop Layout */}
-      <div className="hidden lg:block">
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="flex-1">
-            <Header />
-            <div className="p-6">
-            <div className="mx-auto max-w-7xl">
-          {/* Page Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-semibold tracking-tight uppercase">Dashboard</h1>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  Track your electricity usage
-                </p>
-              </div>
-              <MonthSelector
-                currentMonth={currentMonth}
-                onMonthChange={setCurrentMonth}
-              />
-            </div>
+      {/* Responsive Layout */}
+      <SidebarProvider>
+        <div className="lg:flex">
+          {/* Sidebar - Desktop only */}
+          <div className="hidden lg:block">
+            <AppSidebar />
           </div>
+          
+          <main className="flex-1 lg:ml-0">
+            {/* Header - Desktop only */}
+            <div className="hidden lg:block">
+              <Header />
+            </div>
+            
+            {/* Dashboard Content - Responsive */}
+            <div className="p-4 sm:p-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
+              <div className="mx-auto max-w-7xl">
+                {/* Page Header */}
+                <div className="mb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h1 className="text-2xl font-semibold tracking-tight uppercase">Dashboard</h1>
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        Track your electricity usage
+                      </p>
+                    </div>
+                    <MonthSelector
+                      currentMonth={currentMonth}
+                      onMonthChange={setCurrentMonth}
+                    />
+                  </div>
+                </div>
 
                 {/* Key Metrics Cards */}
                 <div className="mb-6">
                   <SummaryCards currentMonth={currentMonth} />
                 </div>
 
-          {/* Main Content Grid */}
-          <div className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-3">
-              <ConsumptionBreakdown
-                currentMonth={currentMonth}
-                viewMode="kwh"
-              />
-              <MonthlyOverview
-                currentMonth={currentMonth}
-              />
+                {/* Main Content Grid */}
+                <div className="space-y-6">
+                  <div className="grid gap-6 md:grid-cols-3">
+                    <ConsumptionBreakdown
+                      currentMonth={currentMonth}
+                      viewMode="kwh"
+                    />
+                    <MonthlyOverview
+                      currentMonth={currentMonth}
+                    />
+                  </div>
+                  
+                  <ConsumptionChart />
+                </div>
+
+                {/* Recent Readings */}
+                <div className="mt-8">
+                  <MeterReadingsLog />
+                </div>
+              </div>
             </div>
-            
-            <ConsumptionChart />
-          </div>
 
-          {/* Recent Readings */}
-          <div className="mt-8">
-            <MeterReadingsLog />
-          </div>
+            <MeterReadingPanel
+              isOpen={isMeterPanelOpen}
+              onClose={() => toggleMeterPanel(false)}
+            />
+            <UserGuide />
+            <AIChatbot />
+          </main>
         </div>
-        </div>
-
-        <MeterReadingPanel
-          isOpen={isMeterPanelOpen}
-          onClose={() => toggleMeterPanel(false)}
-        />
-          <UserGuide />
-          <AIChatbot />
-        </main>
       </SidebarProvider>
-      </div>
-
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <MobileDashboard />
-        <MeterReadingPanel
-          isOpen={isMeterPanelOpen}
-          onClose={() => toggleMeterPanel(false)}
-        />
-      </div>
     </>
   );
 };

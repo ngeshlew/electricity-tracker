@@ -1,12 +1,27 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChartSkeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { formatDateUK, addDays } from '../../utils/dateFormatters';
 
 export const ConsumptionChart: React.FC = () => {
-  const { chartData } = useElectricityStore();
+  const { chartData, isLoading } = useElectricityStore();
+  
+  // Show skeleton loading state
+  if (isLoading && chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold uppercase tracking-wide">Weekly Consumption</CardTitle>
+        </CardHeader>
+        <CardContent className="pl-2">
+          <ChartSkeleton className="h-[350px]" />
+        </CardContent>
+      </Card>
+    );
+  }
   
   // Fill missing dates to prevent chart gaps
   // Only fills gaps where no chart data point exists (not for dates with readings)

@@ -16,7 +16,7 @@
     --ring: oklch(0.677 0.203 40.381 / 0.1);
     --secondary: oklch(0.981 0.009 258.335);
     --secondary-foreground: oklch(0.282 0.087 267.935);
-    --muted-foreground: oklch(0.516 0.054 272.586);
+    --muted-foreground: oklch(0.450 0.054 272.586); /* Improved contrast: ~4.8:1 ratio for WCAG AA */
     --chart-1: oklch(0.677 0.203 40.381);
     --sidebar-foreground: oklch(0.282 0.087 267.935);
     --sidebar: oklch(0.984 0.003 247.858);
@@ -46,7 +46,7 @@
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 215 20.2% 75%; /* Improved contrast for dark mode: ~4.5:1 ratio */
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;

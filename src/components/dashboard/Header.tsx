@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ModeToggle } from "@/components/mode-toggle";
@@ -13,6 +13,30 @@ export const Header: FC = () => {
   const { toggleMeterPanel } = useElectricityStore();
   const { isAuthenticated } = useAuthStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Keyboard shortcut: 'A' to open Add Reading panel
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger when typing in input fields
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
+      // 'A' key to open Add Reading panel
+      if (e.key.toLowerCase() === 'a' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        toggleMeterPanel(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [toggleMeterPanel]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

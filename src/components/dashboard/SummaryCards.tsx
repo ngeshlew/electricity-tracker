@@ -4,6 +4,7 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Activity, TrendingUp, TrendingDown } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -116,7 +117,27 @@ interface SummaryCardsProps {
  * Custom styling: Lewis-Linear design system
  */
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
-  const { chartData, timeSeriesData } = useElectricityStore();
+  const { chartData, timeSeriesData, isLoading } = useElectricityStore();
+  
+  // Show skeleton loading state
+  if (isLoading && chartData.length === 0) {
+    return (
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader className="px-4 pt-4 pb-2">
+              <Skeleton className="h-3 w-20 mb-3" />
+              <Skeleton className="h-8 w-32 mb-2" />
+              <Skeleton className="h-4 w-24" />
+            </CardHeader>
+            <CardContent className="px-4 pb-4 pt-0">
+              <Skeleton className="h-3 w-40" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
   
   
   // Use monthly as default time period

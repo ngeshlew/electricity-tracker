@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, Pencil, Trash2, X, MoreHorizontal, Zap } from "lucide-react";
+import { Eye, Pencil, Trash2, X, MoreHorizontal, Zap, Search, Filter, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
 
@@ -33,6 +36,32 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 }) => {
   const { readings, isLoading, deleteReading, removeEstimatedReading } = useElectricityStore();
   const [selectedReading, setSelectedReading] = useState<MeterReading | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<'ALL' | 'MANUAL' | 'ESTIMATED'>('ALL');
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Keyboard shortcut: '/' to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger when typing in input fields (except to allow '/' to focus search)
+      const target = e.target as HTMLElement;
+      if (
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') &&
+        target !== searchInputRef.current
+      ) {
+        return;
+      }
+
+      // '/' key to focus search
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const formatDate = (date: Date | string) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -88,49 +117,181 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Meter Readings Log</CardTitle>
+          <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-4">Reading History</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Skeleton className="h-9 flex-1" />
+            <Skeleton className="h-9 w-full sm:w-[180px]" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-8">
-            <div className="h-8 w-8 border-2 border-primary border-t-transparent  animate-spin" />
-            <span className="ml-2 text-muted-foreground">Loading readings...</span>
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-4 py-3 border-b">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-20 ml-auto" />
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  if (readings.length === 0) {
+  // Filter and search readings
+  const filteredReadings = readings.filter(reading => {
+    // Filter by type
+    if (filterType !== 'ALL' && reading.type !== filterType) {
+      return false;
+    }
+    
+    // Search by date, reading value, or notes
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const dateStr = formatDate(reading.date).toLowerCase();
+      const readingStr = reading.reading.toString();
+      const notesStr = (reading.notes || '').toLowerCase();
+      
+      return dateStr.includes(query) || 
+             readingStr.includes(query) || 
+             notesStr.includes(query);
+    }
+    
+    return true;
+  });
+
+  const sortedReadings = [...filteredReadings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  if (!isLoading && readings.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Meter Readings Log</CardTitle>
+          <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            <Zap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">No meter readings found</p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Add your first reading to start tracking your electricity consumption
+          <div className="text-center py-12">
+            <Zap className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+            <h3 className="text-lg font-semibold mb-2">No readings yet</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+              Start tracking your electricity usage by adding your first meter reading. 
+              Readings help you monitor consumption and identify savings opportunities.
+            </p>
+            <Button 
+              onClick={() => {
+                // Trigger Add Reading panel via store
+                const { toggleMeterPanel } = useElectricityStore.getState();
+                toggleMeterPanel(true);
+              }}
+              size="lg"
+              className="min-w-[200px]"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Your First Reading
+            </Button>
+            <p className="text-xs text-muted-foreground mt-4">
+              Press <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">A</kbd> to add a reading
             </p>
           </div>
         </CardContent>
       </Card>
     );
   }
-
-  const sortedReadings = [...readings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  // Empty search results
+  if (!isLoading && readings.length > 0 && sortedReadings.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-4">Reading History</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search by date, reading, or notes... (Press / to focus)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Select value={filterType} onValueChange={(value: 'ALL' | 'MANUAL' | 'ESTIMATED') => setFilterType(value)}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Readings</SelectItem>
+                <SelectItem value="MANUAL">Manual Only</SelectItem>
+                <SelectItem value="ESTIMATED">Estimated Only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-12">
+            <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+            <h3 className="text-lg font-semibold mb-2">No readings found</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              No readings match your search "{searchQuery}"{filterType !== 'ALL' && ` and filter "${filterType}"`}
+            </p>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                setSearchQuery('');
+                setFilterType('ALL');
+              }}
+            >
+              Clear filters
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>
+        <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-4">Reading History</CardTitle>
+        
+        {/* Search and Filter Controls */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search by date, reading, or notes... (Press / to focus)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          
+          {/* Type Filter */}
+          <Select value={filterType} onValueChange={(value: 'ALL' | 'MANUAL' | 'ESTIMATED') => setFilterType(value)}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filter by type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Readings</SelectItem>
+              <SelectItem value="MANUAL">Manual Only</SelectItem>
+              <SelectItem value="ESTIMATED">Estimated Only</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       
       <CardContent>
         <Table>
           <TableCaption className="text-xs text-muted-foreground">
-            {readings.length} {readings.length === 1 ? 'reading' : 'readings'} total
+            {sortedReadings.length} of {readings.length} {readings.length === 1 ? 'reading' : 'readings'}
+            {searchQuery && ` matching "${searchQuery}"`}
           </TableCaption>
           <TableHeader>
             <TableRow>

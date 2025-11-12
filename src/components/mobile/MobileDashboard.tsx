@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 // import { Badge } from "@/components/ui/badge";
 import { 
-  Plus, 
   Zap, 
   TrendingUp, 
   TrendingDown,
@@ -22,8 +21,7 @@ export const MobileDashboard: React.FC = () => {
     readings, 
     chartData, 
     isLoading, 
-    error,
-    toggleMeterPanel
+    error
   } = useElectricityStore();
   const { getMonthlyTargets } = useTariffStore();
   
@@ -88,7 +86,7 @@ export const MobileDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background p-4 pt-20">
+      <div className="min-h-screen bg-background p-4 pt-14 pb-20">
         <div className="space-y-4">
           <div className="h-32 bg-muted animate-pulse rounded-lg" />
           <div className="h-64 bg-muted animate-pulse rounded-lg" />
@@ -99,27 +97,10 @@ export const MobileDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Mobile Header */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold">Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Electricity consumption overview</p>
-          </div>
-          
-          <Button
-            onClick={() => toggleMeterPanel(true)}
-            size="sm"
-            className="h-9"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Reading
-          </Button>
-        </div>
-
-        {/* Period Selector */}
-        <div className="flex items-center gap-2 mt-3">
+    <div className="min-h-screen bg-background pt-14 pb-20">
+      {/* Period Selector - Sticky below MobileNavigation */}
+      <div className="sticky top-14 z-30 bg-background/95 backdrop-blur-sm border-b px-4 py-3">
+        <div className="flex items-center gap-2">
           {(['7d', '30d', '90d'] as const).map((period) => (
             <Button
               key={period}
@@ -135,7 +116,7 @@ export const MobileDashboard: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="p-4 space-y-6 pb-20">
+      <div className="p-4 space-y-6">
         {/* Quick Stats */}
         {analytics && (
           <div className="grid grid-cols-2 gap-3">

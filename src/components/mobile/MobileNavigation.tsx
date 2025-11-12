@@ -11,7 +11,9 @@ import {
   Bars3Icon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
+import { Plus } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useElectricityStore } from '../../store/useElectricityStore';
 
 interface MobileNavItem {
   name: string;
@@ -33,6 +35,10 @@ export const MobileNavigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { toggleMeterPanel } = useElectricityStore();
+  
+  // Check if we're on Dashboard page
+  const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
 
   // Update current page based on location
   const updatedNavigationItems = navigationItems.map(item => ({
@@ -74,18 +80,33 @@ export const MobileNavigation: React.FC = () => {
             <span className="text-lg font-semibold">Electricity Tracker</span>
           </div>
 
-          {/* Mobile Menu Button */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            {/* Add Reading Button - Only on Dashboard */}
+            {isDashboard && (
               <Button
-                variant="ghost"
+                onClick={() => toggleMeterPanel(true)}
                 size="sm"
-                className="h-9 w-9 p-0"
-                aria-label="Open mobile menu"
+                className="h-9 px-3"
+                aria-label="Add meter reading"
               >
-                <Bars3Icon className="h-5 w-5" />
+                <Plus className="h-4 w-4 mr-1" />
+                <span className="hidden xs:inline">Add</span>
               </Button>
-            </SheetTrigger>
+            )}
+            
+            {/* Mobile Menu Button */}
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 w-9 p-0"
+                  aria-label="Open mobile menu"
+                >
+                  <Bars3Icon className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
             <SheetContent side="right" className="w-80 p-0">
               <div className="flex h-full flex-col">
                 {/* Mobile Menu Header */}
@@ -148,6 +169,7 @@ export const MobileNavigation: React.FC = () => {
               </div>
             </SheetContent>
           </Sheet>
+          </div>
         </div>
       </div>
 

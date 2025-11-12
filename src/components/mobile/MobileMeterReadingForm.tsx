@@ -112,7 +112,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
         >
           ×
         </Button>
-        <h2 className="text-lg font-semibold">Add Meter Reading</h2>
+        <h2 className="text-lg font-normal">Add Meter Reading</h2>
         <div className="w-9" /> {/* Spacer */}
       </div>
 
@@ -150,8 +150,8 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
               {formData.reading && !isNaN(Number(formData.reading)) && (
                 <div className="rounded-lg bg-muted p-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Estimated Cost</span>
-                    <span className="text-lg font-bold">£{estimatedCost.toFixed(2)}</span>
+                    <span className="text-sm font-normal">Estimated Cost</span>
+                    <span className="text-lg font-normal">£{estimatedCost.toFixed(2)}</span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
                     Based on current tariff: {currentTariff.unitRate}p/kWh
@@ -277,7 +277,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
               <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3">
                 <div className="flex items-center gap-2 text-destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <span className="text-sm font-medium">Error</span>
+                  <span className="text-sm font-normal">Error</span>
                 </div>
                 <p className="text-sm text-destructive mt-1">{error}</p>
               </div>

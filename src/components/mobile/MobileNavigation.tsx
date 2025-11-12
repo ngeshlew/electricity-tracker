@@ -123,7 +123,7 @@ export const MobileNavigation: React.FC = () => {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <BoltIcon className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-semibold">Electricity Tracker</span>
+            <span className="text-lg font-normal">Electricity Tracker</span>
           </div>
 
           {/* Action Buttons */}
@@ -169,7 +169,7 @@ export const MobileNavigation: React.FC = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{user.name}</p>
+                        <p className="text-sm font-normal truncate">{user.name}</p>
                         <p className="text-xs text-muted-foreground truncate">
                           {user.email}
                         </p>
@@ -183,7 +183,7 @@ export const MobileNavigation: React.FC = () => {
                         <BoltIcon className="h-5 w-5 text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium">Electricity Tracker</p>
+                        <p className="text-sm font-normal">Electricity Tracker</p>
                         <p className="text-xs text-muted-foreground">Guest</p>
                       </div>
                     </div>
@@ -196,7 +196,7 @@ export const MobileNavigation: React.FC = () => {
                     {isAuthenticated && (
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Notifications</p>
+                          <p className="text-xs font-normal text-muted-foreground uppercase tracking-wider">Notifications</p>
                           {unreadCount > 0 && (
                             <Badge variant="secondary" className="text-xs">
                               {unreadCount} unread
@@ -229,7 +229,7 @@ export const MobileNavigation: React.FC = () => {
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-start justify-between gap-2">
                                         <div className="flex-1">
-                                          <h4 className={`text-sm font-medium ${
+                                          <h4 className={`text-sm font-normal ${
                                             notification.read ? 'text-muted-foreground' : 'text-foreground'
                                           }`}>
                                             {notification.title}
@@ -393,7 +393,7 @@ export const MobileNavigation: React.FC = () => {
                 key={item.name}
                 href={item.href}
                 className={`
-                  flex flex-col items-center justify-center space-y-1 px-2 py-2 text-xs font-medium
+                  flex flex-col items-center justify-center space-y-1 px-2 py-2 text-xs font-normal
                   transition-colors touch-manipulation
                   ${item.current
                     ? 'text-primary'

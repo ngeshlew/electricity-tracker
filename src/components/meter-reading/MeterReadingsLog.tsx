@@ -355,8 +355,8 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
       
       <CardContent>
         {/* Mobile: Horizontal scroll wrapper */}
-        <div className="overflow-x-auto -mx-6 sm:mx-0">
-          <div className="inline-block min-w-full align-middle px-6 sm:px-0">
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full align-middle">
             <TableCaption className="text-xs text-muted-foreground mb-4">
               {sortedReadings.length} of {readings.length} {readings.length === 1 ? 'reading' : 'readings'}
               {searchQuery && ` matching "${searchQuery}"`}

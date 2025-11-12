@@ -258,25 +258,25 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-4">Reading History</CardTitle>
         
         {/* Search and Filter Controls */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               ref={searchInputRef}
               type="text"
-              placeholder="Search by date, reading, or notes... (Press / to focus)"
+              placeholder="Search... (Press /)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
+              className="pl-9 h-10 sm:h-9 text-sm"
             />
           </div>
           
           {/* Type Filter */}
           <Select value={filterType} onValueChange={(value: 'ALL' | 'MANUAL' | 'ESTIMATED') => setFilterType(value)}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px] h-10 sm:h-9">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filter by type" />
+              <SelectValue placeholder="Filter" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">All Readings</SelectItem>
@@ -288,7 +288,10 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
       </CardHeader>
       
       <CardContent>
-        <Table>
+        {/* Mobile: Horizontal scroll wrapper */}
+        <div className="overflow-x-auto -mx-6 sm:mx-0">
+          <div className="inline-block min-w-full align-middle px-6 sm:px-0">
+            <Table>
           <TableCaption className="text-xs text-muted-foreground">
             {sortedReadings.length} of {readings.length} {readings.length === 1 ? 'reading' : 'readings'}
             {searchQuery && ` matching "${searchQuery}"`}
@@ -368,6 +371,8 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
             })}
           </TableBody>
         </Table>
+          </div>
+        </div>
         
         {/* Reading Details Modal */}
         {selectedReading && (

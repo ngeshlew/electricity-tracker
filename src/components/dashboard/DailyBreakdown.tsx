@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TrendingUp } from 'lucide-react';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachDayOfInterval, format } from 'date-fns';
 
@@ -128,7 +129,7 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
         <CardContent>
           <div className="flex items-center justify-center h-64 text-muted-foreground">
             <div className="text-center">
-              <div className="text-3xl mb-2">📈</div>
+              <TrendingUp className="h-12 w-12 mx-auto mb-2 opacity-50" />
               <p>No data available for this month</p>
             </div>
           </div>

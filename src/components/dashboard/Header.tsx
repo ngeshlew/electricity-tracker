@@ -40,29 +40,37 @@ export const Header: FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex h-16 items-center justify-between">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6">
+        <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
           {/* Sidebar Trigger */}
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             <SidebarTrigger />
           </div>
 
           {/* Navigation and Actions */}
-          <div className="flex items-center space-x-3">
-            <ModeToggle />
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-1 justify-end">
+            {/* Mode Toggle - Hidden on very small screens */}
+            <div className="hidden sm:block">
+              <ModeToggle />
+            </div>
             
-            {/* Primary Action: Add Reading - Made 2x more prominent */}
+            {/* Primary Action: Add Reading - Responsive sizing */}
             <Button 
               onClick={() => toggleMeterPanel(true)} 
               size="lg"
-              className="flex items-center space-x-2 h-12 px-6 text-base font-semibold min-w-[160px]"
+              className="flex items-center gap-1.5 sm:gap-2 h-10 sm:h-12 px-3 sm:px-6 text-sm sm:text-base font-semibold min-w-[100px] sm:min-w-[160px] flex-shrink-0"
             >
-              <Plus className="h-5 w-5" />
-              <span>Add Reading</span>
+              <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="hidden sm:inline">Add Reading</span>
+              <span className="sm:hidden">Add</span>
             </Button>
             
             {/* Notifications */}
-            {isAuthenticated && <NotificationBell />}
+            {isAuthenticated && (
+              <div className="hidden sm:block">
+                <NotificationBell />
+              </div>
+            )}
             
             {/* Authentication */}
             {isAuthenticated ? (
@@ -71,7 +79,7 @@ export const Header: FC = () => {
               <Button
                 variant="outline"
                 onClick={() => setShowAuthModal(true)}
-                className="flex items-center space-x-2"
+                className="flex items-center gap-1.5 sm:gap-2 h-10 sm:h-12 px-3 sm:px-4 flex-shrink-0"
               >
                 <LogIn className="h-4 w-4" />
                 <span className="hidden sm:inline">Sign In</span>

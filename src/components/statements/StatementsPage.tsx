@@ -12,7 +12,8 @@ import {
   DollarSign,
   Plus,
   Search,
-  Eye
+  Eye,
+  Zap
 } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
@@ -236,7 +237,7 @@ export const StatementsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 Avg Efficiency
               </div>
-              <div className="h-3 w-3 text-muted-foreground">⚡</div>
+              <Zap className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               {statements.length > 0 

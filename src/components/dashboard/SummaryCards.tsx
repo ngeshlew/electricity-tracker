@@ -122,7 +122,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   // Show skeleton loading state
   if (isLoading && chartData.length === 0) {
     return (
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
           <Card key={i}>
             <CardHeader className="px-4 pt-4 pb-2">

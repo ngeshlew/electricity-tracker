@@ -1,7 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { ModeToggle } from "@/components/mode-toggle";
 import { UserMenu } from '../auth/UserMenu';
 import { AuthModal } from '../auth/AuthModal';
 import { NotificationBell } from '../notifications/NotificationBell';
@@ -49,11 +48,6 @@ export const Header: FC = () => {
 
           {/* Navigation and Actions */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-1 justify-end">
-            {/* Mode Toggle - Hidden on very small screens */}
-            <div className="hidden sm:block">
-              <ModeToggle />
-            </div>
-            
             {/* Primary Action: Add Reading - Responsive sizing */}
             <Button 
               onClick={() => toggleMeterPanel(true)} 

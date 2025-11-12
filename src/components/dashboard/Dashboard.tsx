@@ -44,8 +44,8 @@ export const Dashboard: FC = () => {
             {/* Dashboard Content - Responsive */}
             <div className="p-4 sm:p-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
               <div className="mx-auto max-w-7xl">
-                {/* Page Header */}
-                <div className="mb-6">
+                {/* Page Header - Increased spacing */}
+                <div className="mb-16" style={{ marginBottom: 'var(--space-3xl)' }}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                       <h1 className="text-2xl font-semibold tracking-tight uppercase">Dashboard</h1>
@@ -60,13 +60,13 @@ export const Dashboard: FC = () => {
                   </div>
                 </div>
 
-                {/* Key Metrics Cards */}
-                <div className="mb-6">
+                {/* Key Metrics Cards - Increased spacing */}
+                <div className="mb-16" style={{ marginBottom: 'var(--space-3xl)' }}>
                   <SummaryCards currentMonth={currentMonth} />
                 </div>
 
-                {/* Main Content Grid */}
-                <div className="space-y-6">
+                {/* Main Content Grid - Increased spacing */}
+                <div className="space-y-16" style={{ gap: 'var(--space-3xl)' }}>
                   <div className="grid gap-6 md:grid-cols-3">
                     <ConsumptionBreakdown
                       currentMonth={currentMonth}
@@ -80,8 +80,8 @@ export const Dashboard: FC = () => {
                   <ConsumptionChart />
                 </div>
 
-                {/* Recent Readings */}
-                <div className="mt-8">
+                {/* Recent Readings - Increased spacing */}
+                <div className="mt-16" style={{ marginTop: 'var(--space-3xl)' }}>
                   <MeterReadingsLog />
                 </div>
               </div>

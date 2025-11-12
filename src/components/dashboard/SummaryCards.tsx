@@ -66,8 +66,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
     : 'text-muted-foreground';
   
   return (
-    <Card className="bg-card text-card-foreground flex flex-col border shadow-sm hover:shadow-md transition-shadow duration-200" role="region" aria-label={`${title} statistics`}>
-      <CardHeader className="px-4 pt-4 pb-4 text-center">
+    <Card className="bg-transparent text-card-foreground flex flex-col border-dashed hover:border-[var(--color-border-strong)] transition-colors duration-200" role="region" aria-label={`${title} statistics`} style={{ padding: 'var(--space-2xl)' }}>
+      <CardHeader className="px-0 pt-0 pb-0 text-center">
         {/* Label - Uppercase, small, muted */}
         <div className="text-muted-foreground text-xs uppercase tracking-wider mb-6" aria-label={`Metric: ${title}`}>
           {title.replace('Total ', '').replace('Daily ', '')}
@@ -85,7 +85,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
         </div>
         
         {/* Dashed divider */}
-        <div className="border-t border-dashed border-border mb-4 mx-[-16px]" aria-hidden="true"></div>
+        <div className="border-t border-dashed border-border mb-4" style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-md)' }} aria-hidden="true"></div>
         
         {/* Context label - VS LAST MONTH (11px) */}
         <div className="text-xs uppercase tracking-normal text-muted-foreground" aria-label="Comparison period">

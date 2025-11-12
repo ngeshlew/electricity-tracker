@@ -129,14 +129,14 @@ export const ConsumptionChart: React.FC = () => {
   };
 
   return (
-    <Card role="region" aria-label="Consumption chart">
-      <CardHeader className="text-center">
+    <Card role="region" aria-label="Consumption chart" className="bg-transparent" style={{ padding: 'var(--space-3xl) var(--space-2xl)' }}>
+      <CardHeader className="text-center mb-12" style={{ marginBottom: 'var(--space-3xl)' }}>
         <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-2">Weekly Consumption</CardTitle>
         <p className="text-xs uppercase tracking-normal text-muted-foreground" aria-label={`Time period: ${getTimePeriodContext()}`}>
           {getTimePeriodContext()}
         </p>
       </CardHeader>
-      <CardContent className="pl-2">
+      <CardContent className="pl-2 mt-8" style={{ marginTop: 'var(--space-2xl)' }}>
         <ResponsiveContainer width="100%" height={350} aria-label="Electricity consumption over time">
           <AreaChart data={chartDataFormatted} aria-label="Consumption chart">
             <CartesianGrid strokeDasharray="4 4" stroke="oklch(var(--border))" opacity={0.5} />

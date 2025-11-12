@@ -215,7 +215,7 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
 
   return (
     <TooltipProvider>
-      <Card>
+      <Card className="bg-transparent" style={{ padding: 'var(--space-2xl)' }}>
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2">
             <CardTitle className="text-base">
@@ -235,19 +235,19 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
       <CardContent className="space-y-3">
         {/* Monthly Summary */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="text-center p-3  bg-muted/30">
+          <div className="text-center p-3 border border-dashed">
             <div className="text-xl  text-primary">
               {monthlyData.totalKwh}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Total kWh</div>
           </div>
-          <div className="text-center p-3  bg-muted/30">
+          <div className="text-center p-3 border border-dashed">
             <div className="text-xl  text-primary">
               £{monthlyData.totalCost.toFixed(2)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Total Cost</div>
           </div>
-          <div className="text-center p-3  bg-muted/30">
+          <div className="text-center p-3 border border-dashed">
             <div className="text-xl  text-primary">
               {monthlyData.averageDaily}
             </div>
@@ -272,10 +272,10 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
             {monthlyData.weeklyBreakdown.map((week) => (
               <div
                 key={week.week}
-                className="flex items-center justify-between p-3  bg-muted/20"
+                className="flex items-center justify-between p-3 border border-dashed hover:opacity-70 transition-opacity"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8  bg-primary/20 flex items-center justify-center text-xs ">
+                  <div className="w-8 h-8 border border-dashed flex items-center justify-center text-xs">
                     {week.week}
                   </div>
                   <div>

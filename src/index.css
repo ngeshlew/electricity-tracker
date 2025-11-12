@@ -55,6 +55,7 @@
     --space-xl: 32px;
     --space-2xl: 48px;
     --space-3xl: 64px;
+    --space-4xl: 96px;
 
     /* Borders */
     --border-width: 1px;
@@ -73,6 +74,12 @@
     --color-success: #00AA00;
     --color-warning: #FF6600;
     --color-error: #FF0000;
+
+    /* Timezone-inspired Colors */
+    --color-bg: #FFFFFF;
+    --color-bg-subtle: #FFFFFF;
+    --color-border: #E8E8E8;
+    --color-border-strong: #CCCCCC;
   }
 
   .dark {
@@ -223,5 +230,26 @@
 
   .dark .button__shortcut {
     background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Universal Dashed Border Utility */
+  .border-dashed {
+    border-style: dashed !important;
+  }
+
+  /* Remove all shadows */
+  .no-shadow {
+    box-shadow: none !important;
+  }
+
+  /* Pure white/black backgrounds only */
+  .bg-pure {
+    background: var(--color-bg) !important;
+  }
+
+  /* Subtle hover - opacity only */
+  .hover-subtle:hover {
+    opacity: 0.85;
+    transition: opacity var(--transition-base);
   }
 }

@@ -290,9 +290,9 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   }
 
   return (
-    <Card role="region" aria-label="Meter reading history">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+    <Card role="region" aria-label="Meter reading history" className="bg-transparent" style={{ padding: 'var(--space-3xl)' }}>
+      <CardHeader className="mb-12" style={{ marginBottom: 'var(--space-3xl)' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8" style={{ marginBottom: 'var(--space-2xl)' }}>
           <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>
           
           {/* Export Buttons */}
@@ -369,21 +369,21 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
             ) : (
               <Accordion type="multiple" defaultValue={monthGroups.map(g => g.key)} className="w-full">
                 {monthGroups.map((group, groupIndex) => (
-                  <AccordionItem key={group.key} value={group.key} className="border-none">
-                    <AccordionTrigger className="py-4 hover:no-underline">
+                    <AccordionItem key={group.key} value={group.key} className="border-none">
+                    <AccordionTrigger className="py-6 hover:no-underline hover:opacity-70" style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
                       <h3 className="text-base uppercase tracking-wide font-mono">{group.label}</h3>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="space-y-4">
+                      <div className="space-y-4" style={{ paddingTop: 'var(--space-lg)' }}>
                         <Table>
                           <TableHeader>
-                            <TableRow>
-                              <TableHead>Date</TableHead>
-                              <TableHead>Reading</TableHead>
-                              <TableHead>Consumption</TableHead>
-                              <TableHead>Cost</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead className="text-right">Actions</TableHead>
+                            <TableRow className="border-b border-dashed">
+                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Date</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Reading</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Consumption</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Cost</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Status</TableHead>
+                              <TableHead className="text-right" style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Actions</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -396,11 +396,11 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                               
                               return (
                                 <TableRow key={reading.id}>
-                                  <TableCell>{formatDate(reading.date)}</TableCell>
-                                  <TableCell className="">{Number(reading.reading).toFixed(2)} kWh</TableCell>
-                                  <TableCell>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
-                                  <TableCell>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
-                                  <TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{formatDate(reading.date)}</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{Number(reading.reading).toFixed(2)} kWh</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
                                     <span className="text-xs uppercase tracking-normal font-mono">
                                       {reading.type === "MANUAL" ? (
                                         <span className="text-foreground">■ MANUAL</span>
@@ -409,7 +409,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                                       )}
                                     </span>
                                   </TableCell>
-                                  <TableCell className="text-right">
+                                  <TableCell className="text-right" style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -446,7 +446,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                           </TableBody>
                         </Table>
                         {groupIndex < monthGroups.length - 1 && (
-                          <div className="border-t border-dashed border-border my-6"></div>
+                          <div className="border-t border-dashed border-border my-12" style={{ marginTop: 'var(--space-3xl)', marginBottom: 'var(--space-3xl)' }}></div>
                         )}
                       </div>
                     </AccordionContent>

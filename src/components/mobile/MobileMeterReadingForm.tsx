@@ -101,9 +101,9 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background lg:hidden">
+    <div className="fixed inset-0 z-50 bg-background lg:hidden flex flex-col">
       {/* Header */}
-      <div className="flex h-14 items-center justify-between border-b px-4">
+      <div className="flex h-14 items-center justify-between border-b px-4 flex-shrink-0">
         <Button
           variant="ghost"
           size="sm"
@@ -116,8 +116,8 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
         <div className="w-9" /> {/* Spacer */}
       </div>
 
-      {/* Form */}
-      <div className="flex-1 overflow-y-auto p-4">
+      {/* Form - Scrollable */}
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Reading Input */}
           <Card>
@@ -253,8 +253,8 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
             </CardContent>
           </Card>
 
-          {/* Submit Button */}
-          <div className="space-y-4">
+          {/* Submit Button - Sticky at bottom */}
+          <div className="space-y-4 pt-6 pb-4">
             <Button
               type="submit"
               className="w-full h-12 text-base"

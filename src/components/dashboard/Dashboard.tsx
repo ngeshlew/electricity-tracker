@@ -39,10 +39,18 @@ export const Dashboard: FC = () => {
             <div className="mx-auto max-w-7xl">
           {/* Page Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight uppercase">Dashboard</h1>
-            <p className="text-muted-foreground mt-1 text-sm">
-              Track your electricity usage
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight uppercase">Dashboard</h1>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  Track your electricity usage
+                </p>
+              </div>
+              <MonthSelector
+                currentMonth={currentMonth}
+                onMonthChange={setCurrentMonth}
+              />
+            </div>
           </div>
 
                 {/* Key Metrics Cards */}
@@ -52,25 +60,17 @@ export const Dashboard: FC = () => {
 
           {/* Main Content Grid */}
           <div className="space-y-6">
-            <ConsumptionChart />
-            
-            {/* Month Selector */}
-            <div className="flex justify-center">
-              <MonthSelector
+            <div className="grid gap-6 md:grid-cols-3">
+              <ConsumptionBreakdown
                 currentMonth={currentMonth}
-                onMonthChange={setCurrentMonth}
+                viewMode="kwh"
+              />
+              <MonthlyOverview
+                currentMonth={currentMonth}
               />
             </div>
             
-                   <div className="grid gap-6 md:grid-cols-3">
-                     <ConsumptionBreakdown
-                       currentMonth={currentMonth}
-                       viewMode="kwh"
-                     />
-                     <MonthlyOverview
-                       currentMonth={currentMonth}
-                     />
-                   </div>
+            <ConsumptionChart />
           </div>
 
           {/* Recent Readings */}
@@ -93,6 +93,10 @@ export const Dashboard: FC = () => {
       {/* Mobile Layout */}
       <div className="lg:hidden">
         <MobileDashboard />
+        <MeterReadingPanel
+          isOpen={isMeterPanelOpen}
+          onClose={() => toggleMeterPanel(false)}
+        />
       </div>
     </>
   );

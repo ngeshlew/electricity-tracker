@@ -16,18 +16,18 @@ import {
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useTariffStore } from '../../store/useTariffStore';
 import { MobileChart } from './MobileChart';
-import { MobileMeterReadingForm } from './MobileMeterReadingForm';
 
 export const MobileDashboard: React.FC = () => {
   const { 
     readings, 
     chartData, 
     isLoading, 
-    error
+    error,
+    isMeterPanelOpen,
+    toggleMeterPanel
   } = useElectricityStore();
   const { getMonthlyTargets } = useTariffStore();
   
-  const [showMeterForm, setShowMeterForm] = useState(false);
   const [currentPeriod, setCurrentPeriod] = useState<'7d' | '30d' | '90d'>('30d');
 
   // Calculate analytics
@@ -110,7 +110,7 @@ export const MobileDashboard: React.FC = () => {
           </div>
           
           <Button
-            onClick={() => setShowMeterForm(true)}
+            onClick={() => toggleMeterPanel(true)}
             size="sm"
             className="h-9"
           >
@@ -305,11 +305,6 @@ export const MobileDashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Mobile Meter Reading Form */}
-      <MobileMeterReadingForm
-        isOpen={showMeterForm}
-        onClose={() => setShowMeterForm(false)}
-      />
     </div>
   );
 };

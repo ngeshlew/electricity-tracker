@@ -117,7 +117,7 @@ interface SummaryCardsProps {
  * Custom styling: Lewis-Linear design system
  */
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
-  const { chartData, timeSeriesData, isLoading } = useElectricityStore();
+  const { chartData, isLoading } = useElectricityStore();
   
   // Show skeleton loading state
   if (isLoading && chartData.length === 0) {
@@ -236,13 +236,24 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   const previousTotalKwh = previousPeriodData.reduce((sum, point) => sum + point.kwh, 0);
   const previousTotalCost = previousPeriodData.reduce((sum, point) => sum + point.cost, 0);
   
+  // Calculate average daily for current and previous periods
+  const currentPeriodDays = currentPeriodData.length > 0 ? currentPeriodData.length : 1;
+  const previousPeriodDays = previousPeriodData.length > 0 ? previousPeriodData.length : 1;
+  const currentAverageDaily = totalKwh / currentPeriodDays;
+  const previousAverageDaily = previousTotalKwh / previousPeriodDays;
+  
   // Calculate percentage changes
   const kwhChange = previousTotalKwh > 0 ? ((totalKwh - previousTotalKwh) / previousTotalKwh) * 100 : 0;
   const costChange = previousTotalCost > 0 ? ((totalCost - previousTotalCost) / previousTotalCost) * 100 : 0;
+  const averageDailyChange = previousAverageDaily > 0 ? ((currentAverageDaily - previousAverageDaily) / previousAverageDaily) * 100 : 0;
   
-  // Determine trend
-  const trend = timeSeriesData.length > 0 ? timeSeriesData[timeSeriesData.length - 1]?.trend || 'stable' : 'stable';
+  // Determine trend based on actual change
+  const getTrendFromChange = (change: number): 'increasing' | 'decreasing' | 'stable' => {
+    if (Math.abs(change) < 0.1) return 'stable';
+    return change > 0 ? 'increasing' : 'decreasing';
+  };
   
+  const averageTrend = getTrendFromChange(averageDailyChange);
 
   // Determine trend icons based on change direction
   const getTrendIcon = (change: number) => {
@@ -272,12 +283,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
     },
     {
       title: 'Daily Average',
-      value: `${averageDaily.toFixed(2)} KWH`,
-      change: trend === 'increasing' ? 'Increasing trend' : trend === 'decreasing' ? 'Decreasing trend' : 'Stable trend',
-      changeValue: trend === 'increasing' ? '+12.5%' : trend === 'decreasing' ? '-5.2%' : '0%',
+      value: `${currentAverageDaily.toFixed(2)} KWH`,
+      change: averageTrend === 'increasing' ? 'Higher than last month' : averageTrend === 'decreasing' ? 'Lower than last month' : 'Same as last month',
+      changeValue: `${averageDailyChange >= 0 ? '+' : ''}${averageDailyChange.toFixed(1)}%`,
       description: `Average daily usage`,
-      icon: trend === 'increasing' ? <TrendingUp className="h-3 w-3" /> : trend === 'decreasing' ? <TrendingDown className="h-3 w-3" /> : <Activity className="h-3 w-3" />,
-      trendIcon: trend === 'increasing' ? <TrendingUp className="h-4 w-4" /> : trend === 'decreasing' ? <TrendingDown className="h-4 w-4" /> : <Activity className="h-4 w-4" />
+      icon: averageTrend === 'increasing' ? <TrendingUp className="h-3 w-3" /> : averageTrend === 'decreasing' ? <TrendingDown className="h-3 w-3" /> : <Activity className="h-3 w-3" />,
+      trendIcon: getTrendIcon(averageDailyChange)
     },
     {
       title: 'Efficiency',

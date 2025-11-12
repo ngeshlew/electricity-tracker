@@ -248,7 +248,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
               <Input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search by date, reading, or notes... (Press / to focus)"
+                placeholder="SEARCH READINGS..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"

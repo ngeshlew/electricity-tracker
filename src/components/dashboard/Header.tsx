@@ -57,6 +57,9 @@ export const Header: FC = () => {
               <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="hidden sm:inline">Add Reading</span>
               <span className="sm:hidden">Add</span>
+              <span className="button__shortcut hidden sm:inline" aria-label="Keyboard shortcut: A">
+                A
+              </span>
             </Button>
             
             {/* Notifications */}

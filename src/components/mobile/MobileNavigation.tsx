@@ -133,11 +133,14 @@ export const MobileNavigation: React.FC = () => {
               <Button
                 onClick={() => toggleMeterPanel(true)}
                 size="sm"
-                className="h-9 px-3"
+                className="h-9 px-3 flex items-center gap-1"
                 aria-label="Add meter reading"
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className="h-4 w-4" />
                 <span className="hidden xs:inline">Add</span>
+                <span className="button__shortcut hidden xs:inline" aria-label="Keyboard shortcut: A">
+                  A
+                </span>
               </Button>
             )}
             

@@ -328,11 +328,14 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
             <Input
               ref={searchInputRef}
               type="text"
-              placeholder="Search... (Press /)"
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-10 sm:h-9 text-sm"
+              className="pl-9 pr-16 h-10 sm:h-9 text-sm"
             />
+            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 button__shortcut" aria-label="Keyboard shortcut: /">
+              /
+            </span>
           </div>
           
           {/* Type Filter */}

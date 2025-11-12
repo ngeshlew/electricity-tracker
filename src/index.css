@@ -188,4 +188,40 @@
     background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
     background-size: 20px 20px;
   }
+
+  /* Skeleton Loading Animation */
+  @keyframes skeleton-pulse {
+    0%, 100% { 
+      opacity: 1; 
+    }
+    50% { 
+      opacity: 0.4; 
+    }
+  }
+
+  .skeleton {
+    background: oklch(var(--border));
+    border-radius: 4px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+
+  .skeleton--text {
+    height: 1em;
+  }
+
+  /* Keyboard Shortcut Indicator */
+  .button__shortcut {
+    margin-left: var(--space-sm);
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .dark .button__shortcut {
+    background: rgba(0, 0, 0, 0.3);
+  }
 }

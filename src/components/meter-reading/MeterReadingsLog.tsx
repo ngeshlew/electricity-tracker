@@ -124,7 +124,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-4">Reading History</CardTitle>
+          <CardTitle className="text-lg font-normal uppercase tracking-wide mb-4">Reading History</CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
             <Skeleton className="h-9 flex-1" />
             <Skeleton className="h-9 w-full sm:w-[180px]" />
@@ -210,7 +210,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         <CardContent>
           <div className="text-center py-12">
             <Zap className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-semibold mb-2">No readings yet</h3>
+            <h3 className="text-lg font-normal mb-2">No readings yet</h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
               Start tracking your electricity usage by adding your first meter reading. 
               Readings help you monitor consumption and identify savings opportunities.
@@ -241,7 +241,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-4">Reading History</CardTitle>
+          <CardTitle className="text-lg font-normal uppercase tracking-wide mb-4">Reading History</CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -270,7 +270,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         <CardContent>
           <div className="text-center py-12">
             <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-semibold mb-2">No readings found</h3>
+            <h3 className="text-lg font-normal mb-2">No readings found</h3>
             <p className="text-sm text-muted-foreground mb-4">
               No readings match your search "{searchQuery}"{filterType !== 'ALL' && ` and filter "${filterType}"`}
             </p>
@@ -290,9 +290,9 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   }
 
   return (
-    <Card role="region" aria-label="Meter reading history" className="bg-transparent" style={{ padding: 'var(--space-3xl)' }}>
-      <CardHeader className="mb-12" style={{ marginBottom: 'var(--space-3xl)' }}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8" style={{ marginBottom: 'var(--space-2xl)' }}>
+    <Card role="region" aria-label="Meter reading history" className="bg-transparent" style={{ padding: 'var(--space-2xl)' }}>
+      <CardHeader className="mb-6" style={{ marginBottom: 'var(--space-xl)' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4" style={{ marginBottom: 'var(--space-lg)' }}>
           <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>
           
           {/* Export Buttons */}
@@ -328,7 +328,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
             <Input
               ref={searchInputRef}
               type="text"
-              placeholder="Search..."
+              placeholder="SEARCH READINGS..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 pr-16 h-10 sm:h-9 text-sm"
@@ -370,7 +370,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
               <Accordion type="multiple" defaultValue={monthGroups.map(g => g.key)} className="w-full">
                 {monthGroups.map((group, groupIndex) => (
                     <AccordionItem key={group.key} value={group.key} className="border-none">
-                    <AccordionTrigger className="py-6 hover:no-underline hover:opacity-70" style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
+                    <AccordionTrigger className="py-3 hover:no-underline hover:opacity-70" style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>
                       <h3 className="text-base uppercase tracking-wide font-mono">{group.label}</h3>
                     </AccordionTrigger>
                     <AccordionContent>
@@ -378,12 +378,12 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                         <Table>
                           <TableHeader>
                             <TableRow className="border-b border-dashed">
-                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Date</TableHead>
-                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Reading</TableHead>
-                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Consumption</TableHead>
-                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Cost</TableHead>
-                              <TableHead style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Status</TableHead>
-                              <TableHead className="text-right" style={{ paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-xl)' }}>Actions</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Date</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Reading</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Consumption</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Cost</TableHead>
+                              <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Status</TableHead>
+                              <TableHead className="text-right" style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Actions</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -396,11 +396,11 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                               
                               return (
                                 <TableRow key={reading.id}>
-                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{formatDate(reading.date)}</TableCell>
-                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{Number(reading.reading).toFixed(2)} kWh</TableCell>
-                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
-                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
-                                  <TableCell style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
+                                  <TableCell style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>{formatDate(reading.date)}</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>{Number(reading.reading).toFixed(2)} kWh</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
+                                  <TableCell style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>
                                     <span className="text-xs uppercase tracking-normal font-mono">
                                       {reading.type === "MANUAL" ? (
                                         <span className="text-foreground">■ MANUAL</span>
@@ -409,7 +409,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                                       )}
                                     </span>
                                   </TableCell>
-                                  <TableCell className="text-right" style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
+                                  <TableCell className="text-right" style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -446,7 +446,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                           </TableBody>
                         </Table>
                         {groupIndex < monthGroups.length - 1 && (
-                          <div className="border-t border-dashed border-border my-12" style={{ marginTop: 'var(--space-3xl)', marginBottom: 'var(--space-3xl)' }}></div>
+                          <div className="border-t border-dashed border-border my-6" style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-xl)' }}></div>
                         )}
                       </div>
                     </AccordionContent>

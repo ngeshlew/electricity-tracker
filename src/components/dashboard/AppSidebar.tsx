@@ -38,7 +38,7 @@ export const AppSidebar: React.FC = () => {
           <div className="flex h-8 w-8 items-center justify-center bg-sidebar-primary">
             <BoltIcon className="h-5 w-5 text-sidebar-primary-foreground" />
           </div>
-          <span className="ml-3 text-sm font-semibold uppercase tracking-wide text-sidebar-foreground">
+          <span className="ml-3 text-sm font-normal uppercase tracking-wide text-sidebar-foreground">
             Tracker
           </span>
         </div>

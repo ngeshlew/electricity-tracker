@@ -129,9 +129,9 @@ export const ConsumptionChart: React.FC = () => {
   };
 
   return (
-    <Card role="region" aria-label="Consumption chart" className="bg-transparent" style={{ padding: 'var(--space-3xl) var(--space-2xl)' }}>
-      <CardHeader className="text-center mb-12" style={{ marginBottom: 'var(--space-3xl)' }}>
-        <CardTitle className="text-lg font-semibold uppercase tracking-wide mb-2">Weekly Consumption</CardTitle>
+    <Card role="region" aria-label="Consumption chart" className="bg-transparent" style={{ padding: 'var(--space-xl) var(--space-lg)' }}>
+      <CardHeader className="text-center mb-6" style={{ marginBottom: 'var(--space-xl)' }}>
+        <CardTitle className="text-lg font-normal uppercase tracking-wide mb-2">Weekly Consumption</CardTitle>
         <p className="text-xs uppercase tracking-normal text-muted-foreground" aria-label={`Time period: ${getTimePeriodContext()}`}>
           {getTimePeriodContext()}
         </p>

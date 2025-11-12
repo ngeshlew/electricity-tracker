@@ -79,7 +79,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
         </div>
         
         {/* Secondary: Percentage change (16-18px) */}
-        <div className={`flex items-center justify-center gap-1.5 text-base font-medium mb-4 ${changeColor}`} aria-label={`Change: ${changeValue} compared to last month`}>
+        <div className={`flex items-center justify-center gap-1.5 text-base font-normal mb-4 ${changeColor}`} aria-label={`Change: ${changeValue} compared to last month`}>
           <span aria-hidden="true">{trendIcon}</span>
           <span>{changeValue}</span>
         </div>

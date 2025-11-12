@@ -33,7 +33,7 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({
       >
         <ChevronLeftIcon className="h-4 w-4" />
       </Button>
-      <span className="text-sm font-medium min-w-[90px] sm:min-w-[100px] text-center tabular-nums">
+      <span className="text-sm font-normal min-w-[90px] sm:min-w-[100px] text-center tabular-nums">
         {format(currentMonth, 'MMM yyyy')}
       </span>
       <Button

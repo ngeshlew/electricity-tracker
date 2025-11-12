@@ -44,11 +44,11 @@ export const Dashboard: FC = () => {
             {/* Dashboard Content - Responsive */}
             <div className="p-4 sm:p-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
               <div className="mx-auto max-w-7xl">
-                {/* Page Header - Increased spacing */}
-                <div className="mb-16" style={{ marginBottom: 'var(--space-3xl)' }}>
+                {/* Page Header - Reduced spacing (2x less) */}
+                <div className="mb-8" style={{ marginBottom: 'var(--space-xl)' }}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                      <h1 className="text-2xl font-semibold tracking-tight uppercase">Dashboard</h1>
+                      <h1 className="text-2xl font-normal tracking-tight uppercase">Dashboard</h1>
                       <p className="text-muted-foreground mt-1 text-sm">
                         Track your electricity usage
                       </p>
@@ -60,13 +60,13 @@ export const Dashboard: FC = () => {
                   </div>
                 </div>
 
-                {/* Key Metrics Cards - Increased spacing */}
-                <div className="mb-16" style={{ marginBottom: 'var(--space-3xl)' }}>
+                {/* Key Metrics Cards - Reduced spacing (2x less) */}
+                <div className="mb-8" style={{ marginBottom: 'var(--space-xl)' }}>
                   <SummaryCards currentMonth={currentMonth} />
                 </div>
 
-                {/* Main Content Grid - Increased spacing */}
-                <div className="space-y-16" style={{ gap: 'var(--space-3xl)' }}>
+                {/* Main Content Grid - Reduced spacing (2x less) */}
+                <div className="space-y-8" style={{ gap: 'var(--space-xl)' }}>
                   <div className="grid gap-6 md:grid-cols-3">
                     <ConsumptionBreakdown
                       currentMonth={currentMonth}
@@ -80,8 +80,8 @@ export const Dashboard: FC = () => {
                   <ConsumptionChart />
                 </div>
 
-                {/* Recent Readings - Increased spacing */}
-                <div className="mt-16" style={{ marginTop: 'var(--space-3xl)' }}>
+                {/* Recent Readings - Reduced spacing (2x less) */}
+                <div className="mt-8" style={{ marginTop: 'var(--space-xl)' }}>
                   <MeterReadingsLog />
                 </div>
               </div>

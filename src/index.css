@@ -35,7 +35,7 @@
 
     /* Design System Variables - Timezone-inspired */
     /* Typography */
-    --font-mono: "Geist Mono", "Geist Mono Fallback", SF Mono, Monaco, Inconsolata, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+    --font-mono: "IBM Plex Mono", "IBM Plex Mono Fallback", SF Mono, Monaco, Inconsolata, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
     --text-xs: 11px;
     --text-sm: 13px;
     --text-base: 14px;
@@ -159,7 +159,7 @@
   }
 
   .mono * {
-    font-family: "Geist Mono", "Geist Mono Fallback", SF Mono, Monaco, Inconsolata, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+    font-family: "IBM Plex Mono", "IBM Plex Mono Fallback", SF Mono, Monaco, Inconsolata, "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
   }
 }
 

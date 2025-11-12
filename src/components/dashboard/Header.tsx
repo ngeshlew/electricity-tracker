@@ -52,7 +52,7 @@ export const Header: FC = () => {
             <Button 
               onClick={() => toggleMeterPanel(true)} 
               size="lg"
-              className="flex items-center gap-1.5 sm:gap-2 h-10 sm:h-12 px-3 sm:px-6 text-sm sm:text-base font-semibold min-w-[100px] sm:min-w-[160px] flex-shrink-0"
+              className="flex items-center gap-1.5 sm:gap-2 h-10 sm:h-12 px-3 sm:px-6 text-sm sm:text-base font-normal min-w-[100px] sm:min-w-[160px] flex-shrink-0"
             >
               <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="hidden sm:inline">Add Reading</span>

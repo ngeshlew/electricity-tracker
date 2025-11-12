@@ -19,8 +19,8 @@ module.exports = {
   	extend: {
   		fontFamily: {
   			mono: [
-  				'Geist Mono"',
-  				'Geist Mono Fallback"',
+  				'IBM Plex Mono',
+  				'IBM Plex Mono Fallback',
   				'SF Mono',
   				'Monaco',
   				'Inconsolata',

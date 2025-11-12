@@ -325,4 +325,14 @@
     opacity: 0.85;
     transition: opacity var(--transition-base);
   }
+
+  /* Rounded-full with important */
+  .rounded-full {
+    border-radius: 9999px !important;
+  }
+
+  /* Font-normal uses weight 300 */
+  .font-normal {
+    font-weight: 300 !important;
+  }
 }

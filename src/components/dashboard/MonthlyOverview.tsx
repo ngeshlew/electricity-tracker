@@ -215,7 +215,7 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
 
   return (
     <TooltipProvider>
-      <Card className="bg-transparent" style={{ padding: 'var(--space-2xl)' }}>
+      <Card className="bg-transparent" style={{ padding: 'var(--space-md)' }}>
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2">
             <CardTitle className="text-base">

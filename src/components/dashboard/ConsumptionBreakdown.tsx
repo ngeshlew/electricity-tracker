@@ -183,7 +183,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
 
 
   return (
-    <Card className="col-span-2 bg-transparent" style={{ padding: 'var(--space-2xl)' }}>
+    <Card className="col-span-2 bg-transparent" style={{ padding: 'var(--space-md)' }}>
       <CardHeader>
         <CardTitle>Consumption Breakdown</CardTitle>
       </CardHeader>

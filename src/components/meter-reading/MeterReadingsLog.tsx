@@ -290,7 +290,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   }
 
   return (
-    <Card role="region" aria-label="Meter reading history" className="bg-transparent" style={{ padding: 'var(--space-2xl)' }}>
+    <Card role="region" aria-label="Meter reading history" className="bg-transparent" style={{ padding: 'var(--space-md)' }}>
       <CardHeader className="mb-6" style={{ marginBottom: 'var(--space-xl)' }}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4" style={{ marginBottom: 'var(--space-lg)' }}>
           <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>

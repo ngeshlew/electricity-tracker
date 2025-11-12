@@ -213,11 +213,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
         });
       }
       case 'monthly': {
-        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        // Calculate previous month based on currentMonth prop, not current date
+        const previousMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
         return chartData.filter(point => {
           const pointDate = new Date(point.date);
-          return pointDate.getMonth() === lastMonth.getMonth() && 
-                 pointDate.getFullYear() === lastMonth.getFullYear();
+          return pointDate.getMonth() === previousMonth.getMonth() && 
+                 pointDate.getFullYear() === previousMonth.getFullYear();
         });
       }
       case 'yearly': {

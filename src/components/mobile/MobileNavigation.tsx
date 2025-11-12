@@ -21,16 +21,12 @@ import {
   Bell,
   Shield,
   Calendar,
-  Moon,
-  Sun,
-  Monitor,
   X
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useNotificationStore } from '../../store/useNotificationStore';
-import { useTheme } from '@/components/theme-provider';
 import { formatDistanceToNow } from 'date-fns';
 
 interface MobileNavItem {
@@ -57,7 +53,6 @@ export const MobileNavigation: React.FC = () => {
   const { toggleMeterPanel } = useElectricityStore();
   const { user, logout, isAuthenticated } = useAuthStore();
   const { notifications, unreadCount, markAsRead, removeNotification } = useNotificationStore();
-  const { theme, setTheme } = useTheme();
   
   // Check if we're on Dashboard page
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
@@ -194,51 +189,6 @@ export const MobileNavigation: React.FC = () => {
 
                 <ScrollArea className="flex-1">
                   <div className="p-4 space-y-4">
-                    {/* Theme Switcher */}
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Theme</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button
-                          variant={theme === 'light' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme('light')}
-                          className="justify-start"
-                        >
-                          <Sun className="h-4 w-4 mr-2" />
-                          Light
-                        </Button>
-                        <Button
-                          variant={theme === 'dark' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme('dark')}
-                          className="justify-start"
-                        >
-                          <Moon className="h-4 w-4 mr-2" />
-                          Dark
-                        </Button>
-                        <Button
-                          variant={theme === 'mono' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme('mono')}
-                          className="justify-start"
-                        >
-                          <Monitor className="h-4 w-4 mr-2" />
-                          Mono
-                        </Button>
-                        <Button
-                          variant={theme === 'system' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme('system')}
-                          className="justify-start"
-                        >
-                          <Monitor className="h-4 w-4 mr-2" />
-                          System
-                        </Button>
-                      </div>
-                    </div>
-
-                    <Separator />
-
                     {/* Notifications Section */}
                     {isAuthenticated && (
                       <div className="space-y-2">

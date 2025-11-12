@@ -23,7 +23,6 @@ export const MobileDashboard: React.FC = () => {
     chartData, 
     isLoading, 
     error,
-    isMeterPanelOpen,
     toggleMeterPanel
   } = useElectricityStore();
   const { getMonthlyTargets } = useTariffStore();

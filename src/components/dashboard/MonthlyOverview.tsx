@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval } from 'date-fns';
@@ -194,11 +194,11 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'increasing':
-        return '📈';
+        return <TrendingUp className="h-5 w-5" />;
       case 'decreasing':
-        return '📉';
+        return <TrendingDown className="h-5 w-5" />;
       default:
-        return '➡️';
+        return <Activity className="h-5 w-5" />;
     }
   };
 
@@ -257,7 +257,9 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
 
         {/* Trend Indicator */}
         <div className="flex items-center justify-center space-x-2">
-          <span className="text-xl">{getTrendIcon(monthlyData.trend)}</span>
+          <div className={getTrendColor(monthlyData.trend)}>
+            {getTrendIcon(monthlyData.trend)}
+          </div>
           <span className={`text-xs  ${getTrendColor(monthlyData.trend)}`}>
             {monthlyData.trend.charAt(0).toUpperCase() + monthlyData.trend.slice(1)} trend
           </span>

@@ -1,12 +1,27 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChartSkeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { formatDateUK, addDays } from '../../utils/dateFormatters';
 
 export const ConsumptionChart: React.FC = () => {
-  const { chartData } = useElectricityStore();
+  const { chartData, isLoading } = useElectricityStore();
+  
+  // Show skeleton loading state
+  if (isLoading && chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold uppercase tracking-wide">Weekly Consumption</CardTitle>
+        </CardHeader>
+        <CardContent className="pl-2">
+          <ChartSkeleton className="h-[350px]" />
+        </CardContent>
+      </Card>
+    );
+  }
   
   // Fill missing dates to prevent chart gaps
   // Only fills gaps where no chart data point exists (not for dates with readings)
@@ -105,10 +120,7 @@ export const ConsumptionChart: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Weekly Consumption</CardTitle>
-        <CardDescription>
-          Your electricity usage over the past week
-        </CardDescription>
+        <CardTitle className="text-lg font-semibold uppercase tracking-wide">Weekly Consumption</CardTitle>
       </CardHeader>
       <CardContent className="pl-2">
         <Tabs defaultValue="area" className="w-full">
@@ -119,26 +131,35 @@ export const ConsumptionChart: React.FC = () => {
           <TabsContent value="area">
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart data={chartDataFormatted}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--border))" opacity={0.3} />
                 <XAxis 
                   dataKey="date" 
                   tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
                 />
-                <YAxis />
+                <YAxis 
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
+                  label={{ value: 'kWh', angle: -90, position: 'insideLeft', fill: 'oklch(var(--muted-foreground))' }}
+                />
                 <Tooltip 
-                  formatter={(value: number, name: string) => [
-                    `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
-                    name === 'consumption' ? 'Consumption' : 'Cost'
-                  ]}
-                  labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
+                  formatter={(value: number) => [`${value.toFixed(2)} kWh`, 'Consumption']}
+                  labelFormatter={(value) => formatDateUK(new Date(value), 'long')}
+                  contentStyle={{ 
+                    backgroundColor: 'oklch(var(--card))',
+                    border: '1px solid oklch(var(--border))',
+                    borderRadius: '4px'
+                  }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="consumption" 
                   stroke="oklch(var(--primary))" 
-                  fill="oklch(var(--primary))"
-                  fillOpacity={0.3}
-                  strokeWidth={2}
+                  fill="none"
+                  strokeWidth={3}
+                  dot={{ fill: "oklch(var(--primary))", r: 4 }}
+                  activeDot={{ r: 6 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -146,20 +167,28 @@ export const ConsumptionChart: React.FC = () => {
           <TabsContent value="bar">
             <ResponsiveContainer width="100%" height={350}>
               <BarChart data={chartDataFormatted}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--border))" opacity={0.3} />
                 <XAxis 
                   dataKey="date" 
                   tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
                 />
-                <YAxis />
+                <YAxis 
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
+                  label={{ value: 'kWh', angle: -90, position: 'insideLeft', fill: 'oklch(var(--muted-foreground))' }}
+                />
                 <Tooltip 
-                  formatter={(value: number, name: string) => [
-                    `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
-                    name === 'consumption' ? 'Consumption' : 'Cost'
-                  ]}
-                  labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
+                  formatter={(value: number) => [`${value.toFixed(2)} kWh`, 'Consumption']}
+                  labelFormatter={(value) => formatDateUK(new Date(value), 'long')}
+                  contentStyle={{ 
+                    backgroundColor: 'oklch(var(--card))',
+                    border: '1px solid oklch(var(--border))',
+                    borderRadius: '4px'
+                  }}
                 />
-                <Bar dataKey="consumption" fill="oklch(var(--primary))" />
+                <Bar dataKey="consumption" fill="oklch(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </TabsContent>

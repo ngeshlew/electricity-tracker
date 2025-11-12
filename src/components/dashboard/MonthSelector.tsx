@@ -23,23 +23,25 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center gap-2">
       <Button
         variant="ghost"
         size="icon"
         onClick={() => navigateMonth('prev')}
-        className="h-8 w-8"
+        className="h-8 w-8 sm:h-9 sm:w-9"
+        aria-label="Previous month"
       >
         <ChevronLeftIcon className="h-4 w-4" />
       </Button>
-      <span className="text-sm min-w-[120px] text-center">
+      <span className="text-sm font-medium min-w-[90px] sm:min-w-[100px] text-center tabular-nums">
         {format(currentMonth, 'MMM yyyy')}
       </span>
       <Button
         variant="ghost"
         size="icon"
         onClick={() => navigateMonth('next')}
-        className="h-8 w-8"
+        className="h-8 w-8 sm:h-9 sm:w-9"
+        aria-label="Next month"
       >
         <ChevronRightIcon className="h-4 w-4" />
       </Button>

@@ -4,8 +4,8 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
-import { Activity, TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Activity, TrendingUp, TrendingDown } from "lucide-react";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 /**
@@ -55,48 +55,47 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   value, 
   change, 
   changeValue,
-  description,
-  icon,
   trendIcon
 }) => {
+  // Determine if change is positive/negative for color coding
+  const isPositive = changeValue.startsWith('+');
+  const isNegative = changeValue.startsWith('-');
+  const changeColor = isPositive 
+    ? 'text-red-600 dark:text-red-400' 
+    : isNegative 
+    ? 'text-green-600 dark:text-green-400' 
+    : 'text-muted-foreground';
   
   return (
-    <TooltipProvider>
-      <Card className="bg-card text-card-foreground flex flex-col gap-2 border py-3 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="grid auto-rows-min grid-rows-[auto_auto] items-start gap-1 px-3">
-          <div className="flex items-center gap-1">
-            <div className="text-muted-foreground text-xs">
-              {title}
-            </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{description}</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <div className="text-lg tabular-nums">
-            {value}
-          </div>
-          <div className="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
-            <span className="inline-flex items-center justify-center border px-1.5 py-0.5 text-xs  w-fit whitespace-nowrap shrink-0 gap-1">
-              {icon}
-              {changeValue}
-            </span>
-          </div>
-        </CardHeader>
-        <CardContent className="flex px-3 flex-col items-start gap-1 text-xs">
-          <div className="line-clamp-1 flex gap-2 ">
-            {change} {trendIcon}
-          </div>
-          <div className="text-muted-foreground text-xs">
-            {description}
-          </div>
-        </CardContent>
-      </Card>
-    </TooltipProvider>
+    <Card className="bg-card text-card-foreground flex flex-col border shadow-sm hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="px-4 pt-4 pb-2">
+        {/* Label - Uppercase, small, muted */}
+        <div className="text-muted-foreground text-xs uppercase tracking-wider mb-3">
+          {title.replace('Total ', '').replace('Daily ', '')}
+        </div>
+        
+        {/* Primary Value - Large, prominent */}
+        <div className="text-3xl font-semibold tabular-nums mb-2">
+          {value}
+        </div>
+        
+        {/* Secondary: Percentage change */}
+        <div className={`flex items-center gap-1.5 text-sm font-medium ${changeColor}`}>
+          {trendIcon}
+          <span>{changeValue}</span>
+          <span className="text-muted-foreground font-normal text-xs">
+            vs last month
+          </span>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="px-4 pb-4 pt-0">
+        {/* Trend description - subtle */}
+        <div className="text-xs text-muted-foreground">
+          {change}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -118,7 +117,27 @@ interface SummaryCardsProps {
  * Custom styling: Lewis-Linear design system
  */
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
-  const { chartData, timeSeriesData } = useElectricityStore();
+  const { chartData, isLoading } = useElectricityStore();
+  
+  // Show skeleton loading state
+  if (isLoading && chartData.length === 0) {
+    return (
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader className="px-4 pt-4 pb-2">
+              <Skeleton className="h-3 w-20 mb-3" />
+              <Skeleton className="h-8 w-32 mb-2" />
+              <Skeleton className="h-4 w-24" />
+            </CardHeader>
+            <CardContent className="px-4 pb-4 pt-0">
+              <Skeleton className="h-3 w-40" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
   
   
   // Use monthly as default time period
@@ -194,11 +213,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
         });
       }
       case 'monthly': {
-        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        // Calculate previous month based on currentMonth prop, not current date
+        const previousMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
         return chartData.filter(point => {
           const pointDate = new Date(point.date);
-          return pointDate.getMonth() === lastMonth.getMonth() && 
-                 pointDate.getFullYear() === lastMonth.getFullYear();
+          return pointDate.getMonth() === previousMonth.getMonth() && 
+                 pointDate.getFullYear() === previousMonth.getFullYear();
         });
       }
       case 'yearly': {
@@ -217,46 +237,64 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   const previousTotalKwh = previousPeriodData.reduce((sum, point) => sum + point.kwh, 0);
   const previousTotalCost = previousPeriodData.reduce((sum, point) => sum + point.cost, 0);
   
+  // Calculate average daily for current and previous periods
+  const currentPeriodDays = currentPeriodData.length > 0 ? currentPeriodData.length : 1;
+  const previousPeriodDays = previousPeriodData.length > 0 ? previousPeriodData.length : 1;
+  const currentAverageDaily = totalKwh / currentPeriodDays;
+  const previousAverageDaily = previousTotalKwh / previousPeriodDays;
+  
   // Calculate percentage changes
   const kwhChange = previousTotalKwh > 0 ? ((totalKwh - previousTotalKwh) / previousTotalKwh) * 100 : 0;
   const costChange = previousTotalCost > 0 ? ((totalCost - previousTotalCost) / previousTotalCost) * 100 : 0;
+  const averageDailyChange = previousAverageDaily > 0 ? ((currentAverageDaily - previousAverageDaily) / previousAverageDaily) * 100 : 0;
   
-  // Determine trend
-  const trend = timeSeriesData.length > 0 ? timeSeriesData[timeSeriesData.length - 1]?.trend || 'stable' : 'stable';
+  // Determine trend based on actual change
+  const getTrendFromChange = (change: number): 'increasing' | 'decreasing' | 'stable' => {
+    if (Math.abs(change) < 0.1) return 'stable';
+    return change > 0 ? 'increasing' : 'decreasing';
+  };
   
+  const averageTrend = getTrendFromChange(averageDailyChange);
+
+  // Determine trend icons based on change direction
+  const getTrendIcon = (change: number) => {
+    if (change > 0) return <TrendingUp className="h-4 w-4" />;
+    if (change < 0) return <TrendingDown className="h-4 w-4" />;
+    return <Activity className="h-4 w-4" />;
+  };
 
   const cards = [
     {
-      title: 'Total Consumption',
-      value: `${totalKwh.toFixed(1)} kWh`,
-      change: kwhChange >= 0 ? 'Trending up this period' : 'Down this period',
+      title: 'Consumption',
+      value: `${totalKwh.toFixed(1)} KWH`,
+      change: kwhChange >= 0 ? 'Higher than last month' : 'Lower than last month',
       changeValue: `${kwhChange >= 0 ? '+' : ''}${kwhChange.toFixed(1)}%`,
       description: `Consumption for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
       icon: <TrendingUp className="h-3 w-3" />,
-      trendIcon: <TrendingUp className="h-4 w-4" />
+      trendIcon: getTrendIcon(kwhChange)
     },
     {
-      title: 'Total Cost',
+      title: 'Cost',
       value: `£${totalCost.toFixed(2)}`,
-      change: costChange >= 0 ? 'Cost increasing' : 'Cost decreasing',
+      change: costChange >= 0 ? 'Higher than last month' : 'Lower than last month',
       changeValue: `${costChange >= 0 ? '+' : ''}${costChange.toFixed(1)}%`,
       description: `Spending for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
       icon: costChange >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />,
-      trendIcon: costChange >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />
+      trendIcon: getTrendIcon(costChange)
     },
     {
       title: 'Daily Average',
-      value: `${averageDaily.toFixed(2)} kWh`,
-      change: trend === 'increasing' ? 'Strong consumption trend' : trend === 'decreasing' ? 'Consumption decreasing' : 'Steady consumption',
-      changeValue: trend === 'increasing' ? '+12.5%' : trend === 'decreasing' ? '-5.2%' : '0%',
+      value: `${currentAverageDaily.toFixed(2)} KWH`,
+      change: averageTrend === 'increasing' ? 'Higher than last month' : averageTrend === 'decreasing' ? 'Lower than last month' : 'Same as last month',
+      changeValue: `${averageDailyChange >= 0 ? '+' : ''}${averageDailyChange.toFixed(1)}%`,
       description: `Average daily usage`,
-      icon: trend === 'increasing' ? <TrendingUp className="h-3 w-3" /> : trend === 'decreasing' ? <TrendingDown className="h-3 w-3" /> : <Activity className="h-3 w-3" />,
-      trendIcon: trend === 'increasing' ? <TrendingUp className="h-4 w-4" /> : trend === 'decreasing' ? <TrendingDown className="h-4 w-4" /> : <Activity className="h-4 w-4" />
+      icon: averageTrend === 'increasing' ? <TrendingUp className="h-3 w-3" /> : averageTrend === 'decreasing' ? <TrendingDown className="h-3 w-3" /> : <Activity className="h-3 w-3" />,
+      trendIcon: getTrendIcon(averageDailyChange)
     },
     {
-      title: 'Efficiency Rate',
+      title: 'Efficiency',
       value: `${Math.max(0, Math.min(100, (averageDaily / 20) * 100)).toFixed(1)}%`,
-      change: averageDaily > 15 ? 'Above target consumption' : averageDaily > 10 ? 'Near target consumption' : 'Below target consumption',
+      change: averageDaily > 15 ? 'Above target' : averageDaily > 10 ? 'Near target' : 'Below target',
       changeValue: averageDaily > 15 ? '+15.2%' : averageDaily > 10 ? '+2.1%' : '-8.3%',
       description: 'Based on daily average consumption',
       icon: averageDaily > 15 ? <TrendingUp className="h-3 w-3" /> : averageDaily > 10 ? <Activity className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />,
@@ -265,7 +303,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   ];
 
   return (
-    <div className="grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, index) => (
         <SummaryCard
           key={index}

@@ -11,12 +11,10 @@ import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { MobileNavigation } from '../mobile/MobileNavigation';
-import { MobileDashboard } from '../mobile/MobileDashboard';
-import { AIChatbot } from '../ai/AIChatbot';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 export const Dashboard: FC = () => {
-  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings, clearCacheAndReload, readings, chartData, isLoading, error } = useElectricityStore();
+  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Load meter readings when component mounts
@@ -29,85 +27,74 @@ export const Dashboard: FC = () => {
       {/* Mobile Navigation */}
       <MobileNavigation />
       
-      {/* Desktop Layout */}
-      <div className="hidden lg:block">
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="flex-1">
-            <Header />
-            <div className="p-6">
-            <div className="mx-auto max-w-7xl">
-          {/* Page Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground mt-2">
-              Monitor your electricity consumption and track your energy usage patterns
-            </p>
-            
-            {/* Debug Info */}
-            <div className="mt-4 p-4 bg-muted rounded-lg">
-              <h3 className="text-sm font-medium mb-2">Debug Info:</h3>
-              <p className="text-xs text-muted-foreground">
-                Readings: {readings.length} | Chart Data: {chartData.length} | Loading: {isLoading ? 'Yes' : 'No'} | Error: {error || 'None'}
-              </p>
-              <button 
-                onClick={clearCacheAndReload}
-                className="mt-2 px-3 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
-              >
-                Clear Cache & Reload
-              </button>
-            </div>
+      {/* Responsive Layout */}
+      <SidebarProvider>
+        <div className="lg:flex">
+          {/* Sidebar - Desktop only */}
+          <div className="hidden lg:block">
+            <AppSidebar />
           </div>
+          
+          <main className="flex-1 lg:ml-0">
+            {/* Header - Desktop only */}
+            <div className="hidden lg:block">
+              <Header />
+            </div>
+            
+            {/* Dashboard Content - Responsive */}
+            <div className="p-4 sm:p-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
+              <div className="mx-auto max-w-7xl">
+                {/* Page Header */}
+                <div className="mb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h1 className="text-2xl font-semibold tracking-tight uppercase">Dashboard</h1>
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        Track your electricity usage
+                      </p>
+                    </div>
+                    <MonthSelector
+                      currentMonth={currentMonth}
+                      onMonthChange={setCurrentMonth}
+                    />
+                  </div>
+                </div>
 
                 {/* Key Metrics Cards */}
                 <div className="mb-6">
                   <SummaryCards currentMonth={currentMonth} />
                 </div>
 
-          {/* Main Content Grid */}
-          <div className="space-y-6">
-            <ConsumptionChart />
-            
-            {/* Month Selector */}
-            <div className="flex justify-center">
-              <MonthSelector
-                currentMonth={currentMonth}
-                onMonthChange={setCurrentMonth}
-              />
+                {/* Main Content Grid */}
+                <div className="space-y-6">
+                  <div className="grid gap-6 md:grid-cols-3">
+                    <ConsumptionBreakdown
+                      currentMonth={currentMonth}
+                      viewMode="kwh"
+                    />
+                    <MonthlyOverview
+                      currentMonth={currentMonth}
+                    />
+                  </div>
+                  
+                  <ConsumptionChart />
+                </div>
+
+                {/* Recent Readings */}
+                <div className="mt-8">
+                  <MeterReadingsLog />
+                </div>
+              </div>
             </div>
-            
-                   <div className="grid gap-6 md:grid-cols-3">
-                     <ConsumptionBreakdown
-                       currentMonth={currentMonth}
-                       viewMode="kwh"
-                     />
-                     <MonthlyOverview
-                       currentMonth={currentMonth}
-                     />
-                   </div>
-          </div>
 
-          {/* Recent Readings */}
-          <div className="mt-8">
-            <MeterReadingsLog />
-          </div>
+            <MeterReadingPanel
+              isOpen={isMeterPanelOpen}
+              onClose={() => toggleMeterPanel(false)}
+            />
+            <UserGuide />
+          </main>
         </div>
-        </div>
-
-        <MeterReadingPanel
-          isOpen={isMeterPanelOpen}
-          onClose={() => toggleMeterPanel(false)}
-        />
-          <UserGuide />
-          <AIChatbot />
-        </main>
       </SidebarProvider>
-      </div>
-
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <MobileDashboard />
-      </div>
     </>
   );
 };

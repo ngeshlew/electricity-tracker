@@ -207,19 +207,19 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
         )}
 
         {/* Form Action Buttons */}
-        <div className="flex space-x-4 pt-6">
+        <div className="flex space-x-4 pt-6 pb-4">
           <Button
             type="button"
             variant="outline"
             onClick={onSuccess}
-            className="flex-1"
+            className="flex-1 h-11"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={form.formState.isSubmitting || isLoading}
-            className="flex-1"
+            className="flex-1 h-11"
           >
             {form.formState.isSubmitting || isLoading ? 'Adding...' : 'Add Reading'}
           </Button>

@@ -27,14 +27,14 @@ export const MeterReadingPanel: React.FC<MeterReadingPanelProps> = ({
         toggleMeterPanel(false);
       }
     }}>
-      <SheetContent>
-        <SheetHeader>
+      <SheetContent side="right" className="w-full sm:max-w-sm flex flex-col p-0">
+        <SheetHeader className="flex-shrink-0 px-6 pt-6 pb-4">
           <SheetTitle>Add Meter Reading</SheetTitle>
           <SheetDescription>
             Enter your electricity meter reading to track consumption.
           </SheetDescription>
         </SheetHeader>
-        <div className="mt-6">
+        <div className="flex-1 overflow-y-auto px-6 pb-6 min-h-0">
           <MeterReadingForm onSuccess={onClose} />
         </div>
       </SheetContent>

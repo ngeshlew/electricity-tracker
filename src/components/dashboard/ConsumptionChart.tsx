@@ -116,18 +116,26 @@ export const ConsumptionChart: React.FC = () => {
           <TabsContent value="area">
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart data={chartDataFormatted}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--border))" opacity={0.3} />
                 <XAxis 
                   dataKey="date" 
                   tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
                 />
-                <YAxis />
+                <YAxis 
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
+                  label={{ value: 'kWh', angle: -90, position: 'insideLeft', fill: 'oklch(var(--muted-foreground))' }}
+                />
                 <Tooltip 
-                  formatter={(value: number, name: string) => [
-                    `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
-                    name === 'consumption' ? 'Consumption' : 'Cost'
-                  ]}
-                  labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
+                  formatter={(value: number) => [`${value.toFixed(2)} kWh`, 'Consumption']}
+                  labelFormatter={(value) => formatDateUK(new Date(value), 'long')}
+                  contentStyle={{ 
+                    backgroundColor: 'oklch(var(--card))',
+                    border: '1px solid oklch(var(--border))',
+                    borderRadius: '4px'
+                  }}
                 />
                 <Area 
                   type="monotone" 
@@ -144,20 +152,28 @@ export const ConsumptionChart: React.FC = () => {
           <TabsContent value="bar">
             <ResponsiveContainer width="100%" height={350}>
               <BarChart data={chartDataFormatted}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--border))" opacity={0.3} />
                 <XAxis 
                   dataKey="date" 
                   tickFormatter={(value) => formatDateUK(new Date(value), 'chart')}
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
                 />
-                <YAxis />
+                <YAxis 
+                  stroke="oklch(var(--muted-foreground))"
+                  tick={{ fill: 'oklch(var(--muted-foreground))', fontSize: 12 }}
+                  label={{ value: 'kWh', angle: -90, position: 'insideLeft', fill: 'oklch(var(--muted-foreground))' }}
+                />
                 <Tooltip 
-                  formatter={(value: number, name: string) => [
-                    `${value} ${name === 'consumption' ? 'kWh' : '£'}`,
-                    name === 'consumption' ? 'Consumption' : 'Cost'
-                  ]}
-                  labelFormatter={(value) => `Date: ${formatDateUK(new Date(value), 'long')}`}
+                  formatter={(value: number) => [`${value.toFixed(2)} kWh`, 'Consumption']}
+                  labelFormatter={(value) => formatDateUK(new Date(value), 'long')}
+                  contentStyle={{ 
+                    backgroundColor: 'oklch(var(--card))',
+                    border: '1px solid oklch(var(--border))',
+                    borderRadius: '4px'
+                  }}
                 />
-                <Bar dataKey="consumption" fill="oklch(var(--primary))" />
+                <Bar dataKey="consumption" fill="oklch(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </TabsContent>

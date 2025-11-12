@@ -125,15 +125,14 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Reading History</CardTitle>
-        <CardDescription>
-          View and manage all your meter readings
-        </CardDescription>
+        <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>
       </CardHeader>
       
       <CardContent>
         <Table>
-          <TableCaption>Your meter reading history</TableCaption>
+          <TableCaption className="text-xs text-muted-foreground">
+            {readings.length} {readings.length === 1 ? 'reading' : 'readings'} total
+          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
@@ -159,9 +158,19 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                   <TableCell>{consumption > 0 ? `${consumption.toFixed(2)} kWh` : '-'}</TableCell>
                   <TableCell>{consumption > 0 ? `£${cost.toFixed(2)}` : '-'}</TableCell>
                   <TableCell>
-                    <Badge variant={reading.type === "MANUAL" ? "default" : "secondary"}>
-                      {reading.type === "MANUAL" ? "Manual" : "Estimated"}
-                    </Badge>
+                    <span className="text-xs uppercase tracking-wide">
+                      {reading.type === "MANUAL" ? (
+                        <span className="inline-flex items-center gap-1">
+                          <span className="inline-block w-2 h-2 rounded-full bg-foreground"></span>
+                          Manual
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-muted-foreground">
+                          <span className="inline-block w-2 h-2 rounded-full border border-current"></span>
+                          Estimated
+                        </span>
+                      )}
+                    </span>
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>

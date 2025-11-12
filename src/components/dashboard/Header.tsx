@@ -18,28 +18,23 @@ export const Header: FC = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-16 items-center justify-between">
-          {/* Sidebar Trigger and Brand */}
-          <div className="flex items-center space-x-4">
+          {/* Sidebar Trigger */}
+          <div className="flex items-center">
             <SidebarTrigger />
-            <a href="/" className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center  bg-primary">
-                <Zap className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-lg">
-                Electricity Tracker
-              </span>
-            </a>
           </div>
 
           {/* Navigation and Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <ModeToggle />
+            
+            {/* Primary Action: Add Reading - Made 2x more prominent */}
             <Button 
               onClick={() => toggleMeterPanel(true)} 
-              className="flex items-center space-x-2"
+              size="lg"
+              className="flex items-center space-x-2 h-12 px-6 text-base font-semibold min-w-[160px]"
             >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Add Reading</span>
+              <Plus className="h-5 w-5" />
+              <span>Add Reading</span>
             </Button>
             
             {/* Notifications */}

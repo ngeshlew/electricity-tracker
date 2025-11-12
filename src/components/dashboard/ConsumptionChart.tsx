@@ -105,10 +105,7 @@ export const ConsumptionChart: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Weekly Consumption</CardTitle>
-        <CardDescription>
-          Your electricity usage over the past week
-        </CardDescription>
+        <CardTitle className="text-lg font-semibold uppercase tracking-wide">Weekly Consumption</CardTitle>
       </CardHeader>
       <CardContent className="pl-2">
         <Tabs defaultValue="area" className="w-full">
@@ -136,9 +133,10 @@ export const ConsumptionChart: React.FC = () => {
                   type="monotone" 
                   dataKey="consumption" 
                   stroke="oklch(var(--primary))" 
-                  fill="oklch(var(--primary))"
-                  fillOpacity={0.3}
-                  strokeWidth={2}
+                  fill="none"
+                  strokeWidth={3}
+                  dot={{ fill: "oklch(var(--primary))", r: 4 }}
+                  activeDot={{ r: 6 }}
                 />
               </AreaChart>
             </ResponsiveContainer>

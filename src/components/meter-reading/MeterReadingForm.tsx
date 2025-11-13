@@ -47,11 +47,21 @@ const meterReadingSchema = z.object({
     .date({ message: 'Date is required' })
     .refine((date) => {
       // Compare dates at start of day to allow today's date
+      // Normalize both dates to start of day in local timezone
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+      today.setMinutes(0);
+      today.setSeconds(0);
+      today.setMilliseconds(0);
+      
       const selectedDate = new Date(date);
       selectedDate.setHours(0, 0, 0, 0);
-      return selectedDate <= today;
+      selectedDate.setMinutes(0);
+      selectedDate.setSeconds(0);
+      selectedDate.setMilliseconds(0);
+      
+      // Compare dates - allow today and past dates
+      return selectedDate.getTime() <= today.getTime();
     }, {
       message: 'Date cannot be in the future'
     }),
@@ -83,7 +93,12 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
     resolver: zodResolver(meterReadingSchema),
     defaultValues: {
       reading: 0,
-      date: new Date(),
+      date: (() => {
+        // Normalize default date to start of day
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
+      })(),
       notes: '',
     },
   });
@@ -164,7 +179,16 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
                   <Calendar
                     mode="single"
                     selected={field.value}
-                    onSelect={field.onChange}
+                    onSelect={(date) => {
+                      if (date) {
+                        // Normalize date to start of day in local timezone
+                        const normalizedDate = new Date(date);
+                        normalizedDate.setHours(0, 0, 0, 0);
+                        field.onChange(normalizedDate);
+                      } else {
+                        field.onChange(date);
+                      }
+                    }}
                     disabled={(date) => {
                       const today = new Date();
                       today.setHours(23, 59, 59, 999); // End of today

@@ -45,7 +45,16 @@ const meterReadingSchema = z.object({
     .max(999999, 'Reading must be less than 999,999'),
   date: z
     .date({ message: 'Date is required' })
-    .max(new Date(), 'Date cannot be in the future'),
+    .refine((date) => {
+      // Compare dates at start of day to allow today's date
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(date);
+      selectedDate.setHours(0, 0, 0, 0);
+      return selectedDate <= today;
+    }, {
+      message: 'Date cannot be in the future'
+    }),
   notes: z.string().optional(),
 });
 

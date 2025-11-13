@@ -42,8 +42,8 @@ export const Dashboard: FC = () => {
             </div>
             
             {/* Dashboard Content - Responsive */}
-            <div className="p-4 sm:p-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
-              <div className="mx-auto max-w-7xl">
+            <div className="px-4 sm:px-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
+              <div className="mx-auto max-w-7xl w-full">
                 {/* Page Header - Reduced spacing (2x less) */}
                 <div className="mb-8" style={{ marginBottom: 'var(--space-xl)' }}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -66,8 +66,8 @@ export const Dashboard: FC = () => {
                 </div>
 
                 {/* Main Content Grid - Reduced spacing (2x less) */}
-                <div className="space-y-8" style={{ gap: 'var(--space-xl)' }}>
-                  <div className="grid gap-6 md:grid-cols-3">
+                <div className="space-y-8 w-full" style={{ gap: 'var(--space-xl)' }}>
+                  <div className="grid gap-6 md:grid-cols-3 w-full">
                     <ConsumptionBreakdown
                       currentMonth={currentMonth}
                       viewMode="kwh"

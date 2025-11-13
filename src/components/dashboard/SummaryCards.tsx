@@ -66,7 +66,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
     : 'text-muted-foreground';
   
   return (
-    <Card className="bg-transparent text-card-foreground flex flex-col border-dashed hover:border-[var(--color-border-strong)] transition-colors duration-200" role="region" aria-label={`${title} statistics`} style={{ padding: 'var(--space-md)' }}>
+    <Card className="bg-transparent text-card-foreground flex flex-col border-dashed hover:border-[var(--color-border-strong)] transition-colors duration-200 w-full" role="region" aria-label={`${title} statistics`} style={{ padding: 'var(--space-md)' }}>
       <CardHeader className="px-0 pt-0 pb-0 text-center">
         {/* Label - Uppercase, small, muted */}
         <div className="text-muted-foreground text-xs uppercase tracking-wider mb-6" aria-label={`Metric: ${title}`}>
@@ -119,7 +119,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   // Show skeleton loading state
   if (isLoading && chartData.length === 0) {
     return (
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full">
         {[...Array(4)].map((_, i) => (
           <LoadingCard key={i} />
         ))}
@@ -299,8 +299,8 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-4 w-full">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full">
         {cards.map((card, index) => (
           <SummaryCard
             key={index}

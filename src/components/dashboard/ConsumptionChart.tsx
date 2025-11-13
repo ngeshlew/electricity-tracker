@@ -129,7 +129,7 @@ export const ConsumptionChart: React.FC = () => {
   };
 
   return (
-    <Card role="region" aria-label="Consumption chart" className="bg-transparent w-full" style={{ padding: 'var(--space-xl) var(--space-lg)' }}>
+    <Card role="region" aria-label="Consumption chart" className="bg-transparent w-full" style={{ padding: 'var(--space-md) var(--space-md)' }}>
       <CardHeader className="text-center mb-6" style={{ marginBottom: 'var(--space-xl)' }}>
         <CardTitle className="text-lg font-normal uppercase tracking-wide mb-2">Weekly Consumption</CardTitle>
         <p className="text-xs uppercase tracking-normal text-muted-foreground" aria-label={`Time period: ${getTimePeriodContext()}`}>

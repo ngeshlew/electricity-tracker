@@ -3,6 +3,8 @@ import { devtools, persist } from 'zustand/middleware';
 import { Decimal } from 'decimal.js';
 import { apiService } from '../services/api';
 import { socketService } from '../services/socketService';
+import { useTariffStore } from './useTariffStore';
+import { useToastStore } from './useToastStore';
 import type { 
   MeterReading, 
   ChartDataPoint, 
@@ -53,8 +55,10 @@ interface ElectricityState {
   
   // Utility functions
   getConsumptionBetweenReadings: (reading1: MeterReading, reading2: MeterReading) => number;
-  calculateCost: (kwh: number) => number;
+  calculateCost: (kwh: number, date?: Date, includeStandingCharge?: boolean) => number;
+  calculateReadingCost: (kwh: number, date?: Date) => number;
   getTrend: (data: ChartDataPoint[]) => 'increasing' | 'decreasing' | 'stable';
+  recalculateCosts: () => void;
 }
 
 const defaultPreferences: UserPreferences = {
@@ -139,6 +143,7 @@ export const useElectricityStore = create<ElectricityState>()(
             
             // Generate estimated readings and recalculate analytics data
             await get().generateEstimatedReadings();
+            useToastStore.getState().showToast('Reading added successfully', 'success');
           } catch (error) {
             // Fallback: Create reading locally if API fails
             console.warn('API failed, creating reading locally:', error);
@@ -167,6 +172,7 @@ export const useElectricityStore = create<ElectricityState>()(
             
             // Generate estimated readings and recalculate analytics data
             await get().generateEstimatedReadings();
+            useToastStore.getState().showToast('Reading added locally', 'success');
           }
         },
 
@@ -204,11 +210,13 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculateConsumptionData();
             get().calculateTimeSeriesData('daily');
             get().calculatePieChartData();
+            useToastStore.getState().showToast('Reading updated successfully', 'success');
           } catch (error) {
             set({
               isLoading: false,
               error: error instanceof Error ? error.message : 'Failed to update reading',
             });
+            useToastStore.getState().showToast('Failed to update reading', 'error');
           }
         },
 
@@ -232,11 +240,13 @@ export const useElectricityStore = create<ElectricityState>()(
             get().calculateConsumptionData();
             get().calculateTimeSeriesData('daily');
             get().calculatePieChartData();
+            useToastStore.getState().showToast('Reading deleted successfully', 'success');
           } catch (error) {
             set({
               isLoading: false,
               error: error instanceof Error ? error.message : 'Failed to delete reading',
             });
+            useToastStore.getState().showToast('Failed to delete reading', 'error');
           }
         },
 
@@ -315,6 +325,7 @@ export const useElectricityStore = create<ElectricityState>()(
             const sortedManualReadings = [...manualReadings].sort((a, b) => 
               new Date(a.date).getTime() - new Date(b.date).getTime()
             );
+            const manualDateStrings = new Set(sortedManualReadings.map(r => new Date(r.date).toDateString()));
 
             const estimatedReadings: MeterReading[] = [];
 
@@ -359,8 +370,9 @@ export const useElectricityStore = create<ElectricityState>()(
                   updatedAt: new Date(),
                 };
                 
-                estimatedReadings.push(estimatedReading);
-                
+                if (!manualDateStrings.has(currentDateToFill.toDateString())) {
+                  estimatedReadings.push(estimatedReading);
+                }
                 currentDateToFill.setDate(currentDateToFill.getDate() + 1);
               }
             }
@@ -406,8 +418,9 @@ export const useElectricityStore = create<ElectricityState>()(
                   updatedAt: new Date(),
                 };
                 
-                estimatedReadings.push(estimatedReading);
-                
+                if (!manualDateStrings.has(currentDateToFill.toDateString())) {
+                  estimatedReadings.push(estimatedReading);
+                }
                 currentDateToFill.setDate(currentDateToFill.getDate() + 1);
               }
             }
@@ -551,7 +564,7 @@ export const useElectricityStore = create<ElectricityState>()(
               error: null,
             });
 
-            // Generate estimated readings and recalculate analytics data
+            // Regenerate estimated readings to ensure continuity
             await get().generateEstimatedReadings();
             
             // Always recalculate analytics data after loading readings
@@ -765,7 +778,7 @@ export const useElectricityStore = create<ElectricityState>()(
               );
             }
             
-            const cost = get().calculateCost(validConsumption);
+            const cost = get().calculateReadingCost(validConsumption, currentReading.date);
             
             // Create chart data point for this reading date
             // This includes estimated readings, ensuring they appear in charts
@@ -869,10 +882,69 @@ export const useElectricityStore = create<ElectricityState>()(
           return consumption.toNumber();
         },
 
-        calculateCost: (kwh) => {
+        calculateCost: (kwh, date?: Date, includeStandingCharge: boolean = false) => {
+          const tariffStore = useTariffStore.getState();
+          const tariff = tariffStore.getTariffForDate(date || new Date());
+          
+          if (tariff) {
+            // Calculate cost using tariff: kwh * unitRate (convert pence to pounds)
+            const unitCost = new Decimal(kwh).times(tariff.unitRate).dividedBy(100);
+            
+            // Only add standing charge if explicitly requested (for total bills, not individual readings)
+            if (includeStandingCharge) {
+              const standingCost = new Decimal(tariff.standingCharge).dividedBy(100); // Convert pence to pounds per day
+              return unitCost.plus(standingCost).toNumber();
+            }
+            
+            return unitCost.toNumber();
+          }
+          
+          // Fallback to preferences if no tariff found (values already stored in pounds)
           const { preferences } = get();
-          const cost = new Decimal(kwh).times(preferences.unitRate);
-          return cost.toNumber();
+          const unitCost = new Decimal(kwh).times(preferences.unitRate);
+          
+          if (includeStandingCharge) {
+            const standingCost = new Decimal(preferences.standingCharge || 0);
+            return unitCost.plus(standingCost).toNumber();
+          }
+          
+          return unitCost.toNumber();
+        },
+
+        calculateReadingCost: (kwh, date?: Date) => {
+          // Calculate cost for a meter reading including standing charge and VAT
+          // Formula: ((consumption * unitRate / 100) + (1 day * standingCharge / 100)) * 1.05 (VAT)
+          const tariffStore = useTariffStore.getState();
+          const tariff = tariffStore.getTariffForDate(date || new Date());
+          
+          if (tariff) {
+            // Unit cost: consumption * unitRate (convert pence to pounds)
+            const unitCost = new Decimal(kwh).times(tariff.unitRate).dividedBy(100);
+            
+            // Standing charge: 1 day * standingCharge (convert pence to pounds)
+            const standingCost = new Decimal(tariff.standingCharge).dividedBy(100);
+            
+            // Total before VAT
+            const totalBeforeVAT = unitCost.plus(standingCost);
+            
+            // Apply VAT (5% = multiply by 1.05)
+            const totalWithVAT = totalBeforeVAT.times(1.05);
+            
+            return totalWithVAT.toNumber();
+          }
+          
+          // Fallback to preferences if no tariff found (values already stored in pounds)
+          const { preferences } = get();
+          const unitCost = new Decimal(kwh).times(preferences.unitRate);
+          const standingCost = new Decimal(preferences.standingCharge || 0);
+          return unitCost.plus(standingCost).times(1.05).toNumber();
+        },
+
+        recalculateCosts: () => {
+          // Recalculate all costs using updated tariffs
+          get().calculateConsumptionData();
+          get().calculateTimeSeriesData('daily');
+          get().calculatePieChartData();
         },
 
         getTrend: (data) => {

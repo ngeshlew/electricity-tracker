@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { Icon } from "@/components/ui/icon";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,7 +20,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { useToastStore } from '../../store/useToastStore';
 import { cn } from '@/lib/utils';
 
 /**
@@ -76,7 +75,6 @@ interface MeterReadingFormProps {
 
 export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess }) => {
   const { addReading, isLoading, readings } = useElectricityStore();
-  const { showToast } = useToastStore();
   
   // State for first reading checkbox - only show if no first reading exists
   const [showFirstReadingCheckbox, setShowFirstReadingCheckbox] = useState(false);
@@ -117,13 +115,8 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       
       form.reset();
       onSuccess();
-      
-      // Show success toast
-      showToast('READING ADDED SUCCESSFULLY', 'success');
     } catch (error) {
       console.error('Failed to add meter reading:', error);
-      // Show error toast
-      showToast('ERROR ADDING READING', 'error');
     }
   };
 
@@ -171,7 +164,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
                       ) : (
                         <span>Pick a date</span>
                       )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      <Icon name="calendar-date-appointment" className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>

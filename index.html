@@ -6,6 +6,11 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- Prevent browser caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#3B82F6" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -61,23 +66,7 @@
     <script type="module" src="/src/main.tsx"></script>
     
     <!-- Service Worker Registration -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          // Only register service worker in production
-          if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-            navigator.serviceWorker.register('/sw.js')
-              .then((registration) => {
-                console.log('SW registered: ', registration);
-              })
-              .catch((registrationError) => {
-                console.log('SW registration failed: ', registrationError);
-              });
-          } else {
-            console.log('Service worker disabled in development mode');
-          }
-        });
-      }
-    </script>
+    <!-- VitePWA handles service worker registration automatically -->
+    <!-- Old caches are cleared via cacheManager utility in App.tsx -->
   </body>
 </html>

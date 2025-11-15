@@ -2,18 +2,11 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
-import svgr from 'vite-plugin-svgr'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    svgr({
-      svgrOptions: {
-        icon: true,
-        replaceAttrValues: { '#000000': 'currentColor', black: 'currentColor' },
-      },
-    }),
     VitePWA({
       registerType: 'autoUpdate',
       disable: process.env.NODE_ENV === 'development',

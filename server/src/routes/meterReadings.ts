@@ -198,7 +198,7 @@ router.get('/analytics/consumption', async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
 
-    let whereClause: any = {};
+    const whereClause: any = {};
     
     if (startDate && endDate) {
       whereClause.date = {

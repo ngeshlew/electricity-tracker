@@ -45,7 +45,7 @@ router.get('/summary', async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
 
-    let whereClause: any = {};
+    const whereClause: any = {};
     
     if (startDate && endDate) {
       whereClause.date = {
@@ -243,7 +243,7 @@ router.get('/export', async (req, res, next) => {
   try {
     const { format = 'json', startDate, endDate } = req.query;
 
-    let whereClause: any = {};
+    const whereClause: any = {};
     
     if (startDate && endDate) {
       whereClause.date = {

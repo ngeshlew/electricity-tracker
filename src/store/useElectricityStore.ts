@@ -352,7 +352,7 @@ export const useElectricityStore = create<ElectricityState>()(
               
               // Generate estimated readings for each missing day
               let currentReadingValue = currentReading.reading;
-              let currentDateToFill = new Date(currentDate);
+              const currentDateToFill = new Date(currentDate);
               currentDateToFill.setDate(currentDateToFill.getDate() + 1);
               
               while (currentDateToFill < nextDate) {
@@ -400,7 +400,7 @@ export const useElectricityStore = create<ElectricityState>()(
               
               // Generate estimates from day after last reading to yesterday
               let currentReadingValue = lastReading.reading;
-              let currentDateToFill = new Date(lastReadingDate);
+              const currentDateToFill = new Date(lastReadingDate);
               currentDateToFill.setDate(currentDateToFill.getDate() + 1);
               
               while (currentDateToFill <= yesterday) {

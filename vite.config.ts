@@ -12,7 +12,11 @@ export default defineConfig({
       svgrOptions: {
         icon: true,
         replaceAttrValues: { '#000000': 'currentColor', black: 'currentColor' },
+        svgProps: {
+          fill: 'currentColor',
+        },
       },
+      include: '**/*.svg',
     }),
     VitePWA({
       registerType: 'autoUpdate',

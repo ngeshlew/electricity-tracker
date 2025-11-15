@@ -1,7 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Icon } from '@/components/ui/icon';
 
 interface Props {
   children: ReactNode;
@@ -44,7 +44,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <Card className="lewis-card lewis-shadow-glow max-w-md w-full">
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-electric-red/20  flex items-center justify-center mb-4">
-                <ExclamationTriangleIcon className="h-8 w-8 text-electric-red" />
+                <Icon name="alert-error" className="h-8 w-8 text-electric-red" />
               </div>
               <CardTitle className="text-lg lewis-text-gradient">
                 Something went wrong
@@ -73,7 +73,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   onClick={this.handleReset}
                   className="lewis-button-primary flex-1"
                 >
-                  <ArrowPathIcon className="h-4 w-4 mr-2" />
+                  <Icon name="clock-refresh-time-arrow" className="h-4 w-4 mr-2" />
                   Try Again
                 </Button>
                 <Button

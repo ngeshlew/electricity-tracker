@@ -5,24 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { 
-  HomeIcon, 
-  ChartBarIcon, 
-  DocumentTextIcon, 
-  Cog6ToothIcon, 
-  BoltIcon,
-  Bars3Icon
-} from '@heroicons/react/24/outline';
-import { 
-  Plus, 
-  User, 
-  Settings, 
-  LogOut, 
-  Bell,
-  Shield,
-  Calendar,
-  X
-} from 'lucide-react';
+import { Icon } from "@/components/ui/icon";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -32,17 +15,17 @@ import { formatDistanceToNow } from 'date-fns';
 interface MobileNavItem {
   name: string;
   href: string;
-  icon: React.ComponentType<any>;
+  iconName: string;
   current: boolean;
   badge?: string;
 }
 
 const navigationItems: MobileNavItem[] = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
-  { name: 'Insights', href: '/insights', icon: BoltIcon, current: false },
-  { name: 'Analytics', href: '/analytics', icon: ChartBarIcon, current: false },
-  { name: 'Statements', href: '/statements', icon: DocumentTextIcon, current: false },
-  { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, current: false },
+  { name: 'Dashboard', href: '/', iconName: 'home-house', current: true },
+  { name: 'Analytics', href: '/analytics', iconName: 'bar-chart', current: false },
+  { name: 'Statements', href: '/statements', iconName: 'book-note-paper', current: false },
+  { name: 'Notifications', href: '/notifications', iconName: 'notification-bell-alarm', current: false },
+  { name: 'Settings', href: '/settings', iconName: 'adjust-settings-horizontal', current: false },
 ];
 
 export const MobileNavigation: React.FC = () => {
@@ -74,16 +57,16 @@ export const MobileNavigation: React.FC = () => {
   
   const recentNotifications = notifications.slice(0, 5);
   
-  const notificationIcons: Record<string, React.ComponentType<any>> = {
-    info: Bell,
-    warning: Bell,
-    error: Bell,
-    success: Bell,
-    consumption: BoltIcon,
-    cost: Bell,
-    system: Settings,
-    reminder: Calendar,
-    alert: Bell
+  const notificationIcons: Record<string, string> = {
+    info: 'notification-bell-alarm',
+    warning: 'notification-bell-alarm',
+    error: 'alert-error',
+    success: 'check-good',
+    consumption: 'lightning-energy',
+    cost: 'dollar-currency',
+    system: 'adjust-settings-horizontal',
+    reminder: 'calendar-date-appointment',
+    alert: 'alert-error'
   };
 
   // Update current page based on location
@@ -121,9 +104,9 @@ export const MobileNavigation: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <BoltIcon className="h-5 w-5 text-primary-foreground" />
+              <Icon name="bolt" className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-normal">Electricity Tracker</span>
+            <span className="text-lg font-normal">Tracker</span>
           </div>
 
           {/* Action Buttons */}
@@ -136,7 +119,7 @@ export const MobileNavigation: React.FC = () => {
                 className="h-9 px-3 flex items-center gap-1"
                 aria-label="Add meter reading"
               >
-                <Plus className="h-4 w-4" />
+                <Icon name="add-new-plus" className="h-4 w-4" />
                 <span className="hidden xs:inline">Add</span>
                 <span className="button__shortcut hidden xs:inline" aria-label="Keyboard shortcut: A">
                   A
@@ -153,7 +136,7 @@ export const MobileNavigation: React.FC = () => {
                   className="h-9 w-9 p-0"
                   aria-label="Open mobile menu"
                 >
-                  <Bars3Icon className="h-5 w-5" />
+                  <Icon name="menu-hambuger" className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
             <SheetContent side="right" className="w-80 p-0 flex flex-col">
@@ -180,7 +163,7 @@ export const MobileNavigation: React.FC = () => {
                   <div className="px-6 py-4 border-b">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                        <BoltIcon className="h-5 w-5 text-primary-foreground" />
+                        <Icon name="bolt" className="h-5 w-5 text-primary-foreground" />
                       </div>
                       <div>
                         <p className="text-sm font-normal">Electricity Tracker</p>
@@ -205,13 +188,13 @@ export const MobileNavigation: React.FC = () => {
                         </div>
                         {recentNotifications.length === 0 ? (
                           <div className="p-4 text-center text-muted-foreground">
-                            <Bell className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                            <Icon name="notification-bell-alarm" className="h-6 w-6 mx-auto mb-2 opacity-50" />
                             <p className="text-xs">No notifications</p>
                           </div>
                         ) : (
                           <div className="space-y-2">
                             {recentNotifications.map((notification) => {
-                              const IconComponent = notificationIcons[notification.type] || notificationIcons[notification.category] || Bell;
+                              const iconName = notificationIcons[notification.type] || notificationIcons[notification.category] || 'notification-bell-alarm';
                               return (
                                 <div
                                   key={notification.id}
@@ -225,7 +208,7 @@ export const MobileNavigation: React.FC = () => {
                                   }}
                                 >
                                   <div className="flex items-start gap-3">
-                                    <IconComponent className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                                    <Icon name={iconName as any} className="h-4 w-4 mt-0.5 text-muted-foreground" />
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-start justify-between gap-2">
                                         <div className="flex-1">
@@ -250,7 +233,7 @@ export const MobileNavigation: React.FC = () => {
                                           }}
                                           className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
                                         >
-                                          <X className="h-3 w-3" />
+                                          <Icon name="x-close-delete" className="h-3 w-3" />
                                         </Button>
                                       </div>
                                     </div>
@@ -269,7 +252,7 @@ export const MobileNavigation: React.FC = () => {
                             navigate('/notifications');
                           }}
                         >
-                          <Settings className="h-4 w-4 mr-2" />
+                          <Icon name="adjust-settings-horizontal" className="h-4 w-4 mr-2" />
                           View all notifications
                         </Button>
                       </div>
@@ -288,7 +271,7 @@ export const MobileNavigation: React.FC = () => {
                             navigate('/settings');
                           }}
                         >
-                          <User className="h-4 w-4 mr-2" />
+                          <Icon name="account-user-person" className="h-4 w-4 mr-2" />
                           Profile
                         </Button>
                         <Button
@@ -299,7 +282,7 @@ export const MobileNavigation: React.FC = () => {
                             navigate('/settings');
                           }}
                         >
-                          <Settings className="h-4 w-4 mr-2" />
+                          <Icon name="adjust-settings-horizontal" className="h-4 w-4 mr-2" />
                           Settings
                         </Button>
                         <Button
@@ -310,7 +293,7 @@ export const MobileNavigation: React.FC = () => {
                             navigate('/notifications');
                           }}
                         >
-                          <Bell className="h-4 w-4 mr-2" />
+                          <Icon name="notification-bell-alarm" className="h-4 w-4 mr-2" />
                           Notifications
                           {unreadCount > 0 && (
                             <Badge variant="secondary" className="ml-auto text-xs">
@@ -326,7 +309,7 @@ export const MobileNavigation: React.FC = () => {
                             navigate('/security');
                           }}
                         >
-                          <Shield className="h-4 w-4 mr-2" />
+                          <Icon name="info" className="h-4 w-4 mr-2" />
                           Security
                         </Button>
                         <Button
@@ -337,7 +320,7 @@ export const MobileNavigation: React.FC = () => {
                             navigate('/activity');
                           }}
                         >
-                          <Calendar className="h-4 w-4 mr-2" />
+                          <Icon name="calendar-date-appointment" className="h-4 w-4 mr-2" />
                           Activity
                         </Button>
                         <Separator />
@@ -346,7 +329,7 @@ export const MobileNavigation: React.FC = () => {
                           className="w-full justify-start text-destructive hover:text-destructive"
                           onClick={handleLogout}
                         >
-                          <LogOut className="h-4 w-4 mr-2" />
+                          <Icon name="logout-exit" className="h-4 w-4 mr-2" />
                           Sign out
                         </Button>
                       </div>
@@ -362,7 +345,7 @@ export const MobileNavigation: React.FC = () => {
                             navigate('/');
                           }}
                         >
-                          <LogOut className="h-4 w-4 mr-2" />
+                          <Icon name="enter-log-in-arrow" className="h-4 w-4 mr-2" />
                           Sign In
                         </Button>
                       </div>
@@ -387,7 +370,6 @@ export const MobileNavigation: React.FC = () => {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t lg:hidden">
         <div className="grid grid-cols-5 h-16">
           {updatedNavigationItems.map((item) => {
-            const IconComponent = item.icon;
             return (
               <a
                 key={item.name}
@@ -401,7 +383,8 @@ export const MobileNavigation: React.FC = () => {
                   }
                 `}
               >
-                <IconComponent
+                <Icon
+                  name={item.iconName as any}
                   className={`
                     h-5 w-5
                     ${item.current ? 'text-primary' : 'text-muted-foreground'}

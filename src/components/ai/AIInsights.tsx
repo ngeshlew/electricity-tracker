@@ -3,18 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Sparkles, 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  Zap, 
-  Lightbulb,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  Loader2
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 interface AIInsight {
@@ -116,15 +105,15 @@ export const AIInsights: React.FC = () => {
   const getInsightIcon = (type: AIInsight['type']) => {
     switch (type) {
       case 'tip':
-        return <Lightbulb className="h-5 w-5 text-yellow-500" />;
+        return <Icon name="info" className="h-5 w-5 text-yellow-500" />;
       case 'warning':
-        return <AlertTriangle className="h-5 w-5 text-orange-500" />;
+        return <Icon name="alert-error" className="h-5 w-5 text-orange-500" />;
       case 'success':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
+        return <Icon name="check-circle-2" className="h-5 w-5 text-green-500" />;
       case 'info':
-        return <Zap className="h-5 w-5 text-blue-500" />;
+        return <Icon name="lightning-energy" className="h-5 w-5 text-blue-500" />;
       default:
-        return <Sparkles className="h-5 w-5 text-purple-500" />;
+        return <Icon name="info" className="h-5 w-5 text-purple-500" />;
     }
   };
 
@@ -144,15 +133,15 @@ export const AIInsights: React.FC = () => {
   const getCategoryIcon = (category: AIInsight['category']) => {
     switch (category) {
       case 'consumption':
-        return <Zap className="h-4 w-4" />;
+        return <Icon name="lightning-energy" className="h-4 w-4" />;
       case 'cost':
-        return <DollarSign className="h-4 w-4" />;
+        return <Icon name="dollar-currency" className="h-4 w-4" />;
       case 'efficiency':
-        return <TrendingUp className="h-4 w-4" />;
+        return <Icon name="arrow-up" className="h-4 w-4" />;
       case 'pattern':
-        return <TrendingDown className="h-4 w-4" />;
+        return <Icon name="arrow-down" className="h-4 w-4" />;
       default:
-        return <Sparkles className="h-4 w-4" />;
+        return <Icon name="info" className="h-4 w-4" />;
     }
   };
 
@@ -166,7 +155,7 @@ export const AIInsights: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
+            <Icon name="info" className="h-6 w-6 text-primary" />
             AI-Powered Insights
           </h2>
           <p className="text-muted-foreground">
@@ -186,9 +175,9 @@ export const AIInsights: React.FC = () => {
             size="sm"
           >
             {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Icon name="loading-spinner" className="h-4 w-4 animate-spin" />
             ) : (
-              <RefreshCw className="h-4 w-4" />
+              <Icon name="clock-refresh-time-arrow" className="h-4 w-4" />
             )}
             Refresh
           </Button>
@@ -204,7 +193,7 @@ export const AIInsights: React.FC = () => {
                 <p className="text-sm text-muted-foreground">Total Insights</p>
                 <p className="text-2xl font-bold">{insights.length}</p>
               </div>
-              <Sparkles className="h-8 w-8 text-primary/50" />
+              <Icon name="info" className="h-8 w-8 text-primary/50" />
             </div>
           </CardContent>
         </Card>
@@ -218,7 +207,7 @@ export const AIInsights: React.FC = () => {
                   {insights.filter(i => i.actionable).length}
                 </p>
               </div>
-              <Lightbulb className="h-8 w-8 text-yellow-500/50" />
+              <Icon name="info" className="h-8 w-8 text-yellow-500/50" />
             </div>
           </CardContent>
         </Card>
@@ -230,7 +219,7 @@ export const AIInsights: React.FC = () => {
                 <p className="text-sm text-muted-foreground">Potential Savings</p>
                 <p className="text-2xl font-bold">£{totalSavings.toFixed(2)}</p>
               </div>
-              <DollarSign className="h-8 w-8 text-green-500/50" />
+              <Icon name="dollar-currency" className="h-8 w-8 text-green-500/50" />
             </div>
           </CardContent>
         </Card>
@@ -280,7 +269,7 @@ export const AIInsights: React.FC = () => {
                       
                       {insight.estimatedSavings && (
                         <div className="flex items-center gap-2 text-sm text-green-600">
-                          <DollarSign className="h-4 w-4" />
+                          <Icon name="dollar-currency" className="h-4 w-4" />
                           <span className="font-medium">
                             Potential savings: £{insight.estimatedSavings.toFixed(2)}/month
                           </span>

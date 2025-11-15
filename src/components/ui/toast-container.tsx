@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { Icon } from "@/components/ui/icon";
 import { useToastStore } from '../../store/useToastStore';
 import { cn } from '@/lib/utils';
 
@@ -61,7 +61,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
           className="ml-2 hover:opacity-70 transition-opacity"
           aria-label="Close toast"
         >
-          <X className="h-4 w-4" />
+            <Icon name="x-close-delete" className="h-4 w-4" />
         </button>
       </div>
     </div>

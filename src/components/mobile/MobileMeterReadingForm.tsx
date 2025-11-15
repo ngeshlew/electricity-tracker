@@ -7,14 +7,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 // import { Badge } from "@/components/ui/badge";
-import { 
-  CalendarIcon, 
-  Calculator, 
-  Zap, 
-  Clock,
-  CheckCircle,
-  AlertCircle
-} from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { format } from "date-fns";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useTariffStore } from '../../store/useTariffStore';
@@ -123,7 +116,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Zap className="h-4 w-4" />
+                <Icon name="lightning-energy" className="h-4 w-4" />
                 Meter Reading
               </CardTitle>
               <CardDescription>
@@ -165,7 +158,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4" />
+                <Icon name="calendar-date-appointment" className="h-4 w-4" />
                 Reading Date
               </CardTitle>
             </CardHeader>
@@ -176,7 +169,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
                     variant="outline"
                     className="w-full h-12 justify-start text-left font-normal"
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <Icon name="calendar-date-appointment" className="mr-2 h-4 w-4" />
                     {format(formData.date, "PPP")}
                   </Button>
                 </PopoverTrigger>
@@ -206,7 +199,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Clock className="h-4 w-4" />
+                <Icon name="clock-time" className="h-4 w-4" />
                 Reading Type
               </CardTitle>
             </CardHeader>
@@ -223,13 +216,13 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
                 <SelectContent>
                   <SelectItem value="MANUAL">
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4" />
+                      <Icon name="check-circle-2" className="h-4 w-4" />
                       Manual Reading
                     </div>
                   </SelectItem>
                   <SelectItem value="ESTIMATED">
                     <div className="flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4" />
+                      <Icon name="alert-error" className="h-4 w-4" />
                       Estimated Reading
                     </div>
                   </SelectItem>
@@ -267,7 +260,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Calculator className="h-4 w-4" />
+                  <Icon name="calculator-compute-math" className="h-4 w-4" />
                   Add Reading
                 </div>
               )}
@@ -276,7 +269,7 @@ export const MobileMeterReadingForm: React.FC<MobileMeterReadingFormProps> = ({
             {error && (
               <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3">
                 <div className="flex items-center gap-2 text-destructive">
-                  <AlertCircle className="h-4 w-4" />
+                  <Icon name="alert-error" className="h-4 w-4" />
                   <span className="text-sm font-normal">Error</span>
                 </div>
                 <p className="text-sm text-destructive mt-1">{error}</p>

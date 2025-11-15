@@ -14,18 +14,12 @@ import { TariffLayout } from './components/tariff/TariffLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { useElectricityStore } from './store/useElectricityStore';
-import { clearOldCaches } from './utils/cacheManager';
 import './index.css';
 
 function App() {
   const { loadMeterReadings, setupRealtimeUpdates, cleanupRealtimeUpdates } = useElectricityStore();
 
   useEffect(() => {
-    // Clear old caches on app initialization to ensure fresh content
-    clearOldCaches().catch((error) => {
-      console.warn('Failed to clear old caches:', error);
-    });
-
     // Load initial data and set up real-time updates
     const initializeApp = async () => {
       try {
@@ -39,6 +33,17 @@ function App() {
           console.log('Real-time updates set up successfully');
         } catch (socketError) {
           console.warn('Failed to set up real-time updates (this is OK):', socketError);
+        }
+        
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
         }
         
         console.log('App initialized successfully');

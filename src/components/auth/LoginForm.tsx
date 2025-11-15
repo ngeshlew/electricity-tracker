@@ -5,14 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Eye, 
-  EyeOff, 
-  Loader2, 
-  Mail, 
-  Lock,
-  AlertCircle
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 
 interface LoginFormProps {
@@ -63,7 +56,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Icon name="mail-email-message-inbox" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
@@ -81,7 +74,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Icon name="lock-privacy" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -101,9 +94,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 disabled={isLoading}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <Icon name="eye-password-off" className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <Icon name="eye-password" className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -137,7 +130,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <Icon name="alert-error" className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -150,7 +143,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Icon name="loading-spinner" className="mr-2 h-4 w-4 animate-spin" />
                 Signing in...
               </>
             ) : (

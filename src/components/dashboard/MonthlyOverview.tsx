@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { HelpCircle, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { Icon } from "@/components/ui/icon";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval } from 'date-fns';
@@ -63,7 +63,7 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
       const actualWeekEnd = getWeekEnd(weekStart);
       
       // Get all readings that fall within this week (including boundary dates)
-      const weekReadings = monthReadings.filter(reading => {
+      const weekReadings = readings.filter(reading => {
         const readingDate = new Date(reading.date);
         return readingDate >= actualWeekStart && readingDate <= actualWeekEnd;
       });
@@ -194,11 +194,11 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'increasing':
-        return <TrendingUp className="h-5 w-5" />;
+        return <Icon name="arrow-up" className="h-5 w-5" />;
       case 'decreasing':
-        return <TrendingDown className="h-5 w-5" />;
+        return <Icon name="arrow-down" className="h-5 w-5" />;
       default:
-        return <Activity className="h-5 w-5" />;
+        return <Icon name="activity-graph" className="h-5 w-5" />;
     }
   };
 
@@ -217,37 +217,44 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
     <TooltipProvider>
       <Card className="bg-transparent w-full" style={{ padding: 'var(--space-md)' }}>
         <CardHeader className="pb-4">
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-base">
-              Monthly Overview
-            </CardTitle>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Monthly electricity consumption summary including estimated readings</p>
-              </TooltipContent>
-            </Tooltip>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-base">
+                Monthly Overview
+              </CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Icon name="help-question-mark" className="h-4 w-4 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Monthly electricity consumption summary including estimated readings</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            {monthlyData.weeklyBreakdown.length > 0 && (
+              <div className="text-xs uppercase tracking-normal text-muted-foreground">
+                {formatDateUK(monthlyData.weeklyBreakdown[0].startDate, 'chart')} - {formatDateUK(monthlyData.weeklyBreakdown[monthlyData.weeklyBreakdown.length - 1].endDate, 'chart')}
+              </div>
+            )}
           </div>
         </CardHeader>
       
       <CardContent className="space-y-3">
         {/* Monthly Summary */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="text-center p-3 border border-dashed">
+          <div className="text-center p-3 border border-dotted">
             <div className="text-xl  text-primary">
               {monthlyData.totalKwh}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Total kWh</div>
           </div>
-          <div className="text-center p-3 border border-dashed">
+          <div className="text-center p-3 border border-dotted">
             <div className="text-xl  text-primary">
               £{monthlyData.totalCost.toFixed(2)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Total Cost</div>
           </div>
-          <div className="text-center p-3 border border-dashed">
+          <div className="text-center p-3 border border-dotted">
             <div className="text-xl  text-primary">
               {monthlyData.averageDaily}
             </div>
@@ -272,10 +279,10 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
             {monthlyData.weeklyBreakdown.map((week) => (
               <div
                 key={week.week}
-                className="flex items-center justify-between p-3 border border-dashed hover:opacity-70 transition-opacity"
+                className="flex items-center justify-between p-3 border border-dotted hover:opacity-70 transition-opacity"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 border border-dashed flex items-center justify-center text-xs">
+                  <div className="w-8 h-8 border border-dotted flex items-center justify-center text-xs">
                     {week.week}
                   </div>
                   <div>

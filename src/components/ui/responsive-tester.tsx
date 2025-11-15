@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Monitor, Tablet, Smartphone, Fullscreen, RotateCw } from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 
 type ViewportSize = 'desktop' | 'tablet' | 'mobile';
@@ -56,7 +56,7 @@ export const ResponsiveTester: React.FC<ResponsiveTesterProps> = ({ className })
             className="inline-flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap bg-transparent h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
             title="Desktop"
           >
-            <Monitor className="h-4 w-4" />
+            <Icon name="desktop-computer-mac" className="h-4 w-4" />
           </Button>
 
           {/* Tablet Button */}
@@ -67,7 +67,7 @@ export const ResponsiveTester: React.FC<ResponsiveTesterProps> = ({ className })
             className="inline-flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap bg-transparent h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
             title="Tablet"
           >
-            <Tablet className="h-4 w-4" />
+            <Icon name="mobile-phone" className="h-4 w-4" />
           </Button>
 
           {/* Mobile Button */}
@@ -78,7 +78,7 @@ export const ResponsiveTester: React.FC<ResponsiveTesterProps> = ({ className })
             className="inline-flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap bg-transparent h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
             title="Mobile"
           >
-            <Smartphone className="h-4 w-4" />
+            <Icon name="mobile-phone" className="h-4 w-4" />
           </Button>
 
           <Separator orientation="vertical" className="h-4" />
@@ -91,7 +91,7 @@ export const ResponsiveTester: React.FC<ResponsiveTesterProps> = ({ className })
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-6 rounded-sm p-0"
             title="Toggle Fullscreen"
           >
-            <Fullscreen className="h-4 w-4" />
+            <Icon name="maximize-expand" className="h-4 w-4" />
             <span className="sr-only">Toggle Fullscreen</span>
           </Button>
 
@@ -105,7 +105,7 @@ export const ResponsiveTester: React.FC<ResponsiveTesterProps> = ({ className })
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-6 rounded-sm p-0"
             title="Refresh Preview"
           >
-            <RotateCw className="h-4 w-4" />
+            <Icon name="clock-refresh-time-arrow" className="h-4 w-4" />
             <span className="sr-only">Refresh Preview</span>
           </Button>
         </div>

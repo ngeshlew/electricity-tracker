@@ -3,17 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Brain, 
-  TrendingUp, 
-  AlertTriangle, 
-  Lightbulb, 
-
-  RefreshCw,
-  ChevronRight,
-  BarChart3,
-  PieChart
-} from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 interface Insight {
@@ -252,11 +242,11 @@ export const AIInsights: React.FC = () => {
   // Get insight icon
   const getInsightIcon = (type: string) => {
     switch (type) {
-      case 'pattern': return <BarChart3 className="h-4 w-4" />;
-      case 'recommendation': return <Lightbulb className="h-4 w-4" />;
-      case 'anomaly': return <AlertTriangle className="h-4 w-4" />;
-      case 'forecast': return <TrendingUp className="h-4 w-4" />;
-      default: return <Brain className="h-4 w-4" />;
+      case 'pattern': return <Icon name="bar-chart" className="h-4 w-4" />;
+      case 'recommendation': return <Icon name="info" className="h-4 w-4" />;
+      case 'anomaly': return <Icon name="alert-error" className="h-4 w-4" />;
+      case 'forecast': return <Icon name="arrow-up" className="h-4 w-4" />;
+      default: return <Icon name="info" className="h-4 w-4" />;
     }
   };
 
@@ -293,7 +283,7 @@ export const AIInsights: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Brain className="h-6 w-6 text-primary" />
+            <Icon name="info" className="h-6 w-6 text-primary" />
             AI-Powered Insights
           </h2>
           <p className="text-muted-foreground">
@@ -306,9 +296,9 @@ export const AIInsights: React.FC = () => {
           className="flex items-center gap-2"
         >
           {isAnalyzing ? (
-            <RefreshCw className="h-4 w-4 animate-spin" />
+            <Icon name="clock-refresh-time-arrow" className="h-4 w-4 animate-spin" />
           ) : (
-            <Brain className="h-4 w-4" />
+            <Icon name="info" className="h-4 w-4" />
           )}
           {isAnalyzing ? 'Analyzing...' : 'Refresh Analysis'}
         </Button>
@@ -319,7 +309,7 @@ export const AIInsights: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5" />
+              <Icon name="pie-chart" className="h-5 w-5" />
               Consumption Patterns
             </CardTitle>
             <CardDescription>
@@ -365,7 +355,7 @@ export const AIInsights: React.FC = () => {
           {filteredInsights.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8">
-                <Brain className="h-12 w-12 text-muted-foreground mb-4" />
+                <Icon name="info" className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No Insights Available</h3>
                 <p className="text-muted-foreground text-center">
                   Add more meter readings to unlock AI-powered insights and recommendations.
@@ -402,7 +392,7 @@ export const AIInsights: React.FC = () => {
                             {insight.actionable && insight.actionText && (
                               <Button variant="outline" size="sm" className="flex items-center gap-1">
                                 {insight.actionText}
-                                <ChevronRight className="h-3 w-3" />
+                                <Icon name="arrow-chevron-right" className="h-3 w-3" />
                               </Button>
                             )}
                           </div>

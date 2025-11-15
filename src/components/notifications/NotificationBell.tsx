@@ -7,33 +7,20 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Bell, 
- 
-  X, 
-  Settings,
-  AlertCircle,
-  Info,
-  AlertTriangle,
-  CheckCircle,
-  Zap,
-  DollarSign,
-  Cog,
-  Clock
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useNotificationStore } from '../../store/useNotificationStore';
 import { formatDistanceToNow } from 'date-fns';
 
-const notificationIcons = {
-  info: Info,
-  warning: AlertTriangle,
-  error: AlertCircle,
-  success: CheckCircle,
-  consumption: Zap,
-  cost: DollarSign,
-  system: Cog,
-  reminder: Clock,
-  alert: AlertCircle
+const notificationIcons: Record<string, string> = {
+  info: 'info',
+  warning: 'alert-error',
+  error: 'alert-error',
+  success: 'check-circle-2',
+  consumption: 'lightning-energy',
+  cost: 'dollar-currency',
+  system: 'adjust-settings-horizontal',
+  reminder: 'clock-time',
+  alert: 'alert-error'
 };
 
 const notificationColors = {
@@ -69,7 +56,7 @@ export const NotificationBell: React.FC = () => {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="relative">
-          <Bell className="h-4 w-4" />
+          <Icon name="notification-bell-alarm" className="h-4 w-4" />
           {unreadCount > 0 && (
             <Badge 
               variant="destructive" 
@@ -94,13 +81,13 @@ export const NotificationBell: React.FC = () => {
         <ScrollArea className="h-80">
           {recentNotifications.length === 0 ? (
             <div className="p-4 text-center text-muted-foreground">
-              <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <Icon name="notification-bell-alarm" className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p className="text-sm">No notifications</p>
             </div>
           ) : (
             <div className="p-2">
               {recentNotifications.map((notification) => {
-                const IconComponent = notificationIcons[notification.type] || notificationIcons[notification.category] || Bell;
+                const iconName = notificationIcons[notification.type] || notificationIcons[notification.category] || 'notification-bell-alarm';
                 const colorClass = notificationColors[notification.type] || 'text-muted-foreground';
                 
                 return (
@@ -115,7 +102,7 @@ export const NotificationBell: React.FC = () => {
                   >
                     <div className="flex items-start gap-3">
                       <div className={`mt-1 ${colorClass}`}>
-                        <IconComponent className="h-4 w-4" />
+                        <Icon name={iconName as any} className="h-4 w-4" />
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -140,7 +127,7 @@ export const NotificationBell: React.FC = () => {
                             onClick={(e) => handleRemoveNotification(notification.id, e)}
                             className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
                           >
-                            <X className="h-3 w-3" />
+                            <Icon name="x-close-delete" className="h-3 w-3" />
                           </Button>
                         </div>
                       </div>
@@ -162,7 +149,7 @@ export const NotificationBell: React.FC = () => {
               window.location.href = '/notifications';
             }}
           >
-            <Settings className="h-4 w-4 mr-2" />
+            <Icon name="adjust-settings-horizontal" className="h-4 w-4 mr-2" />
             View all notifications
           </Button>
         </div>

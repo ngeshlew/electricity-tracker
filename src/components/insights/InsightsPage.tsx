@@ -3,7 +3,7 @@ import { AIInsights } from '../ai/AIInsights';
 import { AIPromptInput } from '../ai/AIPromptInput';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, TrendingUp, Target, MessageSquare, Sparkles } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { getAIHealth, AIHealthResponse } from '@/services/aiService';
 import { useAIChatStore } from '@/store/useAIChatStore';
 
@@ -28,7 +28,7 @@ export const InsightsPage: React.FC = () => {
     <div className="container mx-auto py-6 max-w-6xl">
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <Brain className="h-8 w-8 text-primary" />
+          <Icon name="info" className="h-8 w-8 text-primary" />
           <h1 className="text-3xl font-bold">AI Insights</h1>
         </div>
         <p className="text-muted-foreground flex items-center gap-2">
@@ -54,7 +54,7 @@ export const InsightsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 AI Analysis
               </div>
-              <Brain className="h-3 w-3 text-muted-foreground" />
+              <Icon name="info" className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               Active
@@ -73,7 +73,7 @@ export const InsightsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 Recommendations
               </div>
-              <Target className="h-3 w-3 text-muted-foreground" />
+              <Icon name="target" className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               5+
@@ -92,7 +92,7 @@ export const InsightsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 Efficiency Score
               </div>
-              <TrendingUp className="h-3 w-3 text-muted-foreground" />
+              <Icon name="arrow-up" className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               85%
@@ -110,15 +110,15 @@ export const InsightsPage: React.FC = () => {
       <Tabs defaultValue="insights" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="insights" className="flex items-center gap-2">
-            <Brain className="h-4 w-4" />
+            <Icon name="info" className="h-4 w-4" />
             AI Insights
           </TabsTrigger>
           <TabsTrigger value="chat" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
+            <Icon name="mail-email-message-inbox" className="h-4 w-4" />
             AI Chat
           </TabsTrigger>
           <TabsTrigger value="prompt" className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4" />
+            <Icon name="info" className="h-4 w-4" />
             Ask AI
           </TabsTrigger>
         </TabsList>
@@ -131,13 +131,13 @@ export const InsightsPage: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
+                <Icon name="mail-email-message-inbox" className="h-5 w-5" />
                 AI Energy Assistant
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
-                <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <Icon name="mail-email-message-inbox" className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Click the chat button in the bottom right to start a conversation with our AI assistant!</p>
               </div>
             </CardContent>

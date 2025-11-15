@@ -3,13 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Loader2, 
-  Mail, 
-  ArrowLeft,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 
 interface ForgotPasswordFormProps {
@@ -44,7 +38,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
     return (
       <div className="space-y-4">
         <div className="text-center">
-          <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-4" />
+          <Icon name="check-circle-2" className="mx-auto h-12 w-12 text-green-500 mb-4" />
           <h3 className="text-lg font-semibold">Check your email</h3>
           <p className="text-sm text-muted-foreground mt-2">
             We've sent a password reset link to <strong>{email}</strong>
@@ -57,7 +51,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
             variant="outline"
             className="w-full"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <Icon name="arrow-left" className="mr-2 h-4 w-4" />
             Back to sign in
           </Button>
           
@@ -81,7 +75,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Icon name="mail-email-message-inbox" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             id="email"
             type="email"
@@ -100,7 +94,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 
       {error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <Icon name="alert-error" className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -113,7 +107,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Icon name="loading-spinner" className="mr-2 h-4 w-4 animate-spin" />
               Sending reset link...
             </>
           ) : (
@@ -128,7 +122,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
           className="w-full"
           disabled={isLoading}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <Icon name="arrow-left" className="mr-2 h-4 w-4" />
           Back to sign in
         </Button>
       </div>

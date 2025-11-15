@@ -4,7 +4,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { LoadingCard } from "@/components/ui/skeleton";
-import { Activity, TrendingUp, TrendingDown } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 /**
@@ -66,7 +66,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
     : 'text-muted-foreground';
   
   return (
-    <Card className="bg-transparent text-card-foreground flex flex-col border-dashed hover:border-[var(--color-border-strong)] transition-colors duration-200 w-full" role="region" aria-label={`${title} statistics`} style={{ padding: 'var(--space-md)' }}>
+    <Card className="bg-transparent text-card-foreground flex flex-col border-dotted hover:border-[var(--color-border-strong)] transition-colors duration-200 w-full" role="region" aria-label={`${title} statistics`} style={{ padding: 'var(--space-md)' }}>
       <CardHeader className="px-0 pt-0 pb-0 text-center">
         {/* Label - Uppercase, small, muted */}
         <div className="text-muted-foreground text-xs uppercase tracking-wider mb-6" aria-label={`Metric: ${title}`}>
@@ -85,11 +85,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
         </div>
         
         {/* Dashed divider */}
-        <div className="border-t border-dashed border-border mb-4" style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-md)' }} aria-hidden="true"></div>
+        <div className="border-t border-dotted border-border mb-4" style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-md)' }} aria-hidden="true"></div>
         
         {/* Context label - VS LAST MONTH (11px) */}
         <div className="text-xs uppercase tracking-normal text-muted-foreground" aria-label="Comparison period">
-          VS LAST MONTH
+          {title === 'vs UK Average' ? 'VS UK AVERAGE' : 'VS LAST MONTH'}
         </div>
       </CardHeader>
     </Card>
@@ -119,8 +119,8 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   // Show skeleton loading state
   if (isLoading && chartData.length === 0) {
     return (
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full">
-        {[...Array(4)].map((_, i) => (
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-5 w-full">
+        {[...Array(5)].map((_, i) => (
           <LoadingCard key={i} />
         ))}
       </div>
@@ -244,19 +244,28 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   
   const averageTrend = getTrendFromChange(averageDailyChange);
 
-  // Calculate average consumption for insights
-  const allTimeAverage = chartData.length > 0 
-    ? chartData.reduce((sum, point) => sum + point.kwh, 0) / chartData.length 
+  // Calculate UK Average comparison for current month
+  const ukAverageDaily = 8.5; // kWh/day (UK average from Ofgem)
+  const currentMonthVsUK = ukAverageDaily > 0 
+    ? ((currentAverageDaily - ukAverageDaily) / ukAverageDaily) * 100 
     : 0;
-  const comparisonToAverage = allTimeAverage > 0 
-    ? ((currentAverageDaily - allTimeAverage) / allTimeAverage) * 100 
+  
+  // Calculate UK Average comparison for previous month
+  const previousMonthVsUK = ukAverageDaily > 0 
+    ? ((previousAverageDaily - ukAverageDaily) / ukAverageDaily) * 100 
     : 0;
+  
+  // Calculate change: improvement from last month's vs UK average
+  // If last month was -60% and this month is -51%, that's a +9% improvement (getting closer to UK average)
+  // Positive change means improving (getting closer to or better than UK average)
+  const ukComparisonChange = previousMonthVsUK - currentMonthVsUK; // Reversed because lower is better
+
 
   // Determine trend icons based on change direction
   const getTrendIcon = (change: number) => {
-    if (change > 0) return <TrendingUp className="h-4 w-4" />;
-    if (change < 0) return <TrendingDown className="h-4 w-4" />;
-    return <Activity className="h-4 w-4" />;
+    if (change > 0) return <Icon name="arrow-up" className="h-4 w-4" />;
+    if (change < 0) return <Icon name="arrow-down" className="h-4 w-4" />;
+    return <Icon name="activity-graph" className="h-4 w-4" />;
   };
 
   const cards = [
@@ -266,7 +275,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: kwhChange >= 0 ? 'Higher than last month' : 'Lower than last month',
       changeValue: `${kwhChange >= 0 ? '+' : ''}${kwhChange.toFixed(1)}%`,
       description: `Consumption for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
-      icon: <TrendingUp className="h-3 w-3" />,
+      icon: <Icon name="arrow-up" className="h-3 w-3" />,
       trendIcon: getTrendIcon(kwhChange)
     },
     {
@@ -275,7 +284,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: costChange >= 0 ? 'Higher than last month' : 'Lower than last month',
       changeValue: `${costChange >= 0 ? '+' : ''}${costChange.toFixed(1)}%`,
       description: `Spending for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
-      icon: costChange >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />,
+      icon: costChange >= 0 ? <Icon name="arrow-up" className="h-3 w-3" /> : <Icon name="arrow-down" className="h-3 w-3" />,
       trendIcon: getTrendIcon(costChange)
     },
     {
@@ -284,7 +293,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: averageTrend === 'increasing' ? 'Higher than last month' : averageTrend === 'decreasing' ? 'Lower than last month' : 'Same as last month',
       changeValue: `${averageDailyChange >= 0 ? '+' : ''}${averageDailyChange.toFixed(1)}%`,
       description: `Average daily usage`,
-      icon: averageTrend === 'increasing' ? <TrendingUp className="h-3 w-3" /> : averageTrend === 'decreasing' ? <TrendingDown className="h-3 w-3" /> : <Activity className="h-3 w-3" />,
+      icon: averageTrend === 'increasing' ? <Icon name="arrow-up" className="h-3 w-3" /> : averageTrend === 'decreasing' ? <Icon name="arrow-down" className="h-3 w-3" /> : <Icon name="activity-graph" className="h-3 w-3" />,
       trendIcon: getTrendIcon(averageDailyChange)
     },
     {
@@ -293,14 +302,23 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: averageDaily > 15 ? 'Above target' : averageDaily > 10 ? 'Near target' : 'Below target',
       changeValue: averageDaily > 15 ? '+15.2%' : averageDaily > 10 ? '+2.1%' : '-8.3%',
       description: 'Based on daily average consumption',
-      icon: averageDaily > 15 ? <TrendingUp className="h-3 w-3" /> : averageDaily > 10 ? <Activity className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />,
-      trendIcon: averageDaily > 15 ? <TrendingUp className="h-4 w-4" /> : averageDaily > 10 ? <Activity className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />
+      icon: averageDaily > 15 ? <Icon name="arrow-up" className="h-3 w-3" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-3 w-3" /> : <Icon name="arrow-down" className="h-3 w-3" />,
+      trendIcon: averageDaily > 15 ? <Icon name="arrow-up" className="h-4 w-4" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-4 w-4" /> : <Icon name="arrow-down" className="h-4 w-4" />
+    },
+    {
+      title: 'vs UK Average',
+      value: `${currentMonthVsUK >= 0 ? '+' : ''}${currentMonthVsUK.toFixed(0)}%`,
+      change: currentMonthVsUK >= 0 ? 'Above UK average' : 'Below UK average',
+      changeValue: `${ukComparisonChange >= 0 ? '+' : ''}${ukComparisonChange.toFixed(0)}%`,
+      description: 'Compared to UK household average (8.5 kWh/day)',
+      icon: <Icon name="target" className="h-3 w-3" />,
+      trendIcon: getTrendIcon(ukComparisonChange)
     }
   ];
 
   return (
     <div className="space-y-4 w-full">
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-5 w-full">
         {cards.map((card, index) => (
           <SummaryCard
             key={index}
@@ -315,17 +333,6 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
         ))}
       </div>
       
-      {/* Insights Section */}
-      {allTimeAverage > 0 && Math.abs(comparisonToAverage) > 1 && (
-        <div className="text-center py-3 px-4 border-t border-dashed border-border">
-          <p className="text-xs uppercase tracking-normal text-muted-foreground font-mono">
-            {comparisonToAverage < 0 
-              ? `YOU'RE USING ${Math.abs(comparisonToAverage).toFixed(0)}% LESS THAN AVERAGE`
-              : `YOU'RE USING ${comparisonToAverage.toFixed(0)}% MORE THAN AVERAGE`
-            }
-          </p>
-        </div>
-      )}
     </div>
   );
 };

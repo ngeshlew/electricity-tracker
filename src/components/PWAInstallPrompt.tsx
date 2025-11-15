@@ -2,14 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 // import { Badge } from '@/components/ui/badge';
-import { 
-  Download, 
-  X, 
-  Smartphone, 
-
-  CheckCircle,
-  Zap
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -112,7 +105,7 @@ export const PWAInstallPrompt: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Zap className="h-4 w-4 text-primary-foreground" />
+                <Icon name="lightning-energy" className="h-4 w-4 text-primary-foreground" />
               </div>
               <div>
                 <CardTitle className="text-sm">Install App</CardTitle>
@@ -127,7 +120,7 @@ export const PWAInstallPrompt: React.FC = () => {
               onClick={handleDismiss}
               className="h-6 w-6 p-0"
             >
-              <X className="h-3 w-3" />
+              <Icon name="x-close-delete" className="h-3 w-3" />
             </Button>
           </div>
         </CardHeader>
@@ -158,7 +151,7 @@ export const PWAInstallPrompt: React.FC = () => {
             // Android/Desktop installation
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm">
-                <Smartphone className="h-4 w-4" />
+                <Icon name="mobile-phone" className="h-4 w-4" />
                 <span>Mobile & Desktop</span>
               </div>
               <div className="text-xs text-muted-foreground">
@@ -169,14 +162,14 @@ export const PWAInstallPrompt: React.FC = () => {
                 className="w-full h-8 text-xs"
                 size="sm"
               >
-                <Download className="h-3 w-3 mr-1" />
+                <Icon name="download" className="h-3 w-3 mr-1" />
                 Install App
               </Button>
             </div>
           )}
           
           <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-            <CheckCircle className="h-3 w-3" />
+            <Icon name="check-circle-2" className="h-3 w-3" />
             <span>Works offline • No app store required</span>
           </div>
         </CardContent>

@@ -60,6 +60,12 @@ module.exports = {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
+  			season: {
+  				winter: 'var(--color-season-winter)',
+  				spring: 'var(--color-season-spring)',
+  				summer: 'var(--color-season-summer)',
+  				autumn: 'var(--color-season-autumn)',
+  			},
   			popover: {
   				DEFAULT: 'hsl(var(--popover))',
   				foreground: 'hsl(var(--popover-foreground))'

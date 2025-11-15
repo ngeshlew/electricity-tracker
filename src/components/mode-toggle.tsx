@@ -1,4 +1,4 @@
-import { Moon, Sun, Monitor } from "lucide-react"
+import { Icon } from "@/components/ui/icon"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -15,9 +15,9 @@ export function ModeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 mono:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 mono:scale-0" />
-          <Monitor className="absolute h-[1.2rem] w-[1.2rem] scale-0 transition-all mono:scale-100" />
+          <Icon name="sun-day" className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 mono:scale-0" />
+          <Icon name="moon-night" className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 mono:scale-0" />
+          <Icon name="desktop-computer-mac" className="absolute h-[1.2rem] w-[1.2rem] scale-0 transition-all mono:scale-100" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>

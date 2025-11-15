@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Monitor, Tablet, Smartphone, Fullscreen, RotateCw, X, Eye } from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 
 type ViewportSize = 'desktop' | 'tablet' | 'mobile';
@@ -80,7 +80,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
         variant="outline"
         size="sm"
       >
-        <Eye className="h-4 w-4" />
+        <Icon name="eye-password" className="h-4 w-4" />
       </Button>
     );
   }
@@ -106,7 +106,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
               className="h-7 px-2"
               title="Desktop (100%)"
             >
-              <Monitor className="h-3 w-3" />
+              <Icon name="desktop-computer-mac" className="h-3 w-3" />
             </Button>
             
             <Button
@@ -116,7 +116,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
               className="h-7 px-2"
               title="Tablet (768px)"
             >
-              <Tablet className="h-3 w-3" />
+              <Icon name="mobile-phone" className="h-3 w-3" />
             </Button>
             
             <Button
@@ -126,7 +126,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
               className="h-7 px-2"
               title="Mobile (375px)"
             >
-              <Smartphone className="h-3 w-3" />
+              <Icon name="mobile-phone" className="h-3 w-3" />
             </Button>
           </div>
 
@@ -141,7 +141,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
               className="h-7 w-7 p-0"
               title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
             >
-              <Fullscreen className="h-3 w-3" />
+              <Icon name="maximize-expand" className="h-3 w-3" />
             </Button>
             
             <Button
@@ -151,7 +151,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
               className="h-7 w-7 p-0"
               title="Refresh Page"
             >
-              <RotateCw className="h-3 w-3" />
+              <Icon name="clock-refresh-time-arrow" className="h-3 w-3" />
             </Button>
           </div>
         </div>
@@ -171,7 +171,7 @@ export const ResponsiveTestBanner: React.FC<ResponsiveTestBannerProps> = ({ clas
             className="h-7 w-7 p-0"
             title="Hide Responsive Tester"
           >
-            <X className="h-3 w-3" />
+            <Icon name="x-close-delete" className="h-3 w-3" />
           </Button>
         </div>
       </div>

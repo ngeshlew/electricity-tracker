@@ -8,20 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Settings as SettingsIcon, 
-  User, 
-  Palette, 
-  Bell, 
-  Database, 
-  Download, 
-
-  Trash2,
-  Save,
-  RefreshCw,
-  AlertTriangle,
-  CheckCircle
-} from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
 
@@ -75,7 +62,7 @@ export const Settings: React.FC = () => {
     <div className="container mx-auto py-6 max-w-4xl">
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <SettingsIcon className="h-8 w-8 text-primary" />
+          <Icon name="adjust-settings-horizontal" className="h-8 w-8 text-primary" />
           <h1 className="text-3xl font-bold">Settings</h1>
         </div>
         <p className="text-muted-foreground">
@@ -86,19 +73,19 @@ export const Settings: React.FC = () => {
       <Tabs defaultValue="general" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="general" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
+            <Icon name="account-user-person" className="h-4 w-4" />
             General
           </TabsTrigger>
           <TabsTrigger value="display" className="flex items-center gap-2">
-            <Palette className="h-4 w-4" />
+            <Icon name="info" className="h-4 w-4" />
             Display
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
+            <Icon name="notification-bell-alarm" className="h-4 w-4" />
             Notifications
           </TabsTrigger>
           <TabsTrigger value="data" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
+            <Icon name="table-panel-window-sidebar" className="h-4 w-4" />
             Data
           </TabsTrigger>
         </TabsList>
@@ -501,7 +488,7 @@ export const Settings: React.FC = () => {
                       onClick={handleExportData}
                       className="flex items-center gap-2"
                     >
-                      <Download className="h-4 w-4" />
+                      <Icon name="download" className="h-4 w-4" />
                       Export Settings
                     </Button>
 
@@ -510,14 +497,14 @@ export const Settings: React.FC = () => {
                       onClick={handleClearCache}
                       className="flex items-center gap-2"
                     >
-                      <RefreshCw className="h-4 w-4" />
+                      <Icon name="clock-refresh-time-arrow" className="h-4 w-4" />
                       Clear Cache
                     </Button>
                   </div>
 
                   <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <AlertTriangle className="h-4 w-4 text-destructive" />
+                      <Icon name="alert-error" className="h-4 w-4 text-destructive" />
                       <h4 className="text-sm font-medium text-destructive">Danger Zone</h4>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">
@@ -529,7 +516,7 @@ export const Settings: React.FC = () => {
                       onClick={handleReset}
                       className="flex items-center gap-2"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Icon name="trash-delete-bin-3" className="h-4 w-4" />
                       Reset All Settings
                     </Button>
                   </div>
@@ -545,13 +532,13 @@ export const Settings: React.FC = () => {
         <div className="flex items-center gap-3">
           {saveStatus === 'saved' && (
             <Badge variant="default" className="flex items-center gap-1">
-              <CheckCircle className="h-3 w-3" />
+              <Icon name="check-circle-2" className="h-3 w-3" />
               Saved
             </Badge>
           )}
           {saveStatus === 'error' && (
             <Badge variant="destructive" className="flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3" />
+              <Icon name="alert-error" className="h-3 w-3" />
               Error
             </Badge>
           )}
@@ -561,9 +548,9 @@ export const Settings: React.FC = () => {
             className="flex items-center gap-2"
           >
             {isLoading ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
+              <Icon name="loading-spinner" className="h-4 w-4 animate-spin" />
             ) : (
-              <Save className="h-4 w-4" />
+              <Icon name="save" className="h-4 w-4" />
             )}
             {isLoading ? 'Saving...' : 'Save Changes'}
           </Button>

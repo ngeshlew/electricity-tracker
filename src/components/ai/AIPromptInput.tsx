@@ -3,17 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Send, 
-  Sparkles, 
-  Loader2, 
-  Zap,
-  Lightbulb,
-  TrendingUp,
-  DollarSign,
-  Calendar,
-  BarChart3
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 
 interface AIPromptInputProps {
   onPromptSubmit: (prompt: string) => void;
@@ -23,32 +13,32 @@ interface AIPromptInputProps {
 
 const suggestedPrompts = [
   {
-    icon: <TrendingUp className="h-4 w-4" />,
+    icon: <Icon name="arrow-up" className="h-4 w-4" />,
     text: "Analyze my consumption trends",
     category: "analytics"
   },
   {
-    icon: <DollarSign className="h-4 w-4" />,
+    icon: <Icon name="dollar-currency" className="h-4 w-4" />,
     text: "How can I reduce my electricity bill?",
     category: "cost"
   },
   {
-    icon: <Lightbulb className="h-4 w-4" />,
+    icon: <Icon name="info" className="h-4 w-4" />,
     text: "Suggest energy-saving tips",
     category: "tips"
   },
   {
-    icon: <BarChart3 className="h-4 w-4" />,
+    icon: <Icon name="bar-chart" className="h-4 w-4" />,
     text: "What are my peak usage hours?",
     category: "patterns"
   },
   {
-    icon: <Calendar className="h-4 w-4" />,
+    icon: <Icon name="calendar-date-appointment" className="h-4 w-4" />,
     text: "Compare this month vs last month",
     category: "comparison"
   },
   {
-    icon: <Zap className="h-4 w-4" />,
+    icon: <Icon name="lightning-energy" className="h-4 w-4" />,
     text: "Identify unusual usage patterns",
     category: "anomalies"
   }
@@ -84,7 +74,7 @@ export const AIPromptInput: React.FC<AIPromptInputProps> = ({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
+          <Icon name="info" className="h-5 w-5 text-primary" />
           AI Energy Assistant
         </CardTitle>
         <CardDescription>
@@ -154,7 +144,7 @@ export const AIPromptInput: React.FC<AIPromptInputProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-xs">
-                <Sparkles className="h-3 w-3 mr-1" />
+                <Icon name="info" className="h-3 w-3 mr-1" />
                 AI Powered
               </Badge>
               <span className="text-xs text-muted-foreground">
@@ -169,12 +159,12 @@ export const AIPromptInput: React.FC<AIPromptInputProps> = ({
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Icon name="loading-spinner" className="h-4 w-4 animate-spin" />
                   Analyzing...
                 </>
               ) : (
                 <>
-                  <Send className="h-4 w-4" />
+                  <Icon name="send-message-dm-inbox" className="h-4 w-4" />
                   Ask AI
                 </>
               )}

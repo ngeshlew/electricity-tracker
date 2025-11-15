@@ -7,16 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { 
-  User, 
-  Settings,
-  Shield,
-  Loader2,
-  CheckCircle,
-  AlertCircle,
-  LogOut,
-  Edit3
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 import { format } from 'date-fns';
 
@@ -105,7 +96,7 @@ export const UserProfile: React.FC = () => {
                     className="h-16 w-16 rounded-full object-cover"
                   />
                 ) : (
-                  <User className="h-8 w-8 text-primary-foreground" />
+                  <Icon name="account-user-person" className="h-8 w-8 text-primary-foreground" />
                 )}
               </div>
               <div>
@@ -118,7 +109,7 @@ export const UserProfile: React.FC = () => {
               onClick={() => setIsEditing(!isEditing)}
               disabled={isLoading}
             >
-              <Edit3 className="h-4 w-4 mr-2" />
+              <Icon name="edit-write" className="h-4 w-4 mr-2" />
               {isEditing ? 'Cancel' : 'Edit Profile'}
             </Button>
           </div>
@@ -129,7 +120,7 @@ export const UserProfile: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+            <Icon name="account-user-person" className="h-5 w-5" />
             Profile Information
           </CardTitle>
           <CardDescription>
@@ -139,7 +130,7 @@ export const UserProfile: React.FC = () => {
         <CardContent>
           {error && (
             <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
+              <Icon name="alert-error" className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -187,12 +178,12 @@ export const UserProfile: React.FC = () => {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Icon name="loading-spinner" className="mr-2 h-4 w-4 animate-spin" />
                       Saving...
                     </>
                   ) : (
                     <>
-                      <CheckCircle className="mr-2 h-4 w-4" />
+                      <Icon name="check-circle-2" className="mr-2 h-4 w-4" />
                       Save Changes
                     </>
                   )}
@@ -222,7 +213,7 @@ export const UserProfile: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
+            <Icon name="info" className="h-5 w-5" />
             Account Information
           </CardTitle>
           <CardDescription>
@@ -305,7 +296,7 @@ export const UserProfile: React.FC = () => {
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Icon name="loading-spinner" className="mr-2 h-4 w-4 animate-spin" />
                         Updating...
                       </>
                     ) : (
@@ -333,7 +324,7 @@ export const UserProfile: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
+            <Icon name="adjust-settings-horizontal" className="h-5 w-5" />
             Preferences
           </CardTitle>
           <CardDescription>
@@ -429,7 +420,7 @@ export const UserProfile: React.FC = () => {
       <Card className="border-destructive">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
-            <AlertCircle className="h-5 w-5" />
+            <Icon name="alert-error" className="h-5 w-5" />
             Danger Zone
           </CardTitle>
           <CardDescription>
@@ -448,7 +439,7 @@ export const UserProfile: React.FC = () => {
               variant="destructive"
               onClick={logout}
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <Icon name="logout-exit" className="mr-2 h-4 w-4" />
               Sign Out
             </Button>
           </div>

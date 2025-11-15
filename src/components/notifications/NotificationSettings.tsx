@@ -6,18 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 // import { Separator } from '@/components/ui/separator';
-import { 
-  Bell, 
-  Mail, 
-  Smartphone, 
-  AlertTriangle, 
-  DollarSign, 
-  Zap, 
-  Cog, 
-  Clock,
-  Save,
-  RotateCcw
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useNotificationStore } from '../../store/useNotificationStore';
 
 export const NotificationSettings: React.FC = () => {
@@ -65,7 +54,7 @@ export const NotificationSettings: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
+            <Icon name="notification-bell-alarm" className="h-5 w-5" />
             General Notification Settings
           </CardTitle>
           <CardDescription>
@@ -76,7 +65,7 @@ export const NotificationSettings: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
+                <Icon name="mail-email-message-inbox" className="h-4 w-4" />
                 <Label htmlFor="email">Email Notifications</Label>
               </div>
               <Switch
@@ -91,7 +80,7 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Smartphone className="h-4 w-4" />
+                <Icon name="mobile-phone" className="h-4 w-4" />
                 <Label htmlFor="push">Push Notifications</Label>
               </div>
               <Switch
@@ -106,7 +95,7 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4" />
+                <Icon name="notification-bell-alarm" className="h-4 w-4" />
                 <Label htmlFor="inApp">In-App Notifications</Label>
               </div>
               <Switch
@@ -126,7 +115,7 @@ export const NotificationSettings: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
+            <Icon name="alert-error" className="h-5 w-5" />
             Alert Categories
           </CardTitle>
           <CardDescription>
@@ -137,7 +126,7 @@ export const NotificationSettings: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4" />
+                <Icon name="lightning-energy" className="h-4 w-4" />
                 <Label htmlFor="consumption">Consumption Alerts</Label>
               </div>
               <Switch
@@ -152,7 +141,7 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4" />
+                <Icon name="dollar-currency" className="h-4 w-4" />
                 <Label htmlFor="cost">Cost Alerts</Label>
               </div>
               <Switch
@@ -167,7 +156,7 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Cog className="h-4 w-4" />
+                <Icon name="adjust-settings-horizontal" className="h-4 w-4" />
                 <Label htmlFor="system">System Alerts</Label>
               </div>
               <Switch
@@ -182,7 +171,7 @@ export const NotificationSettings: React.FC = () => {
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
+                <Icon name="clock-time" className="h-4 w-4" />
                 <Label htmlFor="reminder">Reminder Alerts</Label>
               </div>
               <Switch
@@ -202,7 +191,7 @@ export const NotificationSettings: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
+            <Icon name="alert-error" className="h-5 w-5" />
             Alert Thresholds
           </CardTitle>
           <CardDescription>
@@ -248,7 +237,7 @@ export const NotificationSettings: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
+            <Icon name="clock-time" className="h-5 w-5" />
             Reminder Settings
           </CardTitle>
           <CardDescription>
@@ -284,7 +273,7 @@ export const NotificationSettings: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
+            <Icon name="clock-time" className="h-5 w-5" />
             Quiet Hours
           </CardTitle>
           <CardDescription>
@@ -349,7 +338,7 @@ export const NotificationSettings: React.FC = () => {
                 onClick={handleReset}
                 disabled={!hasChanges}
               >
-                <RotateCcw className="h-4 w-4 mr-2" />
+                <Icon name="clock-refresh-time-arrow" className="h-4 w-4 mr-2" />
                 Reset
               </Button>
               
@@ -364,7 +353,7 @@ export const NotificationSettings: React.FC = () => {
                 onClick={handleSave}
                 disabled={!hasChanges}
               >
-                <Save className="h-4 w-4 mr-2" />
+                <Icon name="save" className="h-4 w-4 mr-2" />
                 Save Changes
               </Button>
             </div>

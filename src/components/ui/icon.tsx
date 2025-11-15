@@ -1,66 +1,66 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import {
-  Plus as AddNewPlus,
-  Activity as ActivityGraph,
-  ChevronLeft as ArrowChevronLeft,
-  ChevronRight as ArrowChevronRight,
-  ArrowLeft,
-  Calculator as CalculatorComputeMath,
-  ChevronUp as ArrowChevronUp,
-  ChevronDown as ArrowChevronDown,
-  ArrowDown,
-  ArrowUp,
-  BarChart3 as BarChart,
-  TrendingUp as ChartUpArrow,
-  Target,
-  Home as HomeHouse,
-  BookOpen as BookNotePaper,
-  Settings as AdjustSettingsHorizontal,
-  Bell as NotificationBellAlarm,
-  Menu as MenuHambuger,
-  User as AccountUserPerson,
-  LogOut as LogoutExit,
-  Calendar as CalendarDateAppointment,
-  LogIn as EnterLogInArrow,
-  PieChart,
-  HelpCircle as HelpQuestionMark,
-  Sun as SunDay,
-  Leaf as FlowerPlant,
-  Droplets as DropletRainWeather,
-  Zap as LightningEnergy,
-  Edit as EditWrite,
-  Trash2 as TrashDeleteBin3,
-  X as XCloseDelete,
-  Search,
-  Filter,
-  Download,
-  Check as CheckGood,
-  Circle as CircleOval,
-  Upload as UploadArrowUp,
-  Moon as MoonNight,
-  DollarSign as DollarCurrency,
-  AlertTriangle as AlertError,
-  RefreshCw as ClockRefreshTimeArrow,
-  MessageSquare as CommentSquareChatMessage,
-  Smartphone as MobilePhone,
-  Maximize as MaximizeExpand,
-  Monitor as DesktopComputerMac,
-  Info,
-  MoreHorizontal,
-  Eye as EyePassword,
-  EyeOff as EyePasswordOff,
-  Mail as MailEmailMessageInbox,
-  Lock as LockPrivacy,
-  Loader2 as LoadingSpinner,
-  CheckCircle2,
-  Clock as ClockTime,
-  CalendarDays as CalendarMonthDate,
-  PanelLeft as TablePanelWindowSidebar,
-  Save,
-  Send as SendMessageDmInbox,
-  Zap as BoltIcon,
-} from 'lucide-react';
+
+// Import all Basicons SVGs as React components
+import AddNewPlus from '../../icons/add-new-plus.svg?react';
+import ActivityGraph from '../../icons/activity-graph.svg?react';
+import ArrowChevronLeft from '../../icons/arrow-chevron-left.svg?react';
+import ArrowChevronRight from '../../icons/arrow-chevron-right.svg?react';
+import ArrowLeft from '../../icons/arrow-left.svg?react';
+import CalculatorComputeMath from '../../icons/calculator-compute-math.svg?react';
+import ArrowChevronUp from '../../icons/arrow-chevron-up.svg?react';
+import ArrowChevronDown from '../../icons/arrow-chevron-down.svg?react';
+import ArrowDown from '../../icons/arrow-down.svg?react';
+import ArrowUp from '../../icons/arrow-up.svg?react';
+import BarChart from '../../icons/bar-chart.svg?react';
+import ChartUpArrow from '../../icons/chart-up-arrow.svg?react';
+import Target from '../../icons/target.svg?react';
+import HomeHouse from '../../icons/home-house.svg?react';
+import BookNotePaper from '../../icons/book-note-paper.svg?react';
+import AdjustSettingsHorizontal from '../../icons/adjust-settings-horizontal.svg?react';
+import NotificationBellAlarm from '../../icons/notification-bell-alarm.svg?react';
+import MenuHambuger from '../../icons/menu-hambuger.svg?react';
+import AccountUserPerson from '../../icons/account-user-person.svg?react';
+import LogoutExit from '../../icons/logout-exit.svg?react';
+import CalendarDateAppointment from '../../icons/calendar-date-appointment.svg?react';
+import EnterLogInArrow from '../../icons/enter-log-in-arrow.svg?react';
+import PieChart from '../../icons/pie-chart.svg?react';
+import HelpQuestionMark from '../../icons/help-question-mark.svg?react';
+import SunDay from '../../icons/sun-day.svg?react';
+import FlowerPlant from '../../icons/flower-plant.svg?react';
+import DropletRainWeather from '../../icons/droplet-rain-weather.svg?react';
+import LightningEnergy from '../../icons/lightning-energy.svg?react';
+import EditWrite from '../../icons/edit-write.svg?react';
+import TrashDeleteBin3 from '../../icons/trash-delete-bin-3.svg?react';
+import XCloseDelete from '../../icons/x-close-delete.svg?react';
+import Search from '../../icons/search.svg?react';
+import Filter from '../../icons/filter.svg?react';
+import Download from '../../icons/download.svg?react';
+import CheckGood from '../../icons/check-good.svg?react';
+import CircleOval from '../../icons/circle-oval.svg?react';
+import UploadArrowUp from '../../icons/upload-arrow-up.svg?react';
+import MoonNight from '../../icons/moon-night.svg?react';
+import DollarCurrency from '../../icons/dollar-currency.svg?react';
+import AlertError from '../../icons/alert-error.svg?react';
+import ClockRefreshTimeArrow from '../../icons/clock-refresh-time-arrow.svg?react';
+import CommentSquareChatMessage from '../../icons/comment-square-chat-message.svg?react';
+import MobilePhone from '../../icons/mobile-phone.svg?react';
+import MaximizeExpand from '../../icons/maximize-expand.svg?react';
+import DesktopComputerMac from '../../icons/desktop-computer-mac.svg?react';
+import Info from '../../icons/info.svg?react';
+import MoreHorizontal from '../../icons/more-horizontal.svg?react';
+import BoltIcon from '../../icons/lightning-energy.svg?react';
+import EyePassword from '../../icons/eye-password.svg?react';
+import EyePasswordOff from '../../icons/eye-password-off.svg?react';
+import MailEmailMessageInbox from '../../icons/mail-email-message-inbox.svg?react';
+import LockPrivacy from '../../icons/lock-privacy.svg?react';
+import LoadingSpinner from '../../icons/loading-spinner.svg?react';
+import CheckCircle2 from '../../icons/check-circle-2.svg?react';
+import ClockTime from '../../icons/clock-time.svg?react';
+import CalendarMonthDate from '../../icons/calendar-month-date.svg?react';
+import TablePanelWindowSidebar from '../../icons/table-panel-window-sidebar.svg?react';
+import Save from '../../icons/save.svg?react';
+import SendMessageDmInbox from '../../icons/send-message-dm-inbox.svg?react';
 
 export type IconName = 
   | 'add-new-plus'
@@ -111,6 +111,7 @@ export type IconName =
   | 'info'
   | 'more-horizontal'
   | 'bolt'
+  | 'eye-password'
   | 'eye-password-off'
   | 'mail-email-message-inbox'
   | 'lock-privacy'
@@ -123,8 +124,8 @@ export type IconName =
   | 'send-message-dm-inbox'
   | 'calculator-compute-math';
 
-// Icon mapping to Lucide React icons
-const iconMap: Record<IconName, React.ComponentType<any>> = {
+// Icon mapping
+const iconMap: Record<IconName, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   'add-new-plus': AddNewPlus,
   'activity-graph': ActivityGraph,
   'arrow-chevron-left': ArrowChevronLeft,
@@ -186,21 +187,20 @@ const iconMap: Record<IconName, React.ComponentType<any>> = {
   'calculator-compute-math': CalculatorComputeMath,
 };
 
-interface IconProps {
+interface IconProps extends React.SVGProps<SVGSVGElement> {
   name: IconName;
   size?: number | string;
   className?: string;
   color?: string;
-  style?: React.CSSProperties;
 }
 
 /**
  * Icon Component
  * 
- * Wrapper component for Lucide React icons.
+ * Wrapper component for Basicons SVG icons.
  * 
  * Features:
- * - Supports all mapped icons via name prop
+ * - Supports all Basicons icons via name prop
  * - Handles color via currentColor (use className="text-*" for colors)
  * - Supports size via size prop or className (h-* w-*)
  * - Maintains SVG viewBox for proper scaling
@@ -211,6 +211,7 @@ export const Icon: React.FC<IconProps> = ({
   className,
   color,
   style,
+  ...props
 }) => {
   const IconComponent = iconMap[name];
 
@@ -224,23 +225,24 @@ export const Icon: React.FC<IconProps> = ({
         viewBox="0 0 24 24"
         className={cn('text-muted-foreground', className)}
         style={style}
+        {...props}
       >
         <rect width="24" height="24" fill="currentColor" opacity="0.1" />
       </svg>
     );
   }
 
-  // Convert size to number if it's a string with units
-  const iconSize = typeof size === 'string' ? parseInt(size, 10) || 24 : size;
-
   return (
     <IconComponent
-      size={iconSize}
+      width={size}
+      height={size}
       className={cn('inline-block', className)}
       style={{
         color: color || 'currentColor',
         ...style,
       }}
+      {...props}
     />
   );
 };
+

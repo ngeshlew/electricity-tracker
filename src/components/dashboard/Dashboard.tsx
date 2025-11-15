@@ -6,16 +6,23 @@ import { SummaryCards } from './SummaryCards';
 import { ConsumptionChart } from './ConsumptionChart';
 import { MonthlyOverview } from './MonthlyOverview';
 import { ConsumptionBreakdown } from './ConsumptionBreakdown';
+import { AnnualProgressCards } from './AnnualProgressCards';
+import { SeasonalTracker } from './SeasonalTracker';
 import { MonthSelector } from './MonthSelector';
 import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { MobileNavigation } from '../mobile/MobileNavigation';
 import { useElectricityStore } from '../../store/useElectricityStore';
+import { CurrentTariffInfo } from '../tariff/CurrentTariffInfo';
+import { TariffHistoryTable } from '../tariff/TariffHistoryTable';
+import { UKPriceComparison } from '../tariff/UKPriceComparison';
+import { TariffFormDialog } from '../tariff/TariffFormDialog';
 
 export const Dashboard: FC = () => {
   const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [isTariffDialogOpen, setIsTariffDialogOpen] = useState(false);
 
   // Load meter readings when component mounts
   useEffect(() => {
@@ -28,8 +35,8 @@ export const Dashboard: FC = () => {
       <MobileNavigation />
       
       {/* Responsive Layout */}
-      <SidebarProvider>
-        <div className="lg:flex">
+      <SidebarProvider defaultOpen={false}>
+        <div className="lg:flex w-screen">
           {/* Sidebar - Desktop only */}
           <div className="hidden lg:block">
             <AppSidebar />
@@ -60,24 +67,56 @@ export const Dashboard: FC = () => {
                   </div>
                 </div>
 
-                {/* Key Metrics Cards - Reduced spacing (2x less) */}
+                {/* Key Metrics Cards */}
                 <div className="mb-8" style={{ marginBottom: 'var(--space-xl)' }}>
                   <SummaryCards currentMonth={currentMonth} />
                 </div>
 
-                {/* Main Content Grid - Reduced spacing (2x less) */}
+                {/* Main Content - Reduced spacing (2x less) */}
                 <div className="space-y-8 w-full" style={{ gap: 'var(--space-xl)' }}>
-                  <div className="grid gap-6 md:grid-cols-3 w-full">
-                    <ConsumptionBreakdown
-                      currentMonth={currentMonth}
-                      viewMode="kwh"
-                    />
-                    <MonthlyOverview
-                      currentMonth={currentMonth}
-                    />
+                  {/* Consumption Breakdown - Full width row */}
+                  <ConsumptionBreakdown
+                    currentMonth={currentMonth}
+                    viewMode="kwh"
+                  />
+                  
+                  {/* Monthly Overview - Full width row */}
+                  <MonthlyOverview
+                    currentMonth={currentMonth}
+                  />
+                  <div className="border-t border-dotted pt-6 space-y-2" style={{ borderColor: 'var(--color-accent-red)' }}>
+                    <h2 className="text-2xl font-normal tracking-tight uppercase">Performance</h2>
+                    <p className="text-muted-foreground mt-1 text-sm">
+                      Monitor long-term usage, weekly consumption, and seasonal trends
+                    </p>
                   </div>
                   
+                  {/* Annual Progress Cards */}
+                  <div>
+                    <AnnualProgressCards />
+                  </div>
+                  
+                  {/* Consumption Chart */}
                   <ConsumptionChart />
+                  
+                  {/* Seasonal Tracker */}
+                  <SeasonalTracker />
+
+                  {/* Tariff Section */}
+                  <section className="space-y-6">
+                    <div className="border-t border-dotted pt-6" style={{ borderColor: 'var(--color-accent-red)' }}>
+                      <h2 className="text-2xl font-normal tracking-tight uppercase">Tariff</h2>
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        Manage your energy tariff and track cost savings
+                      </p>
+                    </div>
+
+                    <CurrentTariffInfo />
+
+                    <TariffHistoryTable onAddTariff={() => setIsTariffDialogOpen(true)} />
+
+                    <UKPriceComparison />
+                  </section>
                 </div>
 
                 {/* Recent Readings - Reduced spacing (2x less) */}
@@ -90,6 +129,10 @@ export const Dashboard: FC = () => {
             <MeterReadingPanel
               isOpen={isMeterPanelOpen}
               onClose={() => toggleMeterPanel(false)}
+            />
+            <TariffFormDialog
+              open={isTariffDialogOpen}
+              onOpenChange={setIsTariffDialogOpen}
             />
             <UserGuide />
           </main>

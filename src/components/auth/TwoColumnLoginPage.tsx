@@ -5,16 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Eye, 
-  EyeOff, 
-  Loader2, 
-  Mail, 
-  Lock,
-  AlertCircle,
-  Zap,
-  ArrowLeft
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 
 interface TwoColumnLoginPageProps {
@@ -62,7 +53,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
             onClick={onBackToHome}
             className="flex items-center gap-2 font-medium"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <Icon name="arrow-left" className="h-4 w-4" />
             Back to Home
           </Button>
         </div>
@@ -70,7 +61,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <Zap className="size-4" />
+              <Icon name="lightning-energy" className="size-4" />
             </div>
             Electricity Tracker
           </a>
@@ -92,7 +83,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Icon name="mail-email-message-inbox" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="email"
                         type="email"
@@ -110,7 +101,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Icon name="lock-privacy" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
@@ -130,9 +121,9 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
                         disabled={isLoading}
                       >
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
+                          <Icon name="eye-password-off" className="h-4 w-4" />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Icon name="eye-password" className="h-4 w-4" />
                         )}
                       </Button>
                     </div>
@@ -166,7 +157,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
                   {/* Error Alert */}
                   {error && (
                     <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
+                      <Icon name="alert-error" className="h-4 w-4" />
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
                   )}
@@ -179,7 +170,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Icon name="loading-spinner" className="mr-2 h-4 w-4 animate-spin" />
                         Signing in...
                       </>
                     ) : (
@@ -226,7 +217,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
         <div className="absolute inset-0 flex items-center justify-center p-8">
           <div className="text-center space-y-4">
             <div className="bg-primary/10 rounded-full p-8 mx-auto w-32 h-32 flex items-center justify-center">
-              <Zap className="h-16 w-16 text-primary" />
+              <Icon name="lightning-energy" className="h-16 w-16 text-primary" />
             </div>
             <h2 className="text-3xl font-bold text-foreground">
               Track Your Energy Usage

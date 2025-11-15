@@ -3,15 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Download,
-  Target,
-  Zap,
-  DollarSign,
-  HelpCircle
-} from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { ConsumptionChart } from '../dashboard/ConsumptionChart';
@@ -70,11 +62,11 @@ export const AnalyticsPage: React.FC = () => {
   // Get trend color and icon
   const getTrendData = (trend: number) => {
     if (trend > 5) {
-      return { color: 'text-red-500', icon: TrendingUp, label: 'Increasing' };
+      return { color: 'text-red-500', iconName: 'arrow-up', label: 'Increasing' };
     } else if (trend < -5) {
-      return { color: 'text-green-500', icon: TrendingUp, label: 'Decreasing' };
+      return { color: 'text-green-500', iconName: 'arrow-down', label: 'Decreasing' };
     } else {
-      return { color: 'text-yellow-500', icon: TrendingUp, label: 'Stable' };
+      return { color: 'text-yellow-500', iconName: 'activity-graph', label: 'Stable' };
     }
   };
 
@@ -86,7 +78,7 @@ export const AnalyticsPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
-              <BarChart3 className="h-8 w-8 text-primary" />
+              <Icon name="bar-chart" className="h-8 w-8 text-primary" />
               Analytics
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -106,7 +98,7 @@ export const AnalyticsPage: React.FC = () => {
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
+              <Icon name="download" className="h-4 w-4 mr-2" />
               Export
             </Button>
           </div>
@@ -122,7 +114,7 @@ export const AnalyticsPage: React.FC = () => {
                 <div className="text-muted-foreground text-xs">
                   Total Consumption
                 </div>
-                <Zap className="h-3 w-3 text-muted-foreground" />
+                <Icon name="lightning-energy" className="h-3 w-3 text-muted-foreground" />
               </div>
               <div className="text-lg tabular-nums">
                 {analytics.totalConsumption.toFixed(1)} kWh
@@ -141,7 +133,7 @@ export const AnalyticsPage: React.FC = () => {
                 <div className="text-muted-foreground text-xs">
                   Total Cost
                 </div>
-                <DollarSign className="h-3 w-3 text-muted-foreground" />
+                <Icon name="dollar-currency" className="h-3 w-3 text-muted-foreground" />
               </div>
               <div className="text-lg tabular-nums">
                 £{analytics.totalCost.toFixed(2)}
@@ -160,7 +152,7 @@ export const AnalyticsPage: React.FC = () => {
                 <div className="text-muted-foreground text-xs">
                   vs UK Average
                 </div>
-                <Target className="h-3 w-3 text-muted-foreground" />
+                <Icon name="target" className="h-3 w-3 text-muted-foreground" />
               </div>
               <div className="text-lg tabular-nums">
                 {analytics.efficiencyRatio > 1 ? '+' : ''}
@@ -180,7 +172,7 @@ export const AnalyticsPage: React.FC = () => {
                 <div className="text-muted-foreground text-xs">
                   Trend
                 </div>
-                {trendData && <trendData.icon className="h-3 w-3 text-muted-foreground" />}
+                {trendData && <Icon name={trendData.iconName as any} className="h-3 w-3 text-muted-foreground" />}
               </div>
               <div className={`text-lg tabular-nums ${trendData?.color}`}>
                 {analytics.trendPercentage > 0 ? '+' : ''}{analytics.trendPercentage.toFixed(1)}%
@@ -263,7 +255,7 @@ export const AnalyticsPage: React.FC = () => {
                           Daily Consumption
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                              <Icon name="help-question-mark" className="h-4 w-4 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent>
                               <p>UK average data sourced from Ofgem's annual energy consumption statistics (8.5 kWh/day for average UK household)</p>
@@ -292,7 +284,7 @@ export const AnalyticsPage: React.FC = () => {
                           Daily Cost
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                              <Icon name="help-question-mark" className="h-4 w-4 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent>
                               <p>UK average cost calculated using Ofgem's average unit rate (£0.30/kWh) × average consumption (8.5 kWh/day) = £2.55/day</p>
@@ -342,7 +334,7 @@ export const AnalyticsPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
-                <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <Icon name="arrow-up" className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Forecasting Coming Soon</h3>
                 <p className="text-muted-foreground">
                   AI-powered consumption forecasting will be available soon.

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Icon } from "@/components/ui/icon";
 import { format } from 'date-fns';
 
 interface MonthSelectorProps {
@@ -31,7 +31,7 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({
         className="h-8 w-8 sm:h-9 sm:w-9"
         aria-label="Previous month"
       >
-        <ChevronLeftIcon className="h-4 w-4" />
+        <Icon name="arrow-chevron-left" className="h-4 w-4" />
       </Button>
       <span className="text-sm font-normal min-w-[90px] sm:min-w-[100px] text-center tabular-nums">
         {format(currentMonth, 'MMM yyyy')}
@@ -43,7 +43,7 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({
         className="h-8 w-8 sm:h-9 sm:w-9"
         aria-label="Next month"
       >
-        <ChevronRightIcon className="h-4 w-4" />
+        <Icon name="arrow-chevron-right" className="h-4 w-4" />
       </Button>
     </div>
   );

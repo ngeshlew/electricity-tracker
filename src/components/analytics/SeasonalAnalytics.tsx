@@ -14,16 +14,8 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { 
-  Snowflake, 
-  Sun, 
-  Leaf, 
-  CloudRain,
-  TrendingUp,
-  TrendingDown,
-  Target,
-  Zap
-} from "lucide-react";
+import { Icon } from "@/components/ui/icon";
+import { getSeasonColor } from "@/utils/seasonalColors";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useTariffStore } from '../../store/useTariffStore';
 
@@ -34,7 +26,7 @@ interface SeasonalData {
   days: number;
   avgDailyConsumption: number;
   avgDailyCost: number;
-  icon: React.ComponentType<any>;
+  icon: string;
   color: string;
   trend: 'up' | 'down' | 'stable';
   trendPercentage: number;
@@ -81,7 +73,7 @@ export const SeasonalAnalytics: React.FC = () => {
           days: 0,
           avgDailyConsumption: 0,
           avgDailyCost: 0,
-          icon: getSeasonIcon(season),
+          icon: getSeasonIconName(season),
           color: getSeasonColor(season),
           trend: 'stable' as const,
           trendPercentage: 0
@@ -104,7 +96,7 @@ export const SeasonalAnalytics: React.FC = () => {
         days,
         avgDailyConsumption,
         avgDailyCost,
-        icon: getSeasonIcon(season),
+        icon: getSeasonIconName(season),
         color: getSeasonColor(season),
         trend: trend.trend,
         trendPercentage: trend.percentage
@@ -114,23 +106,13 @@ export const SeasonalAnalytics: React.FC = () => {
     return seasons.sort((a, b) => b.consumption - a.consumption);
   };
 
-  const getSeasonIcon = (season: string) => {
+  const getSeasonIconName = (season: string): string => {
     switch (season) {
-      case 'Winter': return Snowflake;
-      case 'Spring': return Leaf;
-      case 'Summer': return Sun;
-      case 'Autumn': return CloudRain;
-      default: return Zap;
-    }
-  };
-
-  const getSeasonColor = (season: string) => {
-    switch (season) {
-      case 'Winter': return '#3B82F6'; // Blue
-      case 'Spring': return '#10B981'; // Green
-      case 'Summer': return '#F59E0B'; // Orange
-      case 'Autumn': return '#8B5CF6'; // Purple
-      default: return '#6B7280'; // Gray
+      case 'Winter': return 'info'; // Placeholder for snowflake
+      case 'Spring': return 'flower-plant';
+      case 'Summer': return 'sun-day';
+      case 'Autumn': return 'droplet-rain-weather';
+      default: return 'lightning-energy';
     }
   };
 
@@ -178,7 +160,7 @@ export const SeasonalAnalytics: React.FC = () => {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Target className="h-5 w-5" />
+              <Icon name="target" className="h-5 w-5" />
               Annual Usage Progress
             </CardTitle>
             <CardDescription>
@@ -205,7 +187,7 @@ export const SeasonalAnalytics: React.FC = () => {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Zap className="h-5 w-5" />
+              <Icon name="lightning-energy" className="h-5 w-5" />
               Annual Cost Progress
             </CardTitle>
             <CardDescription>
@@ -272,17 +254,16 @@ export const SeasonalAnalytics: React.FC = () => {
       {/* Seasonal Breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {seasonalData.map((season) => {
-          const IconComponent = season.icon;
-          const TrendIcon = season.trend === 'up' ? TrendingUp : 
-                           season.trend === 'down' ? TrendingDown : 
-                           Target;
+          const trendIconName = season.trend === 'up' ? 'arrow-up' : 
+                               season.trend === 'down' ? 'arrow-down' : 
+                               'target';
           
           return (
             <Card key={season.season} className="relative overflow-hidden">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <IconComponent className="h-5 w-5" style={{ color: season.color }} />
+                    <Icon name={season.icon as any} className="h-5 w-5" style={{ color: season.color }} />
                     <CardTitle className="text-base">{season.season}</CardTitle>
                   </div>
                   <Badge 
@@ -290,7 +271,7 @@ export const SeasonalAnalytics: React.FC = () => {
                             season.trend === 'down' ? 'default' : 'secondary'}
                     className="text-xs"
                   >
-                    <TrendIcon className="h-3 w-3 mr-1" />
+                    <Icon name={trendIconName as any} className="h-3 w-3 mr-1" />
                     {season.trendPercentage > 0 && `${season.trendPercentage.toFixed(0)}%`}
                   </Badge>
                 </div>

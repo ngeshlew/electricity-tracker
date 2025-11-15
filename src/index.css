@@ -148,6 +148,12 @@
     --color-warning: #FF6600;
     --color-error: #FF0000;
 
+    /* Seasonal Colors */
+    --color-season-winter: #3B82F6; /* Blue */
+    --color-season-spring: #10B981; /* Green */
+    --color-season-summer: rgb(255, 220, 0); /* Yellow-ish */
+    --color-season-autumn: rgb(255, 140, 0); /* Orange */
+
     /* Timezone-inspired Colors */
     --color-bg: #FFFFFF;
     --color-bg-subtle: #FFFFFF;
@@ -241,6 +247,10 @@
     @apply border-border;
     border-radius: 0 !important;
   }
+  html, body {
+    overflow-x: hidden;
+  }
+  
   body {
     @apply bg-background text-foreground;
   }
@@ -305,9 +315,9 @@
     background: rgba(0, 0, 0, 0.3);
   }
 
-  /* Universal Dashed Border Utility */
-  .border-dashed {
-    border-style: dashed !important;
+  /* Universal Dotted Border Utility */
+  .border-dotted {
+    border-style: dotted !important;
   }
 
   /* Remove all shadows */

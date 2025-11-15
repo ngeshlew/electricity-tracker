@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart as PieChartIcon } from 'lucide-react';
+import { Icon } from "@/components/ui/icon";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
 
@@ -88,7 +88,7 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-background/95 backdrop-blur-sm border border-border  p-3 shadow-lg">
+        <div className="bg-background/95 backdrop-blur-sm border border-border p-3 shadow-lg">
           <p className="">{data.name}</p>
           <p className="text-xs text-muted-foreground">
             {viewMode === 'kwh' ? `${data.kwh} kWh` : `£${data.cost.toFixed(2)}`}
@@ -131,7 +131,7 @@ export const WeeklyPieChart: React.FC<WeeklyPieChartProps> = ({ currentMonth, vi
         <CardContent>
           <div className="flex items-center justify-center h-64 text-muted-foreground">
             <div className="text-center">
-              <PieChartIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <Icon name="pie-chart" className="h-12 w-12 mx-auto mb-2 opacity-50" />
               <p>No data available for this month</p>
             </div>
           </div>

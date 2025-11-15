@@ -10,34 +10,20 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { 
-  Bell, 
-  Check, 
-  X, 
-  MoreVertical,
-  AlertCircle,
-  Info,
-  AlertTriangle,
-  CheckCircle,
-  Zap,
-  DollarSign,
-  Cog,
-  Clock,
-  AlertTriangle as Alert
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useNotificationStore } from '../../store/useNotificationStore';
 import { formatDistanceToNow } from 'date-fns';
 
-const notificationIcons = {
-  info: Info,
-  warning: AlertTriangle,
-  error: AlertCircle,
-  success: CheckCircle,
-  consumption: Zap,
-  cost: DollarSign,
-  system: Cog,
-  reminder: Clock,
-  alert: Alert
+const notificationIcons: Record<string, string> = {
+  info: 'info',
+  warning: 'alert-error',
+  error: 'alert-error',
+  success: 'check-circle-2',
+  consumption: 'lightning-energy',
+  cost: 'dollar-currency',
+  system: 'adjust-settings-horizontal',
+  reminder: 'clock-time',
+  alert: 'alert-error'
 };
 
 const notificationColors = {
@@ -84,7 +70,7 @@ export const NotificationCenter: React.FC = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
+            <Icon name="notification-bell-alarm" className="h-5 w-5" />
             <CardTitle>Notifications</CardTitle>
             {unreadCount > 0 && (
               <Badge variant="destructive">{unreadCount}</Badge>
@@ -98,7 +84,7 @@ export const NotificationCenter: React.FC = () => {
                 size="sm"
                 onClick={markAllAsRead}
               >
-                <Check className="h-4 w-4 mr-1" />
+                <Icon name="check-good" className="h-4 w-4 mr-1" />
                 Mark all read
               </Button>
             )}
@@ -106,7 +92,7 @@ export const NotificationCenter: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
-                  <MoreVertical className="h-4 w-4" />
+                  <Icon name="more-horizontal" className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -182,7 +168,7 @@ export const NotificationCenter: React.FC = () => {
             <ScrollArea className="h-96">
               {filteredNotifications.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <Bell className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <Icon name="notification-bell-alarm" className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>No notifications</p>
                   <p className="text-sm">
                     {filter === 'unread' 
@@ -194,7 +180,7 @@ export const NotificationCenter: React.FC = () => {
               ) : (
                 <div className="space-y-2">
                   {filteredNotifications.map((notification) => {
-                    const IconComponent = notificationIcons[notification.type] || notificationIcons[notification.category] || Bell;
+                    const iconName = notificationIcons[notification.type] || notificationIcons[notification.category] || 'notification-bell-alarm';
                     const colorClass = notificationColors[notification.type] || 'text-muted-foreground';
                     
                     return (
@@ -208,7 +194,7 @@ export const NotificationCenter: React.FC = () => {
                       >
                         <div className="flex items-start gap-3">
                           <div className={`mt-1 ${colorClass}`}>
-                            <IconComponent className="h-4 w-4" />
+                            <Icon name={iconName as any} className="h-4 w-4" />
                           </div>
                           
                           <div className="flex-1 min-w-0">
@@ -237,7 +223,7 @@ export const NotificationCenter: React.FC = () => {
                                     onClick={() => markAsRead(notification.id)}
                                     className="h-6 w-6 p-0"
                                   >
-                                    <Check className="h-3 w-3" />
+                                    <Icon name="check-good" className="h-3 w-3" />
                                   </Button>
                                 )}
                                 
@@ -247,7 +233,7 @@ export const NotificationCenter: React.FC = () => {
                                   onClick={() => removeNotification(notification.id)}
                                   className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
                                 >
-                                  <X className="h-3 w-3" />
+                                  <Icon name="x-close-delete" className="h-3 w-3" />
                                 </Button>
                               </div>
                             </div>

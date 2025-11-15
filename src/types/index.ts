@@ -7,6 +7,7 @@ export interface MeterReading {
   date: Date;
   type: 'MANUAL' | 'IMPORTED' | 'ESTIMATED';
   notes?: string;
+  statementId?: string; // Optional reference to related statement
   // Derived fields for analytics; may be absent depending on source
   consumption?: number; // kWh delta from previous reading
   cost?: number; // Calculated cost for the interval

@@ -156,7 +156,7 @@ export class UKElectricityApiService {
   /**
    * Format date to DD-MM-YYYY format
    */
-  public formatDate(date: Date): string {
+  formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -178,6 +178,13 @@ export class UKElectricityApiService {
   }
 }
 
+// Calculate estimated annual cost based on unit rate, standing charge, and annual usage
+const calculateAnnualCost = (unitRate: number, standingCharge: number, annualUsage: number): number => {
+  const unitCost = (annualUsage * unitRate) / 100; // Convert pence to pounds
+  const standingCost = (365 * standingCharge) / 100; // Convert pence to pounds
+  return Math.round((unitCost + standingCost) * 100) / 100; // Round to 2 decimal places
+};
+
 // Default tariff information based on user's Octopus Energy details
 export const DEFAULT_TARIFF: TariffInfo = {
   id: 'octopus-12m-fixed-aug-2025-v3',
@@ -191,7 +198,7 @@ export const DEFAULT_TARIFF: TariffInfo = {
   paymentMethod: 'Direct Debit',
   earlyExitFee: 0,
   estimatedAnnualUsage: 1180.1, // kWh
-  estimatedAnnualCost: 458.69, // £
+  estimatedAnnualCost: calculateAnnualCost(23.96, 42.21, 1180.1), // Calculated: ~436.82
   accountNumber: 'A-9F8AC8B3',
   meterNumber: 'E17UP00823',
 };
@@ -210,7 +217,7 @@ export const HISTORICAL_TARIFFS: TariffInfo[] = [
     paymentMethod: 'Non-Direct Debit',
     earlyExitFee: 0,
     estimatedAnnualUsage: 1180.1,
-    estimatedAnnualCost: 458.69,
+    estimatedAnnualCost: calculateAnnualCost(25.95, 48.27, 1180.1), // Calculated: ~482.42
   },
   {
     id: 'octopus-flexible-2',
@@ -224,7 +231,7 @@ export const HISTORICAL_TARIFFS: TariffInfo[] = [
     paymentMethod: 'Direct Debit',
     earlyExitFee: 0,
     estimatedAnnualUsage: 1180.1,
-    estimatedAnnualCost: 458.69,
+    estimatedAnnualCost: calculateAnnualCost(25.13, 42.21, 1180.1), // Calculated: ~450.63
   },
 ];
 

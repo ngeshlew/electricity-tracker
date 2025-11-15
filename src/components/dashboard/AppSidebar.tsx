@@ -1,13 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { 
-  HomeIcon, 
-  ChartBarIcon, 
-  DocumentTextIcon, 
-  Cog6ToothIcon,
-  BoltIcon,
-  BellIcon
-} from '@heroicons/react/24/outline';
+import { Icon } from "@/components/ui/icon";
 import {
   Sidebar,
   SidebarContent,
@@ -22,11 +15,11 @@ import {
 
 // Consolidated navigation: Insights and Analytics merged into Analytics
 const navigationItems = [
-  { name: 'Dashboard', url: '/', icon: HomeIcon },
-  { name: 'Analytics', url: '/analytics', icon: ChartBarIcon },
-  { name: 'Statements', url: '/statements', icon: DocumentTextIcon },
-  { name: 'Notifications', url: '/notifications', icon: BellIcon },
-  { name: 'Settings', url: '/settings', icon: Cog6ToothIcon },
+  { name: 'Dashboard', url: '/', iconName: 'home-house' },
+  { name: 'Analytics', url: '/analytics', iconName: 'bar-chart' },
+  { name: 'Statements', url: '/statements', iconName: 'book-note-paper' },
+  { name: 'Notifications', url: '/notifications', iconName: 'notification-bell-alarm' },
+  { name: 'Settings', url: '/settings', iconName: 'adjust-settings-horizontal' },
 ];
 
 export const AppSidebar: React.FC = () => {
@@ -36,10 +29,11 @@ export const AppSidebar: React.FC = () => {
       <SidebarHeader>
         <div className="flex h-12 shrink-0 items-center px-6">
           <div className="flex h-8 w-8 items-center justify-center bg-sidebar-primary">
-            <BoltIcon className="h-5 w-5 text-sidebar-primary-foreground" />
+            <Icon name="bolt" className="h-5 w-5 text-sidebar-primary-foreground" />
           </div>
-          <span className="ml-3 text-sm font-normal uppercase tracking-wide text-sidebar-foreground">
+          <span className="ml-3 text-sm font-normal uppercase tracking-wide text-sidebar-foreground flex items-center gap-2">
             Tracker
+            <Icon name="lightning-energy" className="h-4 w-4 text-sidebar-foreground" />
           </span>
         </div>
       </SidebarHeader>
@@ -64,7 +58,7 @@ export const AppSidebar: React.FC = () => {
                             •
                           </span>
                         )}
-                        <item.icon className="h-5 w-5" />
+                        <Icon name={item.iconName as any} className="h-5 w-5" />
                         <span>{item.name}</span>
                       </a>
                     </SidebarMenuButton>

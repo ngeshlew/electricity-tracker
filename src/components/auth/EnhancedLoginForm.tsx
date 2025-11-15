@@ -5,15 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Eye, 
-  EyeOff, 
-  Loader2, 
-  Mail, 
-  Lock,
-  AlertCircle,
-  Zap
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 
 interface EnhancedLoginFormProps {
@@ -56,7 +48,7 @@ export const EnhancedLoginForm: React.FC<EnhancedLoginFormProps> = ({
           <CardHeader className="space-y-1">
             <div className="flex items-center justify-center gap-2 mb-4">
               <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg">
-                <Zap className="size-5" />
+                <Icon name="lightning-energy" className="size-5" />
               </div>
               <span className="text-xl font-bold">Electricity Tracker</span>
             </div>
@@ -72,7 +64,7 @@ export const EnhancedLoginForm: React.FC<EnhancedLoginFormProps> = ({
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Icon name="mail-email-message-inbox" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
@@ -90,7 +82,7 @@ export const EnhancedLoginForm: React.FC<EnhancedLoginFormProps> = ({
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Icon name="lock-privacy" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -110,9 +102,9 @@ export const EnhancedLoginForm: React.FC<EnhancedLoginFormProps> = ({
                     disabled={isLoading}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <Icon name="eye-password-off" className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Icon name="eye-password" className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
@@ -146,7 +138,7 @@ export const EnhancedLoginForm: React.FC<EnhancedLoginFormProps> = ({
               {/* Error Alert */}
               {error && (
                 <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
+                  <Icon name="alert-error" className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
@@ -159,7 +151,7 @@ export const EnhancedLoginForm: React.FC<EnhancedLoginFormProps> = ({
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Icon name="loading-spinner" className="mr-2 h-4 w-4 animate-spin" />
                     Signing in...
                   </>
                 ) : (

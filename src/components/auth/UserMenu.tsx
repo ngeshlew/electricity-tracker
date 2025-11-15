@@ -10,14 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { 
-  User, 
-  Settings, 
-  LogOut, 
-  Bell,
-  Shield,
-  Calendar
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 
@@ -74,17 +67,17 @@ export const UserMenu: React.FC = () => {
         <DropdownMenuSeparator />
         
         <DropdownMenuItem onClick={handleProfileClick}>
-          <User className="mr-2 h-4 w-4" />
+          <Icon name="account-user-person" className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={() => navigate('/settings')}>
-          <Settings className="mr-2 h-4 w-4" />
+          <Icon name="adjust-settings-horizontal" className="mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={() => navigate('/notifications')}>
-          <Bell className="mr-2 h-4 w-4" />
+          <Icon name="notification-bell-alarm" className="mr-2 h-4 w-4" />
           <span>Notifications</span>
           <Badge variant="secondary" className="ml-auto text-xs">
             3
@@ -94,19 +87,19 @@ export const UserMenu: React.FC = () => {
         <DropdownMenuSeparator />
         
         <DropdownMenuItem onClick={() => navigate('/security')}>
-          <Shield className="mr-2 h-4 w-4" />
+          <Icon name="info" className="mr-2 h-4 w-4" />
           <span>Security</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={() => navigate('/activity')}>
-          <Calendar className="mr-2 h-4 w-4" />
+          <Icon name="calendar-date-appointment" className="mr-2 h-4 w-4" />
           <span>Activity</span>
         </DropdownMenuItem>
         
         <DropdownMenuSeparator />
         
         <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-          <LogOut className="mr-2 h-4 w-4" />
+          <Icon name="logout-exit" className="mr-2 h-4 w-4" />
           <span>Sign out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

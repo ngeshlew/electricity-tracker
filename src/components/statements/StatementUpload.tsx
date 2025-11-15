@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Upload, FileText, X } from "lucide-react";
+import { Icon } from '@/components/ui/icon';
 
 interface UploadedFile {
   file: File;
@@ -63,13 +63,13 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
         <div
           {...getRootProps()}
           className={`
-            border-2 border-dashed  p-8 text-center transition-colors
+            border-2 border-dotted  p-8 text-center transition-colors
             ${isDragActive || dragActive ? 'border-primary bg-primary/10' : 'border-muted-foreground/25'}
             ${isUploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
         >
           <input {...getInputProps()} />
-          <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
+          <Icon name="upload-arrow-up" className="mx-auto h-12 w-12 text-muted-foreground" />
           <div className="mt-2">
             <p className="text-xs ">
               {isDragActive ? 'Drop your file here' : 'Drop your file here or click to browse'}
@@ -84,7 +84,7 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
           <div className="mt-4 space-y-2">
             {uploadedFiles.map((file) => (
               <Alert key={file.id}>
-                <FileText className="h-4 w-4" />
+                <Icon name="book-note-paper" className="h-4 w-4" />
                 <AlertDescription className="flex items-center justify-between">
                   <span>{file.file.name}</span>
                   <Button
@@ -93,7 +93,7 @@ export const StatementUpload: React.FC<StatementUploadProps> = ({
                     onClick={() => onFileRemove(file.id)}
                     disabled={file.status === 'uploading'}
                   >
-                    <X className="h-4 w-4" />
+                    <Icon name="x-close-delete" className="h-4 w-4" />
                   </Button>
                 </AlertDescription>
               </Alert>

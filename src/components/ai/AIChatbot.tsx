@@ -3,12 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Send, 
-  Bot, 
-  User, 
-  Loader2
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAIChatStore } from '@/store/useAIChatStore';
 
 interface AIChatbotProps {
@@ -50,7 +45,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
         className={`fixed bottom-4 right-4 z-50 rounded-full h-14 w-14 shadow-lg ${className}`}
         size="icon"
       >
-        <Bot className="h-6 w-6" />
+        <Icon name="info" className="h-6 w-6" />
       </Button>
     );
   }
@@ -61,7 +56,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-primary/10 rounded-full p-2">
-              <Bot className="h-5 w-5 text-primary" />
+              <Icon name="info" className="h-5 w-5 text-primary" />
             </div>
             <div>
               <CardTitle className="text-lg">AI Energy Assistant</CardTitle>
@@ -91,7 +86,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
               >
                 {message.role === 'assistant' && (
                   <div className="bg-primary/10 rounded-full p-2 h-8 w-8 flex items-center justify-center">
-                    <Bot className="h-4 w-4 text-primary" />
+                    <Icon name="info" className="h-4 w-4 text-primary" />
                   </div>
                 )}
                 
@@ -109,7 +104,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
 
                 {message.role === 'user' && (
                   <div className="bg-muted rounded-full p-2 h-8 w-8 flex items-center justify-center">
-                    <User className="h-4 w-4" />
+                    <Icon name="account-user-person" className="h-4 w-4" />
                   </div>
                 )}
               </div>
@@ -118,11 +113,11 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
             {isLoading && (
               <div className="flex gap-3 justify-start">
                 <div className="bg-primary/10 rounded-full p-2 h-8 w-8 flex items-center justify-center">
-                  <Bot className="h-4 w-4 text-primary" />
+                  <Icon name="info" className="h-4 w-4 text-primary" />
                 </div>
                 <div className="bg-muted rounded-lg p-3">
                   <div className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Icon name="loading-spinner" className="h-4 w-4 animate-spin" />
                     <span className="text-sm">Thinking...</span>
                   </div>
                 </div>
@@ -162,7 +157,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ className }) => {
               disabled={isLoading}
             />
             <Button type="submit" size="sm" disabled={isLoading || !input.trim()}>
-              <Send className="h-4 w-4" />
+              <Icon name="send-message-dm-inbox" className="h-4 w-4" />
             </Button>
           </div>
         </form>

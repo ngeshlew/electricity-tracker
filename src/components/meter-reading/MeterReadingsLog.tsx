@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -24,13 +23,22 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Eye, Pencil, Trash2, X, MoreHorizontal, Zap, Search, Filter, Plus, Download } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { MeterReading } from '../../types';
 import { exportToCSV, exportToJSON } from '../../utils/exportData';
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface MeterReadingsLogProps {
   onEdit?: (reading: MeterReading) => void;
@@ -43,6 +51,9 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
 }) => {
   const { readings, isLoading, deleteReading, removeEstimatedReading } = useElectricityStore();
   const [selectedReading, setSelectedReading] = useState<MeterReading | null>(null);
+  const [readingPendingDelete, setReadingPendingDelete] = useState<MeterReading | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'ALL' | 'MANUAL' | 'ESTIMATED'>('ALL');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -87,37 +98,64 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this reading?')) {
-      try {
-        // Check if it's an estimated reading (only exists in frontend state)
-        const reading = readings.find(r => r.id === id);
-        if (reading && reading.type === 'ESTIMATED') {
-          // For estimated readings, remove them locally using removeEstimatedReading
-          await removeEstimatedReading(id);
-        } else {
-          // For database readings, use the normal delete function
-          await deleteReading(id);
-          if (onDelete) onDelete(id);
-        }
-      } catch (error) {
-        console.error('Failed to delete reading:', error);
-        alert('Failed to delete reading. Please try again.');
+  const confirmDelete = (reading: MeterReading) => {
+    setDeleteError(null);
+    setReadingPendingDelete(reading);
+  };
+
+  const handleDelete = async () => {
+    if (!readingPendingDelete) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      if (readingPendingDelete.type === 'ESTIMATED') {
+        await removeEstimatedReading(readingPendingDelete.id);
+      } else {
+        await deleteReading(readingPendingDelete.id);
+        if (onDelete) onDelete(readingPendingDelete.id);
       }
+      setReadingPendingDelete(null);
+    } catch (error) {
+      console.error('Failed to delete reading:', error);
+      setDeleteError('Failed to delete reading. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  const calculateConsumption = (current: MeterReading, next?: MeterReading) => {
-    if (!next) return 0;
+  const calculateConsumption = (current: MeterReading, next?: MeterReading, allReadings?: MeterReading[]) => {
     // Skip consumption calculation if the current reading is marked as first reading
     if (current.isFirstReading) return 0;
-    // Calculate consumption as current - next (since current is newer)
-    return Number(current.reading) - Number(next.reading);
+    
+    // If next reading is provided and in the same month group, use it
+    if (next) {
+      return Math.max(0, Number(current.reading) - Number(next.reading));
+    }
+    
+    // If no next reading in same month, look for the previous reading across all readings
+    if (allReadings) {
+      const currentDate = new Date(current.date);
+      // Find the most recent reading before this one (chronologically)
+      const previousReadings = allReadings
+        .filter(r => {
+          const rDate = new Date(r.date);
+          return rDate < currentDate && !r.isFirstReading;
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      if (previousReadings.length > 0) {
+        const previousReading = previousReadings[0];
+        return Math.max(0, Number(current.reading) - Number(previousReading.reading));
+      }
+    }
+    
+    return 0;
   };
 
-  const calculateCost = (kwh: number) => {
-    const { preferences } = useElectricityStore.getState();
-    return kwh * preferences.unitRate;
+  const calculateCost = (kwh: number, date?: Date) => {
+    const { calculateReadingCost } = useElectricityStore.getState();
+    return calculateReadingCost(kwh, date);
   };
 
   if (isLoading) {
@@ -209,7 +247,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-center py-12">
-            <Zap className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+            <Icon name="lightning-energy" className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-normal mb-2">No readings yet</h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
               Start tracking your electricity usage by adding your first meter reading. 
@@ -224,7 +262,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
               size="lg"
               className="min-w-[200px]"
             >
-              <Plus className="h-5 w-5 mr-2" />
+              <Icon name="add-new-plus" className="h-5 w-5 mr-2" />
               Add Your First Reading
             </Button>
             <p className="text-xs text-muted-foreground mt-4">
@@ -244,7 +282,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
           <CardTitle className="text-lg font-normal uppercase tracking-wide mb-4">Reading History</CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Icon name="search" className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 ref={searchInputRef}
                 type="text"
@@ -256,7 +294,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
             </div>
             <Select value={filterType} onValueChange={(value: 'ALL' | 'MANUAL' | 'ESTIMATED') => setFilterType(value)}>
               <SelectTrigger className="w-full sm:w-[180px]">
-                <Filter className="h-4 w-4 mr-2" />
+                <Icon name="filter" className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
@@ -269,7 +307,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-center py-12">
-            <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+            <Icon name="search" className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-normal mb-2">No readings found</h3>
             <p className="text-sm text-muted-foreground mb-4">
               No readings match your search "{searchQuery}"{filterType !== 'ALL' && ` and filter "${filterType}"`}
@@ -295,28 +333,33 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4" style={{ marginBottom: 'var(--space-lg)' }}>
           <CardTitle className="text-lg font-semibold uppercase tracking-wide">Reading History</CardTitle>
           
-          {/* Export Buttons */}
-          <div className="flex gap-2" role="group" aria-label="Export options">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => exportToCSV(sortedReadings)}
-              className="h-9 text-xs uppercase tracking-normal font-mono"
-              aria-label="Export readings as CSV"
-            >
-              <Download className="h-3 w-3 mr-2" aria-hidden="true" />
-              CSV
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => exportToJSON(sortedReadings)}
-              className="h-9 text-xs uppercase tracking-normal font-mono"
-              aria-label="Export readings as JSON"
-            >
-              <Download className="h-3 w-3 mr-2" aria-hidden="true" />
-              JSON
-            </Button>
+          {/* Export Buttons and Reading Count */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground uppercase tracking-normal font-mono">
+              {sortedReadings.length} of {readings.length} {readings.length === 1 ? 'reading' : 'readings'}
+            </span>
+            <div className="flex gap-2" role="group" aria-label="Export options">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportToCSV(sortedReadings)}
+                className="h-9 text-xs uppercase tracking-normal font-mono"
+                aria-label="Export readings as CSV"
+              >
+                <Icon name="download" className="h-3 w-3 mr-2" aria-hidden="true" />
+                CSV
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportToJSON(sortedReadings)}
+                className="h-9 text-xs uppercase tracking-normal font-mono"
+                aria-label="Export readings as JSON"
+              >
+                <Icon name="download" className="h-3 w-3 mr-2" aria-hidden="true" />
+                JSON
+              </Button>
+            </div>
           </div>
         </div>
         
@@ -324,7 +367,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Icon name="search" className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               ref={searchInputRef}
               type="text"
@@ -341,7 +384,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
           {/* Type Filter */}
           <Select value={filterType} onValueChange={(value: 'ALL' | 'MANUAL' | 'ESTIMATED') => setFilterType(value)}>
             <SelectTrigger className="w-full sm:w-[180px] h-10 sm:h-9">
-              <Filter className="h-4 w-4 mr-2" />
+              <Icon name="filter" className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
             <SelectContent>
@@ -357,17 +400,13 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
         {/* Mobile: Horizontal scroll wrapper */}
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
-            <TableCaption className="text-xs text-muted-foreground mb-4">
-              {sortedReadings.length} of {readings.length} {readings.length === 1 ? 'reading' : 'readings'}
-              {searchQuery && ` matching "${searchQuery}"`}
-            </TableCaption>
             
             {monthGroups.length === 0 ? (
               <div className="text-center py-8 text-sm text-muted-foreground">
                 No readings found
               </div>
             ) : (
-              <Accordion type="multiple" defaultValue={monthGroups.map(g => g.key)} className="w-full">
+              <Accordion type="multiple" defaultValue={[]} className="w-full">
                 {monthGroups.map((group, groupIndex) => (
                     <AccordionItem key={group.key} value={group.key} className="border-none">
                     <AccordionTrigger className="py-3 hover:no-underline hover:opacity-70" style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>
@@ -377,7 +416,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                       <div className="space-y-4" style={{ paddingTop: 'var(--space-lg)' }}>
                         <Table>
                           <TableHeader>
-                            <TableRow className="border-b border-dashed">
+                            <TableRow className="border-b border-dotted">
                               <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Date</TableHead>
                               <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Reading</TableHead>
                               <TableHead style={{ paddingTop: 'var(--space-md)', paddingBottom: 'var(--space-md)' }}>Consumption</TableHead>
@@ -391,8 +430,9 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                               // For consumption calculation, we need the next reading (chronologically)
                               // Since we're sorted in descending order, the next reading is at index + 1
                               const nextReading = index < group.readings.length - 1 ? group.readings[index + 1] : undefined;
-                              const consumption = calculateConsumption(reading, nextReading);
-                              const cost = calculateCost(consumption);
+                              // Pass all readings to allow cross-month consumption calculation
+                              const consumption = calculateConsumption(reading, nextReading, sortedReadings);
+                              const cost = calculateCost(consumption, new Date(reading.date));
                               
                               return (
                                 <TableRow key={reading.id}>
@@ -414,27 +454,27 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                                       <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="h-8 w-8 p-0">
                                           <span className="sr-only">Open menu</span>
-                                          <MoreHorizontal className="h-4 w-4" />
+                                          <Icon name="more-horizontal" className="h-4 w-4" />
                                         </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end">
                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                         <DropdownMenuItem onClick={() => setSelectedReading(reading)}>
-                                          <Eye className="mr-2 h-4 w-4" />
+                                          <Icon name="eye-password" className="mr-2 h-4 w-4" />
                                           View
                                         </DropdownMenuItem>
                                         {onEdit && (
                                           <DropdownMenuItem onClick={() => onEdit(reading)}>
-                                            <Pencil className="mr-2 h-4 w-4" />
+                                            <Icon name="edit-write" className="mr-2 h-4 w-4" />
                                             Edit
                                           </DropdownMenuItem>
                                         )}
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem 
                                           className="text-destructive"
-                                          onClick={() => handleDelete(reading.id)}
+                                          onClick={() => confirmDelete(reading)}
                                         >
-                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          <Icon name="trash-delete-bin-3" className="mr-2 h-4 w-4" />
                                           Delete
                                         </DropdownMenuItem>
                                       </DropdownMenuContent>
@@ -446,7 +486,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                           </TableBody>
                         </Table>
                         {groupIndex < monthGroups.length - 1 && (
-                          <div className="border-t border-dashed border-border my-6" style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-xl)' }}></div>
+                          <div className="border-t border-dotted border-border my-6" style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-xl)' }}></div>
                         )}
                       </div>
                     </AccordionContent>
@@ -457,6 +497,53 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
           </div>
         </div>
         
+        <Dialog open={!!readingPendingDelete} onOpenChange={(open) => !open && !isDeleting && setReadingPendingDelete(null)}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-base uppercase tracking-wide">Delete Reading</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. Please confirm you want to delete the reading for{' '}
+                {readingPendingDelete ? formatDate(readingPendingDelete.date) : ''}.
+              </DialogDescription>
+            </DialogHeader>
+            {readingPendingDelete && (
+              <div className="space-y-2 text-sm font-mono border border-dotted border-border p-4">
+                <div className="flex justify-between">
+                  <span>Date</span>
+                  <span>{formatDate(readingPendingDelete.date)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Reading</span>
+                  <span>{Number(readingPendingDelete.reading).toFixed(2)} kWh</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Type</span>
+                  <span>{readingPendingDelete.type}</span>
+                </div>
+              </div>
+            )}
+            {deleteError && (
+              <p className="text-sm text-[var(--color-accent-red)]">{deleteError}</p>
+            )}
+            <DialogFooter className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => !isDeleting && setReadingPendingDelete(null)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Reading Details Modal */}
         {selectedReading && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -472,7 +559,7 @@ export const MeterReadingsLog: React.FC<MeterReadingsLogProps> = ({
                   className="absolute top-4 right-4 h-8 w-8"
                   title="Close"
                 >
-                  <X className="h-4 w-4" />
+                  <Icon name="x-close-delete" className="h-4 w-4" />
                 </Button>
               </CardHeader>
               

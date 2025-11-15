@@ -5,16 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Eye, 
-  EyeOff, 
-  Loader2, 
-  Mail, 
-  Lock,
-  User,
-  AlertCircle,
-  CheckCircle
-} from 'lucide-react';
+import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 
 interface RegisterFormProps {
@@ -105,7 +96,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
             <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Icon name="account-user-person" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="name"
                 type="text"
@@ -123,7 +114,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Icon name="mail-email-message-inbox" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
@@ -141,7 +132,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Icon name="lock-privacy" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -161,9 +152,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 disabled={isLoading}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <Icon name="eye-password-off" className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <Icon name="eye-password" className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -192,7 +183,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Icon name="lock-privacy" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
@@ -212,9 +203,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 disabled={isLoading}
               >
                 {showConfirmPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <Icon name="eye-password-off" className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <Icon name="eye-password" className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -224,12 +215,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               <div className="flex items-center gap-2 text-xs">
                 {isPasswordMatch ? (
                   <>
-                    <CheckCircle className="h-3 w-3 text-green-500" />
+                    <Icon name="check-circle-2" className="h-3 w-3 text-green-500" />
                     <span className="text-green-500">Passwords match</span>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="h-3 w-3 text-red-500" />
+                    <Icon name="alert-error" className="h-3 w-3 text-red-500" />
                     <span className="text-red-500">Passwords don't match</span>
                   </>
                 )}
@@ -261,7 +252,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <Icon name="alert-error" className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -274,7 +265,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Icon name="loading-spinner" className="mr-2 h-4 w-4 animate-spin" />
                 Creating account...
               </>
             ) : (

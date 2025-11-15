@@ -5,16 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { 
-  FileText, 
-  Download, 
-  Calendar, 
-  DollarSign,
-  Plus,
-  Search,
-  Eye,
-  Zap
-} from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { useElectricityStore } from '../../store/useElectricityStore';
 
 interface Statement {
@@ -149,7 +140,7 @@ export const StatementsPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
-              <FileText className="h-8 w-8 text-primary" />
+              <Icon name="book-note-paper" className="h-8 w-8 text-primary" />
               Statements
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -164,7 +155,7 @@ export const StatementsPage: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
+                <Icon name="add-new-plus" className="h-4 w-4" />
                 Generate Statement
               </div>
             )}
@@ -180,7 +171,7 @@ export const StatementsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 Total Statements
               </div>
-              <FileText className="h-3 w-3 text-muted-foreground" />
+              <Icon name="book-note-paper" className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               {statements.length}
@@ -199,7 +190,7 @@ export const StatementsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 This Year
               </div>
-              <Calendar className="h-3 w-3 text-muted-foreground" />
+              <Icon name="calendar-date-appointment" className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               {statements.filter(s => s.year === new Date().getFullYear()).length}
@@ -218,7 +209,7 @@ export const StatementsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 Total Cost
               </div>
-              <DollarSign className="h-3 w-3 text-muted-foreground" />
+              <Icon name="dollar-currency" className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               £{statements.reduce((sum, s) => sum + s.totalCost, 0).toFixed(2)}
@@ -237,7 +228,7 @@ export const StatementsPage: React.FC = () => {
               <div className="text-muted-foreground text-xs">
                 Avg Efficiency
               </div>
-              <Zap className="h-3 w-3 text-muted-foreground" />
+              <Icon name="lightning-energy" className="h-3 w-3 text-muted-foreground" />
             </div>
             <div className="text-lg tabular-nums">
               {statements.length > 0 
@@ -260,7 +251,7 @@ export const StatementsPage: React.FC = () => {
             <div className="flex-1">
               <Label htmlFor="search">Search Statements</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Icon name="search" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
                   placeholder="Search by month or year..."
@@ -292,7 +283,7 @@ export const StatementsPage: React.FC = () => {
         {filteredStatements.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+              <Icon name="book-note-paper" className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Statements Found</h3>
               <p className="text-muted-foreground text-center mb-4">
                 {searchTerm || selectedYear !== new Date().getFullYear()
@@ -301,7 +292,7 @@ export const StatementsPage: React.FC = () => {
               </p>
               {!searchTerm && selectedYear === new Date().getFullYear() && (
                 <Button onClick={handleGenerateStatement}>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Icon name="add-new-plus" className="h-4 w-4 mr-2" />
                   Generate Statement
                 </Button>
               )}
@@ -348,7 +339,7 @@ export const StatementsPage: React.FC = () => {
                       size="sm"
                       onClick={() => handleViewStatement(statement)}
                     >
-                      <Eye className="h-4 w-4 mr-1" />
+                      <Icon name="eye-password" className="h-4 w-4 mr-1" />
                       View
                     </Button>
                     <Button
@@ -356,7 +347,7 @@ export const StatementsPage: React.FC = () => {
                       size="sm"
                       onClick={() => handleDownloadStatement(statement)}
                     >
-                      <Download className="h-4 w-4 mr-1" />
+                      <Icon name="download" className="h-4 w-4 mr-1" />
                       Download
                     </Button>
                   </div>

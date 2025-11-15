@@ -15,14 +15,7 @@ import {
   LineChart,
   Line
 } from 'recharts';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  RotateCw,
-  BarChart3,
-  TrendingUp,
-  Activity
-} from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { useSwipeGestures } from '../../hooks/useSwipeGestures';
 
 interface MobileChartProps {
@@ -223,7 +216,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               onClick={() => setChartType('area')}
               className="h-8 w-8 p-0"
             >
-              <Activity className="h-4 w-4" />
+              <Icon name="activity-graph" className="h-4 w-4" />
             </Button>
             <Button
               variant={chartType === 'bar' ? 'default' : 'ghost'}
@@ -231,7 +224,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               onClick={() => setChartType('bar')}
               className="h-8 w-8 p-0"
             >
-              <BarChart3 className="h-4 w-4" />
+              <Icon name="bar-chart" className="h-4 w-4" />
             </Button>
             <Button
               variant={chartType === 'line' ? 'default' : 'ghost'}
@@ -239,7 +232,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               onClick={() => setChartType('line')}
               className="h-8 w-8 p-0"
             >
-              <TrendingUp className="h-4 w-4" />
+              <Icon name="arrow-up" className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -257,7 +250,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
                   onClick={onPrevious}
                   className="h-8 w-8 p-0"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <Icon name="arrow-chevron-left" className="h-4 w-4" />
                 </Button>
               )}
               
@@ -268,7 +261,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
                   onClick={onNext}
                   className="h-8 w-8 p-0"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <Icon name="arrow-chevron-right" className="h-4 w-4" />
                 </Button>
               )}
             </div>
@@ -281,7 +274,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
                   onClick={onRefresh}
                   className="h-8 w-8 p-0"
                 >
-                  <RotateCw className="h-4 w-4" />
+                  <Icon name="clock-refresh-time-arrow" className="h-4 w-4" />
                 </Button>
               )}
               

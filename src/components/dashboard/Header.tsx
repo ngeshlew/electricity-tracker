@@ -90,7 +90,7 @@ export const Header: FC = () => {
                 aria-label="Help and user guide"
                 title="Help"
               >
-                <Icon name="help-question-mark" className="h-4 w-4" />
+                <Icon name="book-open" className="h-4 w-4" />
               </Button>
             </HelpPopover>
             

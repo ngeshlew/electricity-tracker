@@ -24,6 +24,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  BookOpenIcon,
   ClockIcon,
   CloudArrowDownIcon,
   CloudArrowUpIcon,
@@ -150,6 +151,7 @@ const heroIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGEleme
   'search': MagnifyingGlassIcon,
   'help-question-mark': InformationCircleIcon,
   'info': InformationCircleIcon,
+  'book-open': BookOpenIcon,
 
   // Data & Analytics
   'bar-chart': ChartBarIcon,

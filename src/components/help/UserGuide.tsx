@@ -191,7 +191,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
         className="fixed bottom-6 right-6 z-50 lewis-card-hover"
         title="Open User Guide"
       >
-        <QuestionMarkCircleIcon className="h-5 w-5 mr-2" />
+        <BookOpenIcon className="h-5 w-5 mr-2" />
         Help
       </Button>
     );
@@ -202,7 +202,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
       <Card className="lewis-card lewis-shadow-glow max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg lewis-text-gradient flex items-center space-x-2">
-            <QuestionMarkCircleIcon className="h-6 w-6" />
+            <BookOpenIcon className="h-6 w-6" />
             <span>User Guide</span>
           </CardTitle>
           <Button

@@ -19,7 +19,7 @@ export const HelpPopover: React.FC<HelpPopoverProps> = ({ children }) => {
         {children}
       </PopoverTrigger>
       <PopoverContent
-        className="bg-background border border-dotted border-border rounded-lg p-6 w-96 max-w-[90vw] shadow-none"
+        className="bg-background border border-dotted border-border rounded-lg p-6 w-[560px] max-w-[95vw] shadow-none"
         align="end"
         side="bottom"
         sideOffset={8}

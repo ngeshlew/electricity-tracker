@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +20,8 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
   onForgotPassword,
   onBackToHome
 }) => {
-  const { login, isLoading, error, clearError } = useAuthStore();
+  const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -27,12 +29,20 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  // Redirect to dashboard on successful login
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
     
     try {
       await login(formData.email, formData.password);
+      // Navigation will happen via useEffect when isAuthenticated becomes true
     } catch (error) {
       // Error is handled by the store
     }
@@ -47,17 +57,6 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
     <div className="grid min-h-svh lg:grid-cols-2">
       {/* Left Column - Form */}
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Button
-            variant="ghost"
-            onClick={onBackToHome}
-            className="flex items-center gap-2 font-medium"
-          >
-            <Icon name="arrow-left" className="h-4 w-4" />
-            Back to Home
-          </Button>
-        </div>
-        
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">

@@ -42,10 +42,8 @@ export const Dashboard: FC = () => {
           </div>
           
           <main className="flex-1 lg:ml-0">
-            {/* Header - Desktop only */}
-            <div className="hidden lg:block">
-              <Header />
-            </div>
+            {/* Header - show on all sizes so top nav actions are visible */}
+            <Header />
             
             {/* Dashboard Content - Responsive */}
             <div className="px-4 sm:px-6 pt-14 lg:pt-6 pb-20 lg:pb-6">

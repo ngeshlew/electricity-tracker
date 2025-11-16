@@ -23,8 +23,6 @@ export default defineConfig({
       disable: process.env.NODE_ENV === 'development',
       includeAssets: ['vite.svg'],
       manifest: {
-        // Bump to force service worker update
-        version: '1.0.1',
         name: 'Electricity Tracker',
         short_name: 'ElecTracker',
         description: 'AI-powered electricity consumption tracking dashboard with real-time analytics',

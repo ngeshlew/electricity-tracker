@@ -39,7 +39,6 @@ import {
   PencilSquareIcon,
   PlusIcon,
   SunIcon,
-  TargetIcon,
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
@@ -156,7 +155,7 @@ const heroIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGEleme
   'bar-chart': ChartBarIcon,
   'pie-chart': ChartPieIcon,
   'activity-graph': ArrowTrendingUpIcon,
-  'target': TargetIcon,
+  'target': ChartBarIcon,
 
   // Theming & Devices
   'sun-day': SunIcon,

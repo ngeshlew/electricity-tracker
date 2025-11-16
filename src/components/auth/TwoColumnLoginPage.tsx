@@ -180,10 +180,15 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
       </div>
 
       {/* Right Column - Cover Image */}
-      <div className="bg-muted relative hidden lg:block">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
+      <div 
+        className="relative hidden lg:block bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url(/background-image.png)'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-background/80 to-background/60" />
         <div className="absolute inset-0 flex items-center justify-center p-8">
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 relative z-10">
             <div className="bg-primary/10 rounded-full p-8 mx-auto w-32 h-32 flex items-center justify-center">
               <Icon name="lightning-energy" className="h-16 w-16 text-primary" />
             </div>

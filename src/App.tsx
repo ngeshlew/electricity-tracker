@@ -66,29 +66,24 @@ function App() {
     };
   }, [loadMeterReadings, setupRealtimeUpdates, cleanupRealtimeUpdates]);
 
+  // Wrapper component to provide required callbacks to login page
+  const LoginRoute = () => {
+    const navigate = useNavigate();
+    return (
+      <TwoColumnLoginPage
+        onSwitchToRegister={() => navigate('/login')}
+        onForgotPassword={() => navigate('/login')}
+        onBackToHome={() => navigate('/')}
+      />
+    );
+  };
+
   return (
     <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme">
       <ErrorBoundary>
         <Router>
           <div className="min-h-screen bg-background text-foreground">
             <div>
-              {/* Small wrapper to satisfy TwoColumnLoginPage required callbacks */}
-              {/*
-                These handlers keep the UX simple for now:
-                - Back to Home goes to dashboard (guarded; will redirect to /login if not authed)
-                - Switch/Register and Forgot just keep user on /login (could open modals later)
-              */}
-              {/* eslint-disable-next-line react/no-unstable-nested-components */}
-              const LoginRoute = () => {
-                const navigate = useNavigate();
-                return (
-                  <TwoColumnLoginPage
-                    onSwitchToRegister={() => navigate('/login')}
-                    onForgotPassword={() => navigate('/login')}
-                    onBackToHome={() => navigate('/')}
-                  />
-                );
-              };
               <Routes>
               <Route path="/login" element={<LoginRoute />} />
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

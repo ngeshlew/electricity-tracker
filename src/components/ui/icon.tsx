@@ -250,6 +250,61 @@ export const Icon: React.FC<IconProps> = ({
       );
     }
 
+    // Validate that IconComponent is actually a React component, not a string (data URI)
+    // This can happen if vite-plugin-svgr fails to process the SVG correctly
+    if (typeof IconComponent === 'string') {
+      const iconValue = IconComponent as string;
+      console.error(
+        `[Icon] Icon "${name}" was imported as a string (data URI) instead of a React component. ` +
+        `This indicates a problem with vite-plugin-svgr processing. ` +
+        `IconComponent value: ${iconValue.substring(0, 100)}...`
+      );
+      // Return fallback instead of trying to render the string
+      const sizeValue = typeof size === 'number' ? size : size;
+      return (
+        <svg
+          className={cn('text-muted-foreground', className)}
+          width={sizeValue}
+          height={sizeValue}
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={style}
+          aria-hidden="true"
+          {...props}
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+          <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    }
+
+    // Validate it's a function (React component)
+    if (typeof IconComponent !== 'function') {
+      console.error(
+        `[Icon] Icon "${name}" is not a valid React component. Type: ${typeof IconComponent}, Value:`,
+        IconComponent
+      );
+      // Return fallback
+      const sizeValue = typeof size === 'number' ? size : size;
+      return (
+        <svg
+          className={cn('text-muted-foreground', className)}
+          width={sizeValue}
+          height={sizeValue}
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={style}
+          aria-hidden="true"
+          {...props}
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+          <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    }
+
     // Render the SVG component
     const sizeValue = typeof size === 'number' ? size : size;
     return React.createElement(IconComponent, {

@@ -46,7 +46,6 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        // Force update on every deployment
         globPatterns: ['**/*.{js,css,html,ico,svg}'],
         // Exclude large images from precaching - they'll be cached on-demand
         globIgnores: ['**/background-image.png'],

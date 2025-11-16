@@ -19,7 +19,13 @@ interface GuideSection {
   content: React.ReactNode;
 }
 
-export const UserGuide: React.FC = () => {
+interface UserGuideProps {
+  showFloatingButton?: boolean;
+}
+
+export const UserGuide: React.FC<UserGuideProps> = ({
+  showFloatingButton = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
@@ -175,6 +181,9 @@ export const UserGuide: React.FC = () => {
   };
 
   if (!isOpen) {
+    if (!showFloatingButton) {
+      return null;
+    }
     return (
       <Button
         onClick={() => setIsOpen(true)}

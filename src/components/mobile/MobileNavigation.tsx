@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Icon } from "@/components/ui/icon";
+import { HelpPopover } from '@/components/ui/help-popover';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -111,6 +112,19 @@ export const MobileNavigation: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
+            {/* Help - always available */}
+            <HelpPopover>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 w-9 p-0"
+                aria-label="Help and user guide"
+                title="Help"
+              >
+                <Icon name="help-question-mark" className="h-5 w-5" />
+              </Button>
+            </HelpPopover>
+
             {/* Add Reading Button - Only on Dashboard */}
             {isDashboard && (
               <Button

@@ -8,15 +8,21 @@ import svgr from 'vite-plugin-svgr'
 export default defineConfig({
   plugins: [
     react(),
+    // svgr must come before other plugins that might process SVGs
     svgr({
+      // Process SVGs with ?react query as React components
+      // When using ?react, the default export is the React component
       svgrOptions: {
         icon: true,
         replaceAttrValues: { '#000000': 'currentColor', black: 'currentColor' },
         svgProps: {
           fill: 'currentColor',
         },
+        ref: false,
+        titleProp: false,
       },
-      include: '**/*.svg',
+      // Only process SVGs with ?react query - let Vite handle others as URLs
+      include: '**/*.svg?react',
     }),
     VitePWA({
       registerType: 'autoUpdate',

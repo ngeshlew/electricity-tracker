@@ -78,7 +78,29 @@ import ArrowBottomRightIcon from '../../icons/arrow-bottom-right.svg?react';
 /**
  * Basicons Icon Name Mapping
  * Maps our internal icon names to React SVG components
+ * 
+ * IMPORTANT: If icons are showing as data URIs, check vite-plugin-svgr configuration.
+ * SVGs should be imported as React components, not strings.
  */
+
+// Runtime validation: Check if imports are working correctly
+const validateIconImports = () => {
+  if (process.env.NODE_ENV === 'development') {
+    const sampleIcons = [ArrowUpIcon, ArrowDownIcon, ActivityGraphIcon, TargetIcon];
+    const invalidImports = sampleIcons.filter(icon => typeof icon === 'string');
+    if (invalidImports.length > 0) {
+      console.error(
+        '[Icon] CRITICAL: Some SVG imports are returning strings (data URIs) instead of React components. ' +
+        'This indicates vite-plugin-svgr is not processing SVGs correctly. ' +
+        `Found ${invalidImports.length} invalid imports.`
+      );
+    }
+  }
+};
+
+// Run validation on module load
+validateIconImports();
+
 const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   // Authentication & User
   'account-user-person': AccountUserPersonIcon,
@@ -309,7 +331,8 @@ export const Icon: React.FC<IconProps> = ({
       console.error(
         `[Icon] Icon "${name}" was imported as a string (data URI) instead of a React component. ` +
         `This indicates a problem with vite-plugin-svgr processing. ` +
-        `IconComponent value: ${iconValue.substring(0, 100)}...`
+        `IconComponent value: ${iconValue.substring(0, 100)}... ` +
+        `This is a vite-plugin-svgr configuration issue.`
       );
       // Return a more appropriate fallback based on icon name
       const sizeValue = typeof size === 'number' ? size : size;
@@ -317,9 +340,11 @@ export const Icon: React.FC<IconProps> = ({
     }
 
     // Validate it's a function (React component)
-    if (typeof IconComponent !== 'function') {
+    // Note: React components can be functions or classes
+    const iconType = typeof IconComponent;
+    if (iconType !== 'function' && iconType !== 'object') {
       console.error(
-        `[Icon] Icon "${name}" is not a valid React component. Type: ${typeof IconComponent}, ` +
+        `[Icon] Icon "${name}" is not a valid React component. Type: ${iconType}, ` +
         `Is React element: ${React.isValidElement(IconComponent)}, Value:`,
         IconComponent
       );

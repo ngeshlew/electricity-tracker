@@ -175,6 +175,74 @@ interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, 'name'> {
 }
 
 /**
+ * Render an appropriate fallback icon based on the icon name
+ * This provides better UX than showing the same plus icon for everything
+ */
+function renderIconFallback(
+  name: string,
+  size: number | string,
+  className?: string,
+  style?: React.CSSProperties,
+  props?: any
+): JSX.Element {
+  const sizeValue = typeof size === 'number' ? size : size;
+  
+  // Create semantic fallback icons based on icon name patterns
+  let fallbackPath = '';
+  
+  if (name.includes('arrow-up') || name.includes('trending-up') || name.includes('up')) {
+    fallbackPath = 'M12 19V5M5 12l7-7 7 7';
+  } else if (name.includes('arrow-down') || name.includes('trending-down') || name.includes('down')) {
+    fallbackPath = 'M12 5v14M19 12l-7 7-7-7';
+  } else if (name.includes('arrow-left') || name.includes('chevron-left')) {
+    fallbackPath = 'M19 12H5M12 19l-7-7 7-7';
+  } else if (name.includes('arrow-right') || name.includes('chevron-right')) {
+    fallbackPath = 'M5 12h14M12 5l7 7-7 7';
+  } else if (name.includes('target') || name.includes('goal')) {
+    fallbackPath = 'M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83';
+  } else if (name.includes('chart') || name.includes('graph') || name.includes('activity')) {
+    fallbackPath = 'M3 12h4M7 8h4M11 16h4M15 12h4M19 6h4';
+  } else if (name.includes('lightning') || name.includes('bolt') || name.includes('energy')) {
+    fallbackPath = 'M13 2L3 14h8l-1 8 10-12h-8l1-8z';
+  } else if (name.includes('info') || name.includes('help') || name.includes('question')) {
+    fallbackPath = 'M12 16v-4M12 8h.01';
+  } else if (name.includes('close') || name.includes('delete') || name.includes('x')) {
+    fallbackPath = 'M18 6L6 18M6 6l12 12';
+  } else if (name.includes('add') || name.includes('plus')) {
+    fallbackPath = 'M12 5v14M5 12h14';
+  } else if (name.includes('book') || name.includes('note') || name.includes('paper')) {
+    fallbackPath = 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H20v17.5';
+  } else if (name.includes('settings') || name.includes('adjust')) {
+    fallbackPath = 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z';
+  } else {
+    // Default fallback - simple square with question mark
+    fallbackPath = 'M12 8v4M12 16h.01';
+  }
+  
+  return (
+    <svg
+      className={cn('text-muted-foreground', className)}
+      width={sizeValue}
+      height={sizeValue}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={style}
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d={fallbackPath}
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/**
  * Icon Component (Basicons - Local SVG)
  * 
  * Renders Basicons using local SVG files from src/icons/ directory.
@@ -223,31 +291,15 @@ export const Icon: React.FC<IconProps> = ({
 
     if (!IconComponent) {
       // Fallback: render a placeholder
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(
-          `[Icon] Basicons icon "${name}" not found in iconMap.`,
-          `Available icons: ${Object.keys(iconMap).slice(0, 20).join(', ')}, ...`
-        );
-      }
-      
-      // Render a simple placeholder square instead of returning null
-      const sizeValue = typeof size === 'number' ? size : size;
-      return (
-        <svg
-          className={cn('text-muted-foreground', className)}
-          width={sizeValue}
-          height={sizeValue}
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          style={style}
-          aria-hidden="true"
-          {...props}
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-          <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
+      console.warn(
+        `[Icon] Icon "${name}" not found in iconMap. ` +
+        `Available: ${Object.keys(iconMap).slice(0, 10).join(', ')}... ` +
+        `Total icons: ${Object.keys(iconMap).length}`
       );
+      
+      // Use semantic fallback based on icon name
+      const sizeValue = typeof size === 'number' ? size : size;
+      return renderIconFallback(name, sizeValue, className, style, props);
     }
 
     // Validate that IconComponent is actually a React component, not a string (data URI)
@@ -259,50 +311,21 @@ export const Icon: React.FC<IconProps> = ({
         `This indicates a problem with vite-plugin-svgr processing. ` +
         `IconComponent value: ${iconValue.substring(0, 100)}...`
       );
-      // Return fallback instead of trying to render the string
+      // Return a more appropriate fallback based on icon name
       const sizeValue = typeof size === 'number' ? size : size;
-      return (
-        <svg
-          className={cn('text-muted-foreground', className)}
-          width={sizeValue}
-          height={sizeValue}
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          style={style}
-          aria-hidden="true"
-          {...props}
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-          <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      );
+      return renderIconFallback(name, sizeValue, className, style, props);
     }
 
     // Validate it's a function (React component)
     if (typeof IconComponent !== 'function') {
       console.error(
-        `[Icon] Icon "${name}" is not a valid React component. Type: ${typeof IconComponent}, Value:`,
+        `[Icon] Icon "${name}" is not a valid React component. Type: ${typeof IconComponent}, ` +
+        `Is React element: ${React.isValidElement(IconComponent)}, Value:`,
         IconComponent
       );
       // Return fallback
       const sizeValue = typeof size === 'number' ? size : size;
-      return (
-        <svg
-          className={cn('text-muted-foreground', className)}
-          width={sizeValue}
-          height={sizeValue}
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          style={style}
-          aria-hidden="true"
-          {...props}
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-          <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      );
+      return renderIconFallback(name, sizeValue, className, style, props);
     }
 
     // Render the SVG component
@@ -318,23 +341,8 @@ export const Icon: React.FC<IconProps> = ({
     // Catch any errors during icon rendering and log them
     console.error(`[Icon] Error rendering icon "${name}":`, error);
     
-    // Return a safe fallback
+    // Return semantic fallback
     const sizeValue = typeof size === 'number' ? size : size;
-    return (
-      <svg
-        className={cn('text-muted-foreground', className)}
-        width={sizeValue}
-        height={sizeValue}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        style={style}
-        aria-hidden="true"
-        {...props}
-      >
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-        <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    );
+    return renderIconFallback(name, sizeValue, className, style, props);
   }
 };

@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  XMarkIcon,
-  ChevronRightIcon,
-  ChevronDownIcon,
-  BookOpenIcon,
-  LightBulbIcon,
-  CogIcon,
-  ChartBarIcon
-} from '@heroicons/react/24/outline';
+import { Icon } from '@/components/ui/icon';
 
 interface GuideSection {
   id: string;
@@ -32,7 +24,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
     {
       id: 'getting-started',
       title: 'Getting Started',
-      icon: <BookOpenIcon className="h-5 w-5" />,
+      icon: <Icon name="book-note-paper" className="h-5 w-5" />,
       content: (
         <div className="space-y-4">
           <h4 className="text-base">Welcome to Electricity Tracker!</h4>
@@ -68,7 +60,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
     {
       id: 'adding-readings',
       title: 'Adding Meter Readings',
-      icon: <CogIcon className="h-5 w-5" />,
+      icon: <Icon name="adjust-settings-horizontal" className="h-5 w-5" />,
       content: (
         <div className="space-y-4">
           <h4 className="text-base">How to Add Meter Readings</h4>
@@ -101,7 +93,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
     {
       id: 'understanding-analytics',
       title: 'Understanding Analytics',
-      icon: <ChartBarIcon className="h-5 w-5" />,
+      icon: <Icon name="bar-chart" className="h-5 w-5" />,
       content: (
         <div className="space-y-4">
           <h4 className="text-base">Analytics Dashboard</h4>
@@ -137,7 +129,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
     {
       id: 'tips-tricks',
       title: 'Tips & Tricks',
-      icon: <LightBulbIcon className="h-5 w-5" />,
+      icon: <Icon name="lightning-energy" className="h-5 w-5" />,
       content: (
         <div className="space-y-4">
           <h4 className="text-base">Maximize Your Savings</h4>
@@ -190,7 +182,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
         className="fixed bottom-6 right-6 z-50 lewis-card-hover"
         title="Open User Guide"
       >
-        <BookOpenIcon className="h-5 w-5 mr-2" />
+        <Icon name="book-note-paper" className="h-5 w-5 mr-2" />
         Help
       </Button>
     );
@@ -201,7 +193,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
       <Card className="lewis-card lewis-shadow-glow max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg lewis-text-gradient flex items-center space-x-2">
-            <BookOpenIcon className="h-6 w-6" />
+            <Icon name="book-note-paper" className="h-6 w-6" />
             <span>User Guide</span>
           </CardTitle>
           <Button
@@ -210,7 +202,7 @@ export const UserGuide: React.FC<UserGuideProps> = ({
             onClick={() => setIsOpen(false)}
             className="lewis-card-hover"
           >
-            <XMarkIcon className="h-5 w-5" />
+            <Icon name="x-close-delete" className="h-5 w-5" />
           </Button>
         </CardHeader>
         
@@ -229,9 +221,9 @@ export const UserGuide: React.FC<UserGuideProps> = ({
                     <span className="">{section.title}</span>
                   </div>
                   {activeSection === section.id ? (
-                    <ChevronDownIcon className="h-5 w-5" />
+                    <Icon name="arrow-chevron-down" className="h-5 w-5" />
                   ) : (
-                    <ChevronRightIcon className="h-5 w-5" />
+                    <Icon name="arrow-chevron-right" className="h-5 w-5" />
                   )}
                 </button>
                 

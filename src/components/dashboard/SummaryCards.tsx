@@ -18,7 +18,7 @@ import { useElectricityStore } from '../../store/useElectricityStore';
  * - Real-time data updates
  * 
  * Uses Shadcn UI: Card, CardContent, CardHeader, CardTitle components
- * Uses Heroicons: BoltIcon, CurrencyPoundIcon, ChartBarIcon, ArrowTrendingUpIcon
+ * Uses Hexaicons: Local SVG icons via Icon component
  * Custom styling: Lewis-Linear design system
  */
 
@@ -32,7 +32,7 @@ interface SummaryCardProps {
   change: string;       // Change indicator (e.g., "+5.2%")
   changeValue: string;  // Change percentage (e.g., "+12.5%")
   description: string;  // Description text
-  icon: React.ReactNode; // Heroicon component
+  icon: React.ReactNode; // Hexaicon component
   trendIcon: React.ReactNode; // Trend icon
 }
 

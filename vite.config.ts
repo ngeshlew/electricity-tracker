@@ -46,7 +46,11 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,ico,svg}'],
+        // Exclude large images from precaching - they'll be cached on-demand
+        globIgnores: ['**/background-image.png'],
+        // Increase file size limit for precaching (in case other assets are large)
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.electricity-tracker\.com\/.*/i,
@@ -67,6 +71,18 @@ export default defineConfig({
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24
+              }
+            }
+          },
+          {
+            // Cache large images on-demand (like background-image.png)
+            urlPattern: /\.(?:png|jpg|jpeg|webp|gif)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'image-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
               }
             }
           }

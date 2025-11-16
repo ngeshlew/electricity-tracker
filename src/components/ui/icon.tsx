@@ -192,27 +192,58 @@ export const Icon: React.FC<IconProps> = ({
   style,
   ...props
 }) => {
-  const IconComponent = iconMap[name];
+  try {
+    const IconComponent = iconMap[name];
 
-  if (!IconComponent) {
-    // Fallback: render a placeholder
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(
-        `[Icon] Basicons icon "${name}" not found in iconMap.`,
-        `Available icons: ${Object.keys(iconMap).slice(0, 20).join(', ')}, ...`
+    if (!IconComponent) {
+      // Fallback: render a placeholder
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(
+          `[Icon] Basicons icon "${name}" not found in iconMap.`,
+          `Available icons: ${Object.keys(iconMap).slice(0, 20).join(', ')}, ...`
+        );
+      }
+      
+      // Render a simple placeholder square instead of returning null
+      const sizeValue = typeof size === 'number' ? size : size;
+      return (
+        <svg
+          className={cn('text-muted-foreground', className)}
+          width={sizeValue}
+          height={sizeValue}
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={style}
+          aria-hidden="true"
+          {...props}
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+          <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
       );
     }
+
+    // Render the SVG component
+    const sizeValue = typeof size === 'number' ? size : size;
+    return React.createElement(IconComponent, {
+      className: cn(className),
+      width: sizeValue,
+      height: sizeValue,
+      style,
+      ...props,
+    });
+  } catch (error) {
+    // Catch any errors during icon rendering and log them
+    console.error(`[Icon] Error rendering icon "${name}":`, error);
     
-    if (process.env.NODE_ENV === 'production') {
-      return null as unknown as JSX.Element;
-    }
-    
-    // Render a simple placeholder square
+    // Return a safe fallback
+    const sizeValue = typeof size === 'number' ? size : size;
     return (
       <svg
         className={cn('text-muted-foreground', className)}
-        width={typeof size === 'number' ? size : size}
-        height={typeof size === 'number' ? size : size}
+        width={sizeValue}
+        height={sizeValue}
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -225,16 +256,4 @@ export const Icon: React.FC<IconProps> = ({
       </svg>
     );
   }
-
-  // Render the SVG component
-  const sizeValue = typeof size === 'number' ? size : size;
-  return (
-    <IconComponent
-      className={cn(className)}
-      width={sizeValue}
-      height={sizeValue}
-      style={style}
-      {...props}
-    />
-  );
 };

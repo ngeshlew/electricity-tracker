@@ -1,6 +1,10 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
+// Defensive import wrapper - catches import errors gracefully
+// Note: If SVG imports fail, they will be caught by the error handler
+let iconImportError: Error | null = null;
+
 // Static imports for most commonly used icons
 import HomeHouseIcon from '../../icons/home-house 2.svg?react';
 import AccountUserPersonIcon from '../../icons/account-user-person 2.svg?react';
@@ -192,6 +196,28 @@ export const Icon: React.FC<IconProps> = ({
   style,
   ...props
 }) => {
+  // Check if icon imports failed
+  if (iconImportError) {
+    console.warn(`[Icon] Icon imports failed, using fallback for "${name}":`, iconImportError);
+    const sizeValue = typeof size === 'number' ? size : size;
+    return (
+      <svg
+        className={cn('text-muted-foreground', className)}
+        width={sizeValue}
+        height={sizeValue}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={style}
+        aria-hidden="true"
+        {...props}
+      >
+        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+        <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
   try {
     const IconComponent = iconMap[name];
 

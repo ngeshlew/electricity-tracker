@@ -1,6 +1,6 @@
 import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { AuthModal } from './AuthModal';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,28 +12,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requireAuth = true
 }) => {
   const { isAuthenticated } = useAuthStore();
-  const [showAuthModal, setShowAuthModal] = React.useState(false);
-
-  React.useEffect(() => {
-    if (requireAuth && !isAuthenticated) {
-      setShowAuthModal(true);
-    }
-  }, [requireAuth, isAuthenticated]);
-
-  // No-op handlers retained for future use
-
-  const handleAuthClose = () => {
-    setShowAuthModal(false);
-  };
+  const location = useLocation();
 
   if (requireAuth && !isAuthenticated) {
-    return (
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={handleAuthClose}
-        initialMode="login"
-      />
-    );
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
   return <>{children}</>;

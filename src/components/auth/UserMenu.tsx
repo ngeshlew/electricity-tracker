@@ -25,7 +25,7 @@ export const UserMenu: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login', { replace: true });
   };
 
   const handleProfileClick = () => {

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ToastContainer } from "@/components/ui/toast-container";
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { Dashboard } from './components/dashboard/Dashboard';
+import { TwoColumnLoginPage } from './components/auth/TwoColumnLoginPage';
 import { SettingsLayout } from './components/settings/SettingsLayout';
 import { InsightsLayout } from './components/insights/InsightsLayout';
 import { AnalyticsLayout } from './components/analytics/AnalyticsLayout';
@@ -71,6 +72,7 @@ function App() {
           <div className="min-h-screen bg-background text-foreground">
             <div>
               <Routes>
+              <Route path="/login" element={<TwoColumnLoginPage />} />
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/insights" element={<ProtectedRoute><InsightsLayout /></ProtectedRoute>} />

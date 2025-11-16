@@ -8,6 +8,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { Icon } from "@/components/ui/icon";
 import { useElectricityStore } from '../../store/useElectricityStore';
 import { KeyboardShortcutsPopover } from '@/components/ui/keyboard-shortcuts-dialog';
+import { HelpPopover } from '@/components/ui/help-popover';
 
 export const Header: FC = () => {
   const { toggleMeterPanel, chartData } = useElectricityStore();
@@ -80,6 +81,19 @@ export const Header: FC = () => {
               </div>
             )}
             
+            {/* Help Button */}
+            <HelpPopover>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 sm:h-12 px-3 flex-shrink-0"
+                aria-label="Help and user guide"
+                title="Help"
+              >
+                <Icon name="help-question-mark" className="h-4 w-4" />
+              </Button>
+            </HelpPopover>
+            
             {/* Keyboard Shortcuts Button */}
             <KeyboardShortcutsPopover>
               <Button
@@ -87,8 +101,9 @@ export const Header: FC = () => {
                 size="sm"
                 className="h-10 sm:h-12 px-3 flex-shrink-0"
                 aria-label="Keyboard shortcuts"
+                title="Keyboard Shortcuts"
               >
-                <Icon name="help-question-mark" className="h-4 w-4" />
+                <Icon name="info" className="h-4 w-4" />
               </Button>
             </KeyboardShortcutsPopover>
             

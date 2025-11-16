@@ -9,7 +9,6 @@ import { ConsumptionBreakdown } from './ConsumptionBreakdown';
 import { AnnualProgressCards } from './AnnualProgressCards';
 import { SeasonalTracker } from './SeasonalTracker';
 import { MonthSelector } from './MonthSelector';
-import { UserGuide } from '../help/UserGuide';
 import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
 import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { MobileNavigation } from '../mobile/MobileNavigation';
@@ -134,7 +133,7 @@ export const Dashboard: FC = () => {
               open={isTariffDialogOpen}
               onOpenChange={setIsTariffDialogOpen}
             />
-            <UserGuide />
+            
           </main>
         </div>
       </SidebarProvider>

@@ -1,168 +1,193 @@
-# Icon Migration Documentation - Lineicons to Basicons
+# Icon Migration Documentation - Basicons HTML Script Implementation
 
 This document tracks all icons used in the codebase and their Basicons equivalents.
+
+## Basicons Implementation
+
+Basicons uses an HTML script embed approach:
+- **Script**: `<script async src="https://basicons.xyz/embed.js"></script>` (added to `index.html` `<head>`)
+- **Format**: `<i class="bsc-{icon-name}"></i>`
+- **Documentation**: https://basicons.xyz/
+- **React Package**: https://github.com/PreciousME/react-basicons
 
 ## Icon Usage Inventory
 
 ### Authentication & User Interface
-- `lightning-energy` → `bsi-bolt` - App logo/brand icon
-- `mail-email-message-inbox` → `bsi-envelope` - Email input icon
-- `lock-privacy` → `bsi-lock` - Password/lock icon
-- `eye-password` → `bsi-eye` - Show password icon
-- `eye-password-off` → `bsi-eye-off` - Hide password icon
-- `alert-error` → `bsi-alert-circle` - Error alert icon
-- `loading-spinner` → `bsi-loader` - Loading spinner icon
-- `account-user-person` → `bsi-user` - User account icon
-- `logout-exit` → `bsi-log-out` - Logout icon
-- `enter-log-in-arrow` → `bsi-log-in` - Login icon
+- `lightning-energy` → `bsc-lightning-energy` - App logo/brand icon
+- `bolt` → `bsc-lightning-energy` - Bolt/energy icon (alias)
+- `mail-email-message-inbox` → `bsc-mail-email-message-inbox` - Email input icon
+- `lock-privacy` → `bsc-lock-privacy` - Password/lock icon
+- `eye-password` → `bsc-eye-password` - Show password icon
+- `eye-password-off` → `bsc-eye-password-off` - Hide password icon
+- `alert-error` → `bsc-alert-error` - Error alert icon
+- `loading-spinner` → `bsc-loading-spinner` - Loading spinner icon
+- `account-user-person` → `bsc-account-user-person` - User account icon
+- `logout-exit` → `bsc-logout-exit` - Logout icon
+- `enter-log-in-arrow` → `bsc-enter-log-in-arrow` - Login icon
 
 ### Navigation & UI Controls
-- `home-house` → `bsi-home` - Home/Dashboard icon
-- `book-note-paper` → `bsi-file-text` - Statements/Book icon
-- `notification-bell-alarm` → `bsi-bell` - Notifications icon
-- `adjust-settings-horizontal` → `bsi-settings` - Settings icon
-- `menu-hambuger` → `bsi-menu` - Menu/hamburger icon
-- `x-close-delete` → `bsi-x` - Close/delete icon
-- `arrow-chevron-down` → `bsi-chevron-down` - Chevron down
-- `arrow-chevron-up` → `bsi-chevron-up` - Chevron up
-- `arrow-chevron-left` → `bsi-chevron-left` - Chevron left
-- `arrow-chevron-right` → `bsi-chevron-right` - Chevron right
-- `arrow-up` → `bsi-arrow-up` - Arrow up
-- `arrow-down` → `bsi-arrow-down` - Arrow down
-- `arrow-left` → `bsi-arrow-left` - Arrow left
-- `arrow-right` → `bsi-arrow-right` - Arrow right
+- `home-house` → `bsc-home-house` - Home/Dashboard icon
+- `book-note-paper` → `bsc-book-note-paper` - Statements/Book icon
+- `notification-bell-alarm` → `bsc-notification-bell-alarm` - Notifications icon
+- `adjust-settings-horizontal` → `bsc-adjust-settings-horizontal` - Settings icon
+- `menu-hambuger` → `bsc-menu` - Menu/hamburger icon
+- `x-close-delete` → `bsc-x-close-delete` - Close/delete icon
+- `arrow-chevron-down` → `bsc-chevron-down` - Chevron down
+- `arrow-chevron-up` → `bsc-chevron-up` - Chevron up
+- `arrow-chevron-left` → `bsc-arrow-chevron-left` - Chevron left
+- `arrow-chevron-right` → `bsc-arrow-chevron-right` - Chevron right
+- `arrow-up` → `bsc-arrow-up` - Arrow up
+- `arrow-down` → `bsc-arrow-down` - Arrow down
+- `arrow-left` → `bsc-arrow-left` - Arrow left
+- `arrow-right` → `bsc-arrow-right` - Arrow right
+- `arrow-bottom-left` → `bsc-arrow-bottom-left` - Arrow bottom left
+- `arrow-bottom-right` → `bsc-arrow-bottom-right` - Arrow bottom right
 
 ### Data & Analytics
-- `bar-chart` → `bsi-bar-chart` - Bar chart icon
-- `pie-chart` → `bsi-pie-chart` - Pie chart icon
-- `activity-graph` → `bsi-trending-up` - Activity/trend graph icon
-- `target` → `bsi-target` - Target/goal icon
-- `trending-up` → `bsi-trending-up` - Trending up icon
-- `trending-down` → `bsi-trending-down` - Trending down icon
-- `chart-up-arrow` → `bsi-trending-up` - Chart with up arrow
+- `bar-chart` → `bsc-bar-chart` - Bar chart icon
+- `pie-chart` → `bsc-pie-chart` - Pie chart icon
+- `activity-graph` → `bsc-activity-graph` - Activity/trend graph icon
+- `target` → `bsc-target` - Target/goal icon
+- `trending-up` → `bsc-trending-up` - Trending up icon
+- `trending-down` → `bsc-trending-down` - Trending down icon
+- `chart-up-arrow` → `bsc-chart-up-arrow` - Chart with up arrow
 
 ### Actions & Operations
-- `add-new-plus` → `bsi-plus` - Add/plus icon
-- `edit-write` → `bsi-edit` - Edit icon
-- `trash-delete-bin-3` → `bsi-trash` - Delete/trash icon
-- `save` → `bsi-save` - Save icon
-- `download` → `bsi-download` - Download icon
-- `upload-arrow-up` → `bsi-upload` - Upload icon
-- `check-circle-2` → `bsi-check-circle` - Check/success icon
-- `check-good` → `bsi-check` - Check mark icon
+- `add-new-plus` → `bsc-add-new-plus` - Add/plus icon
+- `edit-write` → `bsc-edit-write` - Edit icon
+- `trash-delete-bin-3` → `bsc-trash-delete-bin-3` - Delete/trash icon
+- `save` → `bsc-save` - Save icon
+- `download` → `bsc-download` - Download icon
+- `upload-arrow-up` → `bsc-upload-arrow-up` - Upload icon
+- `check-circle-2` → `bsc-check-circle-2` - Check/success icon
+- `check-good` → `bsc-check-good` - Check mark icon
 
 ### Calendar & Time
-- `calendar-date-appointment` → `bsi-calendar` - Calendar icon
-- `calendar-month-date` → `bsi-calendar` - Calendar month icon
-- `clock-time` → `bsi-clock` - Clock icon
-- `clock-refresh-time-arrow` → `bsi-refresh` - Refresh/time icon
+- `calendar-date-appointment` → `bsc-calendar-date-appointment` - Calendar icon
+- `calendar-month-date` → `bsc-calendar-month-date` - Calendar month icon
+- `clock-time` → `bsc-clock-time` - Clock icon
+- `clock-refresh-time-arrow` → `bsc-clock-refresh-time-arrow` - Refresh/time icon
 
 ### Information & Help
-- `info` → `bsi-info` - Information icon
-- `help-question-mark` → `bsi-help-circle` - Help/question icon
-- `book-open` → `bsi-book-open` - Book open icon (documentation)
+- `info` → `bsc-info` - Information icon
+- `help-question-mark` → `bsc-help-question-mark` - Help/question icon
+- `book-open` → `bsc-book-open` - Book open icon (documentation)
 
 ### Devices & Platforms
-- `desktop-computer-mac` → `bsi-monitor` - Desktop computer icon
-- `mobile-phone` → `bsi-smartphone` - Mobile phone icon
+- `desktop-computer-mac` → `bsc-desktop-computer-mac` - Desktop computer icon
+- `mobile-phone` → `bsc-mobile-phone` - Mobile phone icon
 
 ### Other
-- `bolt` → `bsi-bolt` - Bolt/energy icon (alias for lightning-energy)
-- `maximize-expand` → `bsi-maximize` - Maximize/expand icon
-- `more-horizontal` → `bsi-more-horizontal` - More options icon
-- `search` → `bsi-search` - Search icon
-- `filter` → `bsi-filter` - Filter icon
-- `panel-left` → `bsi-sidebar` - Sidebar/panel icon
-- `circle-oval` → `bsi-circle` - Circle icon
-- `snowflakes-weather-cold` → `bsi-snowflake` - Snowflake icon (winter season)
-- `droplet-rain-weather` → `bsi-droplet` - Rain/water icon
-- `flower-plant` → `bsi-flower` - Plant/flower icon
-- `sun-day` → `bsi-sun` - Sun icon
-- `moon-night` → `bsi-moon` - Moon icon
-- `calculator-compute-math` → `bsi-calculator` - Calculator icon
-- `dollar-currency` → `bsi-dollar-sign` - Dollar currency icon
-- `dollar-sign` → `bsi-dollar-sign` - Dollar sign icon
-- `comment-square-chat-message` → `bsi-message-square` - Comment/message icon
-- `send-message-dm-inbox` → `bsi-send` - Send message icon
-- `table-panel-window-sidebar` → `bsi-layout` - Layout/panel icon
-- `zap-light-energy` → `bsi-zap` - Zap/energy icon
+- `maximize-expand` → `bsc-maximize-expand` - Maximize/expand icon
+- `more-horizontal` → `bsc-more-horizontal` - More options icon
+- `search` → `bsc-search` - Search icon
+- `filter` → `bsc-filter` - Filter icon
+- `panel-left` → `bsc-panel-left` - Sidebar/panel icon
+- `circle-oval` → `bsc-circle-oval` - Circle icon
+- `snowflakes-weather-cold` → `bsc-snowflakes-weather-cold` - Snowflake icon (winter season)
+- `droplet-rain-weather` → `bsc-droplet-rain-weather` - Rain/water icon
+- `flower-plant` → `bsc-flower-plant` - Plant/flower icon
+- `sun-day` → `bsc-sun-day` - Sun icon
+- `moon-night` → `bsc-moon-night` - Moon icon
+- `calculator-compute-math` → `bsc-calculator-compute-math` - Calculator icon
+- `dollar-currency` → `bsc-dollar-currency` - Dollar currency icon
+- `dollar-sign` → `bsc-dollar-sign` - Dollar sign icon
+- `comment-square-chat-message` → `bsc-comment-square-chat-message` - Comment/message icon
+- `send-message-dm-inbox` → `bsc-send-message-dm-inbox` - Send message icon
+- `table-panel-window-sidebar` → `bsc-table-panel-window-sidebar` - Layout/panel icon
+- `zap-light-energy` → `bsc-zap-light-energy` - Zap/energy icon
 
-## Basicons Implementation
-
-Basicons uses CSS classes with the format: `<i class="bsi bsi-{icon-name}"></i>`
-
-### Complete Icon Name Mapping
+## Complete Icon Name Mapping
 
 | Internal Name | Basicons Class | Notes |
 |--------------|----------------|-------|
-| account-user-person | bsi-user | User account |
-| activity-graph | bsi-trending-up | Activity/trend |
-| add-new-plus | bsi-plus | Add/plus |
-| adjust-settings-horizontal | bsi-settings | Settings |
-| alert-error | bsi-alert-circle | Error alert |
-| arrow-chevron-down | bsi-chevron-down | Chevron down |
-| arrow-chevron-left | bsi-chevron-left | Chevron left |
-| arrow-chevron-right | bsi-chevron-right | Chevron right |
-| arrow-chevron-up | bsi-chevron-up | Chevron up |
-| arrow-down | bsi-arrow-down | Arrow down |
-| arrow-left | bsi-arrow-left | Arrow left |
-| arrow-up | bsi-arrow-up | Arrow up |
-| arrow-right | bsi-arrow-right | Arrow right |
-| bar-chart | bsi-bar-chart | Bar chart |
-| book-note-paper | bsi-file-text | Book/document |
-| calendar-date-appointment | bsi-calendar | Calendar |
-| check-circle-2 | bsi-check-circle | Success check |
-| check-good | bsi-check | Check mark |
-| clock-refresh-time-arrow | bsi-refresh | Refresh |
-| clock-time | bsi-clock | Clock |
-| desktop-computer-mac | bsi-monitor | Desktop |
-| download | bsi-download | Download |
-| edit-write | bsi-edit | Edit |
-| enter-log-in-arrow | bsi-log-in | Login |
-| eye-password | bsi-eye | Show password |
-| eye-password-off | bsi-eye-off | Hide password |
-| help-question-mark | bsi-help-circle | Help |
-| home-house | bsi-home | Home |
-| info | bsi-info | Info |
-| lightning-energy | bsi-bolt | Energy/bolt |
-| bolt | bsi-bolt | Bolt (alias) |
-| loading-spinner | bsi-loader | Loading |
-| lock-privacy | bsi-lock | Lock |
-| logout-exit | bsi-log-out | Logout |
-| mail-email-message-inbox | bsi-envelope | Email |
-| maximize-expand | bsi-maximize | Maximize |
-| menu-hambuger | bsi-menu | Menu |
-| mobile-phone | bsi-smartphone | Mobile |
-| more-horizontal | bsi-more-horizontal | More options |
-| notification-bell-alarm | bsi-bell | Notifications |
-| pie-chart | bsi-pie-chart | Pie chart |
-| search | bsi-search | Search |
-| target | bsi-target | Target |
-| trending-down | bsi-trending-down | Trend down |
-| trending-up | bsi-trending-up | Trend up |
-| trash-delete-bin-3 | bsi-trash | Delete |
-| upload-arrow-up | bsi-upload | Upload |
-| x-close-delete | bsi-x | Close |
-| snowflakes-weather-cold | bsi-snowflake | Snowflake |
-| droplet-rain-weather | bsi-droplet | Rain/water |
-| flower-plant | bsi-flower | Plant |
-| sun-day | bsi-sun | Sun |
-| moon-night | bsi-moon | Moon |
-| calculator-compute-math | bsi-calculator | Calculator |
-| dollar-currency | bsi-dollar-sign | Dollar |
-| dollar-sign | bsi-dollar-sign | Dollar sign |
-| comment-square-chat-message | bsi-message-square | Comment |
-| send-message-dm-inbox | bsi-send | Send message |
-| table-panel-window-sidebar | bsi-layout | Layout |
-| zap-light-energy | bsi-zap | Zap/energy |
+| account-user-person | bsc-account-user-person | User account |
+| activity-graph | bsc-activity-graph | Activity/trend |
+| add-new-plus | bsc-add-new-plus | Add/plus |
+| adjust-settings-horizontal | bsc-adjust-settings-horizontal | Settings |
+| alert-error | bsc-alert-error | Error alert |
+| arrow-chevron-down | bsc-chevron-down | Chevron down |
+| arrow-chevron-left | bsc-arrow-chevron-left | Chevron left |
+| arrow-chevron-right | bsc-arrow-chevron-right | Chevron right |
+| arrow-chevron-up | bsc-chevron-up | Chevron up |
+| arrow-down | bsc-arrow-down | Arrow down |
+| arrow-left | bsc-arrow-left | Arrow left |
+| arrow-up | bsc-arrow-up | Arrow up |
+| arrow-right | bsc-arrow-right | Arrow right |
+| arrow-bottom-left | bsc-arrow-bottom-left | Arrow bottom left |
+| arrow-bottom-right | bsc-arrow-bottom-right | Arrow bottom right |
+| bar-chart | bsc-bar-chart | Bar chart |
+| book-note-paper | bsc-book-note-paper | Book/document |
+| book-open | bsc-book-open | Book open |
+| bolt | bsc-lightning-energy | Bolt (alias) |
+| calendar-date-appointment | bsc-calendar-date-appointment | Calendar |
+| calendar-month-date | bsc-calendar-month-date | Calendar month |
+| calculator-compute-math | bsc-calculator-compute-math | Calculator |
+| chart-up-arrow | bsc-chart-up-arrow | Chart with up arrow |
+| check-circle-2 | bsc-check-circle-2 | Success check |
+| check-good | bsc-check-good | Check mark |
+| circle-oval | bsc-circle-oval | Circle |
+| clock-refresh-time-arrow | bsc-clock-refresh-time-arrow | Refresh |
+| clock-time | bsc-clock-time | Clock |
+| comment-square-chat-message | bsc-comment-square-chat-message | Comment |
+| desktop-computer-mac | bsc-desktop-computer-mac | Desktop |
+| dollar-currency | bsc-dollar-currency | Dollar |
+| dollar-sign | bsc-dollar-sign | Dollar sign |
+| download | bsc-download | Download |
+| droplet-rain-weather | bsc-droplet-rain-weather | Rain/water |
+| edit-write | bsc-edit-write | Edit |
+| enter-log-in-arrow | bsc-enter-log-in-arrow | Login |
+| eye-password | bsc-eye-password | Show password |
+| eye-password-off | bsc-eye-password-off | Hide password |
+| filter | bsc-filter | Filter |
+| flower-plant | bsc-flower-plant | Plant |
+| help-question-mark | bsc-help-question-mark | Help |
+| home-house | bsc-home-house | Home |
+| info | bsc-info | Info |
+| lightning-energy | bsc-lightning-energy | Energy/bolt |
+| loading-spinner | bsc-loading-spinner | Loading |
+| lock-privacy | bsc-lock-privacy | Lock |
+| logout-exit | bsc-logout-exit | Logout |
+| mail-email-message-inbox | bsc-mail-email-message-inbox | Email |
+| maximize-expand | bsc-maximize-expand | Maximize |
+| menu-hambuger | bsc-menu | Menu |
+| mobile-phone | bsc-mobile-phone | Mobile |
+| moon-night | bsc-moon-night | Moon |
+| more-horizontal | bsc-more-horizontal | More options |
+| notification-bell-alarm | bsc-notification-bell-alarm | Notifications |
+| panel-left | bsc-panel-left | Sidebar |
+| pie-chart | bsc-pie-chart | Pie chart |
+| save | bsc-save | Save |
+| search | bsc-search | Search |
+| send-message-dm-inbox | bsc-send-message-dm-inbox | Send message |
+| snowflakes-weather-cold | bsc-snowflakes-weather-cold | Snowflake |
+| sun-day | bsc-sun-day | Sun |
+| table-panel-window-sidebar | bsc-table-panel-window-sidebar | Layout |
+| target | bsc-target | Target |
+| trash-delete-bin-3 | bsc-trash-delete-bin-3 | Delete |
+| trending-down | bsc-trending-down | Trend down |
+| trending-up | bsc-trending-up | Trend up |
+| upload-arrow-up | bsc-upload-arrow-up | Upload |
+| x-close-delete | bsc-x-close-delete | Close |
+| zap-light-energy | bsc-zap-light-energy | Zap/energy |
 
 ## Files Updated
-1. `index.html` - Added Basicons CDN link
-2. `package.json` - Removed lineicons dependency
-3. `src/components/ui/icon.tsx` - Updated to use Basicons
-4. All component files using `<Icon name="..." />` - No changes needed (Icon component handles mapping)
+1. `index.html` - Added Basicons embed script
+2. `src/components/ui/icon.tsx` - Updated to use Basicons CSS classes
+3. All component files using `<Icon name="..." />` - No changes needed (Icon component handles mapping)
 
 ## Basicons Resources
-- Website: https://www.basicons.com/
-- CDN: https://cdn.basicons.com/css/basicons.css
-- Format: `<i class="bsi bsi-{icon-name}"></i>`
+- Website: https://basicons.xyz/
+- Embed Script: `https://basicons.xyz/embed.js`
+- React Package: https://github.com/PreciousME/react-basicons
+- Format: `<i class="bsc-{icon-name}"></i>`
+
+## Implementation Notes
+
+1. **Async Script Loading**: The embed script loads asynchronously, so icons may not render immediately on first page load. The script will load in the background.
+
+2. **Icon Name Mapping**: All internal icon names are mapped to Basicons class names using the `bsc-` prefix followed by the icon name in kebab-case.
+
+3. **Fallback Strategy**: The Icon component includes a fallback mechanism for unmapped icons to prevent broken UI. In development mode, it shows a help icon; in production, it returns null.
+
+4. **Local SVG Files**: The `src/icons/` directory contains Basicons SVG files that match the naming conventions used in the mapping.

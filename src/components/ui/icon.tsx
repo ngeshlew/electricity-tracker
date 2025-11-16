@@ -331,18 +331,16 @@ export const Icon: React.FC<IconProps> = ({
     }
     
     // Standard JSX rendering
-    return (
-      <IconComponent
-        width={size}
-        height={size}
-        className={cn('inline-block', className)}
-        style={{
-          color: color || 'currentColor',
-          ...style,
-        }}
-        {...props}
-      />
-    );
+    return React.createElement(IconComponent as React.ComponentType<React.SVGProps<SVGSVGElement>>, {
+      width: size,
+      height: size,
+      className: cn('inline-block', className),
+      style: {
+        color: color || 'currentColor',
+        ...style,
+      },
+      ...props,
+    });
   } catch (error) {
     // Catch any rendering errors
     if (process.env.NODE_ENV === 'development') {

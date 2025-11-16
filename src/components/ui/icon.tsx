@@ -365,7 +365,12 @@ export const Icon: React.FC<IconProps> = ({
       );
     }
     
-    // Fallback: render a placeholder square
+    // Fallback:
+    // - Production: render nothing to avoid visual placeholder artifacts
+    // - Development: render a subtle placeholder square to surface issues
+    if (process.env.NODE_ENV === 'production') {
+      return null as unknown as JSX.Element;
+    }
     return (
       <svg
         width={size}

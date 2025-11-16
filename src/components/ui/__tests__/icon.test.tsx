@@ -1,4 +1,29 @@
 import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { Icon } from '../icon';
+
+describe('Icon component', () => {
+  test('renders known hero icon', () => {
+    render(<Icon name="arrow-up" data-testid="icon" />);
+    const node = screen.getByTestId('icon');
+    expect(node).toBeInTheDocument();
+  });
+
+  test('renders known svg fallback icon', () => {
+    render(<Icon name="lightning-energy" data-testid="svg-icon" />);
+    const node = screen.getByTestId('svg-icon');
+    expect(node).toBeInTheDocument();
+  });
+
+  test('unknown icon renders nothing in production', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    const { container } = render(<Icon name="__does-not-exist__" />);
+    expect(container.firstChild).toBeNull();
+    process.env.NODE_ENV = originalEnv;
+  });
+});
+import React from 'react';
 import { render } from '@testing-library/react';
 import { Icon } from '../icon';
 

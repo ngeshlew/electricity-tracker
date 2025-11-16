@@ -73,7 +73,6 @@ function App() {
       <TwoColumnLoginPage
         onSwitchToRegister={() => navigate('/login')}
         onForgotPassword={() => navigate('/login')}
-        onBackToHome={() => navigate('/')}
       />
     );
   };

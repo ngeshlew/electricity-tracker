@@ -12,13 +12,11 @@ import { useAuthStore } from '../../store/useAuthStore';
 interface TwoColumnLoginPageProps {
   onSwitchToRegister: () => void;
   onForgotPassword: () => void;
-  onBackToHome: () => void;
 }
 
 export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
   onSwitchToRegister,
-  onForgotPassword,
-  onBackToHome
+  onForgotPassword
 }) => {
   const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import { ToastContainer } from "@/components/ui/toast-container";
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { TwoColumnLoginPage } from './components/auth/TwoColumnLoginPage';
+import { useNavigate } from 'react-router-dom';
 import { SettingsLayout } from './components/settings/SettingsLayout';
 import { InsightsLayout } from './components/insights/InsightsLayout';
 import { AnalyticsLayout } from './components/analytics/AnalyticsLayout';
@@ -71,8 +72,25 @@ function App() {
         <Router>
           <div className="min-h-screen bg-background text-foreground">
             <div>
+              {/* Small wrapper to satisfy TwoColumnLoginPage required callbacks */}
+              {/*
+                These handlers keep the UX simple for now:
+                - Back to Home goes to dashboard (guarded; will redirect to /login if not authed)
+                - Switch/Register and Forgot just keep user on /login (could open modals later)
+              */}
+              {/* eslint-disable-next-line react/no-unstable-nested-components */}
+              const LoginRoute = () => {
+                const navigate = useNavigate();
+                return (
+                  <TwoColumnLoginPage
+                    onSwitchToRegister={() => navigate('/login')}
+                    onForgotPassword={() => navigate('/login')}
+                    onBackToHome={() => navigate('/')}
+                  />
+                );
+              };
               <Routes>
-              <Route path="/login" element={<TwoColumnLoginPage />} />
+              <Route path="/login" element={<LoginRoute />} />
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/insights" element={<ProtectedRoute><InsightsLayout /></ProtectedRoute>} />

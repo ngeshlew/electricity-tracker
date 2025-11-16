@@ -353,11 +353,11 @@ export const Icon: React.FC<IconProps> = ({
   style,
   ...props
 }) => {
-  // Prefer Heroicons when available
-  const PreferredIconComponent =
+  // Prefer Basicons (local SVGs) first; fallback to Heroicons for gaps
+  const PrimaryIconComponent = svgIconMap[name];
+  const SecondaryIconComponent =
     heroIconMap[name] as React.ComponentType<React.SVGProps<SVGSVGElement>> | undefined;
-  const FallbackIconComponent = svgIconMap[name];
-  const IconComponent = PreferredIconComponent || FallbackIconComponent;
+  const IconComponent = PrimaryIconComponent || SecondaryIconComponent;
 
   if (!IconComponent) {
     // In development, log warning with helpful information

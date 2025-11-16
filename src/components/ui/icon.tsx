@@ -111,6 +111,7 @@ import ChartUpArrow from '../../icons/chart-up-arrow.svg?react';
 import CommentSquareChatMessage from '../../icons/comment-square-chat-message.svg?react';
 import DropletRainWeather from '../../icons/droplet-rain-weather.svg?react';
 import FlowerPlant from '../../icons/flower-plant.svg?react';
+import SnowflakesWeatherCold from '../../icons/snowflakes-weather-cold.svg?react';
 
 // Map common app icon names to Heroicons
 const heroIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -204,6 +205,7 @@ const svgIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElemen
   'clock-refresh-time-arrow': ClockRefreshTimeArrow,
   'clock-time': ClockTime,
   'comment-square-chat-message': CommentSquareChatMessage,
+  'snowflakes-weather-cold': SnowflakesWeatherCold,
   'desktop-computer-mac': DesktopComputerMac,
   'dollar-currency': DollarCurrency,
   'dollar-sign': DollarSign,

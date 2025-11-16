@@ -116,7 +116,7 @@ export const SeasonalTracker: React.FC = () => {
 
   const getSeasonIconName = (season: string): string => {
     switch (season) {
-      case 'Winter': return 'info'; // Using info as placeholder - need to find snowflake icon
+      case 'Winter': return 'snowflakes-weather-cold';
       case 'Spring': return 'flower-plant';
       case 'Summer': return 'sun-day';
       case 'Autumn': return 'droplet-rain-weather';

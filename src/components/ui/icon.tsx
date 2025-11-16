@@ -1,6 +1,49 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
+// Heroicons (Outline, 24px) - preferred icon set
+import {
+  ArrowDownIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  ArrowUpTrayIcon,
+  ArrowDownTrayIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
+  ArrowRightStartOnRectangleIcon,
+  ArrowLeftStartOnRectangleIcon,
+  Bars3Icon,
+  BellIcon,
+  BoltIcon,
+  CalendarDaysIcon,
+  ChartBarIcon,
+  ChartPieIcon,
+  CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  ClockIcon,
+  CloudArrowDownIcon,
+  CloudArrowUpIcon,
+  Cog6ToothIcon,
+  ComputerDesktopIcon,
+  DevicePhoneMobileIcon,
+  EllipsisHorizontalIcon,
+  EnvelopeIcon,
+  HomeIcon,
+  InformationCircleIcon,
+  MagnifyingGlassIcon,
+  MoonIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  SunIcon,
+  TargetIcon,
+  TrashIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
+
 // Import all SVG icons used in the application
 // Using dynamic imports with error handling
 import AccountUserPerson from '../../icons/account-user-person.svg?react';
@@ -68,6 +111,69 @@ import ChartUpArrow from '../../icons/chart-up-arrow.svg?react';
 import CommentSquareChatMessage from '../../icons/comment-square-chat-message.svg?react';
 import DropletRainWeather from '../../icons/droplet-rain-weather.svg?react';
 import FlowerPlant from '../../icons/flower-plant.svg?react';
+
+// Map common app icon names to Heroicons
+const heroIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+  // Arrows & Chevrons
+  'arrow-up': ArrowUpIcon,
+  'arrow-down': ArrowDownIcon,
+  'arrow-left': ArrowLeftIcon,
+  'arrow-right': ArrowRightIcon,
+  'arrow-chevron-left': ChevronLeftIcon,
+  'arrow-chevron-right': ChevronRightIcon,
+  'arrow-chevron-up': ChevronUpIcon,
+  'arrow-chevron-down': ChevronDownIcon,
+  'upload-arrow-up': ArrowUpTrayIcon,
+  'download': ArrowDownTrayIcon,
+  'chart-up-arrow': ArrowTrendingUpIcon,
+  'trending-up': ArrowTrendingUpIcon,
+  'trending-down': ArrowTrendingDownIcon,
+  'enter-log-in-arrow': ArrowRightStartOnRectangleIcon,
+  'logout-exit': ArrowLeftStartOnRectangleIcon,
+
+  // Status & Actions
+  'x-close-delete': XMarkIcon,
+  'check-circle-2': CheckCircleIcon,
+  'edit-write': PencilSquareIcon,
+  'add-new-plus': PlusIcon,
+  'trash-delete-bin-3': TrashIcon,
+  'save': CloudArrowDownIcon,
+  'upload': CloudArrowUpIcon,
+  'loading-spinner': ArrowPathIcon, // will fall back if not imported
+
+  // UI & System
+  'menu-hambuger': Bars3Icon,
+  'more-horizontal': EllipsisHorizontalIcon,
+  'notification-bell-alarm': BellIcon,
+  'adjust-settings-horizontal': Cog6ToothIcon,
+  'calendar-date-appointment': CalendarDaysIcon,
+  'clock-time': ClockIcon,
+  'search': MagnifyingGlassIcon,
+  'help-question-mark': InformationCircleIcon,
+  'info': InformationCircleIcon,
+
+  // Data & Analytics
+  'bar-chart': ChartBarIcon,
+  'pie-chart': ChartPieIcon,
+  'activity-graph': ArrowTrendingUpIcon,
+  'target': TargetIcon,
+
+  // Theming & Devices
+  'sun-day': SunIcon,
+  'moon-night': MoonIcon,
+  'desktop-computer-mac': ComputerDesktopIcon,
+  'mobile-phone': DevicePhoneMobileIcon,
+
+  // App brand-ish
+  'lightning-energy': BoltIcon,
+  'bolt': BoltIcon,
+  'home-house': HomeIcon,
+  'mail-email-message-inbox': EnvelopeIcon,
+};
+
+// NOTE: ArrowPathIcon is referenced above; import late to avoid unused import prunes
+// Keeping import separate to maintain readability
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 // Comprehensive icon mapping with validation
 const svgIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -244,14 +350,19 @@ export const Icon: React.FC<IconProps> = ({
   style,
   ...props
 }) => {
-  const IconComponent = svgIconMap[name];
+  // Prefer Heroicons when available
+  const PreferredIconComponent =
+    heroIconMap[name] as React.ComponentType<React.SVGProps<SVGSVGElement>> | undefined;
+  const FallbackIconComponent = svgIconMap[name];
+  const IconComponent = PreferredIconComponent || FallbackIconComponent;
 
   if (!IconComponent) {
     // In development, log warning with helpful information
     if (process.env.NODE_ENV === 'development') {
       console.warn(
-        `[Icon] Icon "${name}" not found in svgIconMap.`,
-        `Available icons: ${Object.keys(svgIconMap).slice(0, 10).join(', ')}, ...`
+        `[Icon] Icon "${name}" not found in heroIconMap or svgIconMap.`,
+        `Heroicons keys: ${Object.keys(heroIconMap).slice(0, 10).join(', ')}, ...`,
+        `SVG keys: ${Object.keys(svgIconMap).slice(0, 10).join(', ')}, ...`
       );
     }
     

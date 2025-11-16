@@ -2,97 +2,99 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * Lineicons Icon Name Mapping
- * Maps our internal icon names to Lineicons CSS classes
+ * Basicons Icon Name Mapping
+ * Maps our internal icon names to Basicons CSS classes
+ * Basicons uses the format: <i class="bsi bsi-{icon-name}"></i>
+ * Documentation: https://www.basicons.com/
  */
-const lineIconMap: Record<string, string> = {
+const basiconMap: Record<string, string> = {
   // Authentication & User
-  'account-user-person': 'lni-user',
-  'lightning-energy': 'lni-bolt',
-  'bolt': 'lni-bolt',
-  'mail-email-message-inbox': 'lni-envelope',
-  'lock-privacy': 'lni-lock',
-  'eye-password': 'lni-eye',
-  'eye-password-off': 'lni-eye-alt',
-  'alert-error': 'lni-close-circle',
-  'loading-spinner': 'lni-spinner',
-  'logout-exit': 'lni-exit',
-  'enter-log-in-arrow': 'lni-enter',
+  'account-user-person': 'bsi-user',
+  'lightning-energy': 'bsi-bolt',
+  'bolt': 'bsi-bolt',
+  'mail-email-message-inbox': 'bsi-envelope',
+  'lock-privacy': 'bsi-lock',
+  'eye-password': 'bsi-eye',
+  'eye-password-off': 'bsi-eye-off',
+  'alert-error': 'bsi-alert-circle',
+  'loading-spinner': 'bsi-loader',
+  'logout-exit': 'bsi-log-out',
+  'enter-log-in-arrow': 'bsi-log-in',
   
   // Navigation & UI
-  'home-house': 'lni-home',
-  'book-note-paper': 'lni-book',
-  'notification-bell-alarm': 'lni-bell',
-  'adjust-settings-horizontal': 'lni-cog',
-  'menu-hambuger': 'lni-menu',
-  'x-close-delete': 'lni-close',
-  'arrow-chevron-down': 'lni-chevron-down',
-  'arrow-chevron-up': 'lni-chevron-up',
-  'arrow-chevron-left': 'lni-chevron-left',
-  'arrow-chevron-right': 'lni-chevron-right',
-  'arrow-up': 'lni-arrow-up',
-  'arrow-down': 'lni-arrow-down',
-  'arrow-left': 'lni-arrow-left',
-  'arrow-right': 'lni-arrow-right',
-  'arrow-bottom-left': 'lni-arrow-left',
-  'arrow-bottom-right': 'lni-arrow-right',
+  'home-house': 'bsi-home',
+  'book-note-paper': 'bsi-file-text',
+  'notification-bell-alarm': 'bsi-bell',
+  'adjust-settings-horizontal': 'bsi-settings',
+  'menu-hambuger': 'bsi-menu',
+  'x-close-delete': 'bsi-x',
+  'arrow-chevron-down': 'bsi-chevron-down',
+  'arrow-chevron-up': 'bsi-chevron-up',
+  'arrow-chevron-left': 'bsi-chevron-left',
+  'arrow-chevron-right': 'bsi-chevron-right',
+  'arrow-up': 'bsi-arrow-up',
+  'arrow-down': 'bsi-arrow-down',
+  'arrow-left': 'bsi-arrow-left',
+  'arrow-right': 'bsi-arrow-right',
+  'arrow-bottom-left': 'bsi-arrow-left',
+  'arrow-bottom-right': 'bsi-arrow-right',
   
   // Data & Analytics
-  'bar-chart': 'lni-bar-chart',
-  'pie-chart': 'lni-pie-chart',
-  'activity-graph': 'lni-line-chart',
-  'target': 'lni-target',
-  'trending-up': 'lni-arrow-up-circle',
-  'trending-down': 'lni-arrow-down-circle',
-  'chart-up-arrow': 'lni-line-chart',
+  'bar-chart': 'bsi-bar-chart',
+  'pie-chart': 'bsi-pie-chart',
+  'activity-graph': 'bsi-trending-up',
+  'target': 'bsi-target',
+  'trending-up': 'bsi-trending-up',
+  'trending-down': 'bsi-trending-down',
+  'chart-up-arrow': 'bsi-trending-up',
   
   // Actions
-  'add-new-plus': 'lni-plus',
-  'edit-write': 'lni-pencil',
-  'trash-delete-bin-3': 'lni-trash',
-  'save': 'lni-save',
-  'download': 'lni-download',
-  'upload-arrow-up': 'lni-upload',
-  'check-circle-2': 'lni-checkmark-circle',
-  'check-good': 'lni-checkmark',
+  'add-new-plus': 'bsi-plus',
+  'edit-write': 'bsi-edit',
+  'trash-delete-bin-3': 'bsi-trash',
+  'save': 'bsi-save',
+  'download': 'bsi-download',
+  'upload-arrow-up': 'bsi-upload',
+  'check-circle-2': 'bsi-check-circle',
+  'check-good': 'bsi-check',
   
   // Calendar & Time
-  'calendar-date-appointment': 'lni-calendar',
-  'calendar-month-date': 'lni-calendar',
-  'clock-time': 'lni-clock',
-  'clock-refresh-time-arrow': 'lni-reload',
+  'calendar-date-appointment': 'bsi-calendar',
+  'calendar-month-date': 'bsi-calendar',
+  'clock-time': 'bsi-clock',
+  'clock-refresh-time-arrow': 'bsi-refresh',
   
   // Information & Help
-  'info': 'lni-information',
-  'help-question-mark': 'lni-question-circle',
-  'book-open': 'lni-book',
+  'info': 'bsi-info',
+  'help-question-mark': 'bsi-help-circle',
+  'book-open': 'bsi-book-open',
   
   // Devices
-  'desktop-computer-mac': 'lni-monitor',
-  'mobile-phone': 'lni-mobile',
+  'desktop-computer-mac': 'bsi-monitor',
+  'mobile-phone': 'bsi-smartphone',
   
   // Other
-  'maximize-expand': 'lni-fullscreen',
-  'more-horizontal': 'lni-more-alt',
-  'search': 'lni-search',
-  'filter': 'lni-filter',
-  'panel-left': 'lni-layout',
-  'circle-oval': 'lni-circle',
-  'snowflakes-weather-cold': 'lni-snowflake',
-  'droplet-rain-weather': 'lni-drop',
-  'flower-plant': 'lni-leaf',
-  'sun-day': 'lni-sun',
-  'moon-night': 'lni-moon',
-  'calculator-compute-math': 'lni-calculator',
-  'dollar-currency': 'lni-dollar',
-  'dollar-sign': 'lni-dollar',
-  'comment-square-chat-message': 'lni-comment',
-  'send-message-dm-inbox': 'lni-send',
-  'table-panel-window-sidebar': 'lni-layout',
-  'zap-light-energy': 'lni-bolt',
+  'maximize-expand': 'bsi-maximize',
+  'more-horizontal': 'bsi-more-horizontal',
+  'search': 'bsi-search',
+  'filter': 'bsi-filter',
+  'panel-left': 'bsi-sidebar',
+  'circle-oval': 'bsi-circle',
+  'snowflakes-weather-cold': 'bsi-snowflake',
+  'droplet-rain-weather': 'bsi-droplet',
+  'flower-plant': 'bsi-flower',
+  'sun-day': 'bsi-sun',
+  'moon-night': 'bsi-moon',
+  'calculator-compute-math': 'bsi-calculator',
+  'dollar-currency': 'bsi-dollar-sign',
+  'dollar-sign': 'bsi-dollar-sign',
+  'comment-square-chat-message': 'bsi-message-square',
+  'send-message-dm-inbox': 'bsi-send',
+  'table-panel-window-sidebar': 'bsi-layout',
+  'zap-light-energy': 'bsi-zap',
 };
 
-export type IconName = keyof typeof lineIconMap;
+export type IconName = keyof typeof basiconMap;
 
 interface IconProps extends React.HTMLAttributes<HTMLElement> {
   name: IconName | string;
@@ -102,12 +104,12 @@ interface IconProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 /**
- * Icon Component (Lineicons)
+ * Icon Component (Basicons)
  * 
- * Renders Lineicons using CSS classes. Lineicons are loaded via CDN in index.html.
+ * Renders Basicons using CSS classes. Basicons are loaded via CDN in index.html.
  * 
  * Features:
- * - Uses Lineicons CSS classes (lni lni-{icon-name})
+ * - Uses Basicons CSS classes (bsi bsi-{icon-name})
  * - Handles color via className="text-*" or color prop
  * - Supports size via size prop or className (h-* w-*)
  * - Graceful fallback for missing icons
@@ -116,6 +118,8 @@ interface IconProps extends React.HTMLAttributes<HTMLElement> {
  * 
  * Usage:
  * <Icon name="home-house" className="h-5 w-5 text-primary" />
+ * 
+ * Documentation: https://www.basicons.com/
  */
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -125,15 +129,15 @@ export const Icon: React.FC<IconProps> = ({
   style,
   ...props
 }) => {
-  // Get Lineicons class name from mapping
-  const lineIconClass = lineIconMap[name];
+  // Get Basicons class name from mapping
+  const basiconClass = basiconMap[name];
 
-  if (!lineIconClass) {
+  if (!basiconClass) {
     // In development, log warning with helpful information
     if (process.env.NODE_ENV === 'development') {
       console.warn(
-        `[Icon] Lineicon "${name}" not found in lineIconMap.`,
-        `Available icons: ${Object.keys(lineIconMap).slice(0, 20).join(', ')}, ...`
+        `[Icon] Basicons icon "${name}" not found in basiconMap.`,
+        `Available icons: ${Object.keys(basiconMap).slice(0, 20).join(', ')}, ...`
       );
     }
     
@@ -143,7 +147,7 @@ export const Icon: React.FC<IconProps> = ({
     }
     return (
       <i
-        className={cn('lni lni-question-circle text-muted-foreground', className)}
+        className={cn('bsi bsi-help-circle text-muted-foreground', className)}
         style={{
           fontSize: typeof size === 'number' ? `${size}px` : size,
           color,
@@ -155,10 +159,10 @@ export const Icon: React.FC<IconProps> = ({
     );
   }
 
-  // Render Lineicons as <i> tag with CSS classes
+  // Render Basicons as <i> tag with CSS classes
   return (
     <i
-      className={cn('lni', lineIconClass, className)}
+      className={cn('bsi', basiconClass, className)}
       style={{
         fontSize: typeof size === 'number' ? `${size}px` : size,
         color,

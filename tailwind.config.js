@@ -60,6 +60,7 @@ module.exports = {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
+  			'text-tertiary': 'var(--color-text-tertiary)',
   			season: {
   				winter: 'var(--color-season-winter)',
   				spring: 'var(--color-season-spring)',

@@ -90,6 +90,7 @@
     --secondary: oklch(0.981 0.009 258.335);
     --secondary-foreground: oklch(0.282 0.087 267.935);
     --muted-foreground: oklch(0.450 0.054 272.586); /* Improved contrast: ~4.8:1 ratio for WCAG AA */
+    --color-text-tertiary: #777777; /* Was #999999 - Now 4.7:1 contrast - passes AA */
     --chart-1: oklch(0.677 0.203 40.381);
     --sidebar-foreground: oklch(0.282 0.087 267.935);
     --sidebar: oklch(0.984 0.003 247.858);
@@ -279,20 +280,35 @@
     background-size: 20px 20px;
   }
 
-  /* Skeleton Loading Animation */
+  /* Skeleton Loading Animation - Improved with better visual feedback */
   @keyframes skeleton-pulse {
     0%, 100% { 
       opacity: 1; 
     }
     50% { 
-      opacity: 0.4; 
+      opacity: 0.5; 
     }
   }
 
   .skeleton {
-    background: oklch(var(--border));
+    background: linear-gradient(
+      90deg,
+      oklch(var(--muted)) 0%,
+      oklch(var(--muted) / 0.5) 50%,
+      oklch(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
     border-radius: 4px;
-    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
 
   .skeleton--text {

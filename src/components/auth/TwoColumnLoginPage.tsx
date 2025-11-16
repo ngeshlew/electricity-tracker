@@ -200,13 +200,13 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
             </p>
             <div className="flex flex-wrap gap-2 justify-center mt-6">
               <div className="bg-background/50 backdrop-blur-sm rounded-lg px-3 py-2 text-sm">
-                📊 Real-time Analytics
+                Real-time Analytics
               </div>
               <div className="bg-background/50 backdrop-blur-sm rounded-lg px-3 py-2 text-sm">
-                🤖 AI Insights
+                AI Insights
               </div>
               <div className="bg-background/50 backdrop-blur-sm rounded-lg px-3 py-2 text-sm">
-                📱 Mobile App
+                Mobile App
               </div>
             </div>
           </div>

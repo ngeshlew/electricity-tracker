@@ -80,17 +80,44 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
   const [showFirstReadingCheckbox, setShowFirstReadingCheckbox] = useState(false);
   const [isFirstReading, setIsFirstReading] = useState(false);
   
-  // Check if there's already a first reading in the system
-  useEffect(() => {
-    const hasFirstReading = readings.some(reading => reading.isFirstReading);
-    setShowFirstReadingCheckbox(!hasFirstReading);
+  // Calculate previous reading and estimate
+  const getPreviousReadingAndEstimate = React.useCallback(() => {
+    if (readings.length === 0) return { previousReading: 0, estimate: 0 };
+    
+    // Sort readings by date (most recent first)
+    const sortedReadings = [...readings]
+      .filter(r => !r.isFirstReading && r.type !== 'ESTIMATED')
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    if (sortedReadings.length === 0) return { previousReading: 0, estimate: 0 };
+    
+    const lastReading = sortedReadings[0];
+    const previousReading = lastReading.reading;
+    
+    // Calculate estimate based on average daily consumption
+    let estimate = previousReading;
+    if (sortedReadings.length >= 2) {
+      const secondLastReading = sortedReadings[1];
+      const daysDiff = Math.ceil(
+        (new Date(lastReading.date).getTime() - new Date(secondLastReading.date).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      if (daysDiff > 0) {
+        const consumption = lastReading.reading - secondLastReading.reading;
+        const dailyAverage = consumption / daysDiff;
+        // Estimate for today (1 day since last reading)
+        estimate = previousReading + dailyAverage;
+      }
+    }
+    
+    return { previousReading, estimate: Math.round(estimate * 100) / 100 };
   }, [readings]);
-  
+
   // React Hook Form setup with validation
+  const { previousReading, estimate } = getPreviousReadingAndEstimate();
   const form = useForm<MeterReadingFormData>({
     resolver: zodResolver(meterReadingSchema),
     defaultValues: {
-      reading: 0,
+      reading: estimate > previousReading ? estimate : previousReading,
       date: (() => {
         // Normalize default date to start of day
         const today = new Date();
@@ -100,6 +127,21 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
       notes: '',
     },
   });
+
+  // Check if there's already a first reading in the system
+  useEffect(() => {
+    const hasFirstReading = readings.some(reading => reading.isFirstReading);
+    setShowFirstReadingCheckbox(!hasFirstReading);
+  }, [readings]);
+
+  // Update form value when readings change
+  useEffect(() => {
+    const { previousReading, estimate } = getPreviousReadingAndEstimate();
+    const newValue = estimate > previousReading ? estimate : previousReading;
+    if (newValue > 0) {
+      form.setValue('reading', newValue);
+    }
+  }, [readings, form, getPreviousReadingAndEstimate]);
 
   // Form submission handler
   const onSubmit = async (data: MeterReadingFormData) => {
@@ -133,11 +175,20 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({ onSuccess })
                 <Input
                   type="number"
                   step="0.01"
-                  placeholder="Enter meter reading"
+                  placeholder={previousReading > 0 ? `Previous: ${previousReading.toFixed(2)} | Estimate: ${estimate.toFixed(2)}` : "Enter meter reading"}
                   {...field}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                  value={field.value || ''}
+                  onChange={(e) => {
+                    const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                    field.onChange(isNaN(value) ? 0 : value);
+                  }}
                 />
               </FormControl>
+              {previousReading > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Previous reading: {previousReading.toFixed(2)} kWh | Estimated: {estimate.toFixed(2)} kWh
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}

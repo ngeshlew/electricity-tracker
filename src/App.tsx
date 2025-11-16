@@ -71,7 +71,6 @@ function App() {
     const navigate = useNavigate();
     return (
       <TwoColumnLoginPage
-        onSwitchToRegister={() => navigate('/login')}
         onForgotPassword={() => navigate('/login')}
       />
     );

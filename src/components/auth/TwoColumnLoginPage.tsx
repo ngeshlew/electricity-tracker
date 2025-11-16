@@ -10,12 +10,10 @@ import { Icon } from '@/components/ui/icon';
 import { useAuthStore } from '../../store/useAuthStore';
 
 interface TwoColumnLoginPageProps {
-  onSwitchToRegister: () => void;
   onForgotPassword: () => void;
 }
 
 export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
-  onSwitchToRegister,
   onForgotPassword
 }) => {
   const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
@@ -174,34 +172,7 @@ export const TwoColumnLoginPage: React.FC<TwoColumnLoginPageProps> = ({
                       'Sign in'
                     )}
                   </Button>
-
-                  {/* Demo Credentials */}
-                  <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <p className="text-xs text-muted-foreground text-center mb-2">
-                      Demo Credentials:
-                    </p>
-                    <p className="text-xs text-center">
-                      Email: <code className="bg-background px-1 rounded">demo@electricitytracker.com</code>
-                    </p>
-                    <p className="text-xs text-center">
-                      Password: <code className="bg-background px-1 rounded">demo123</code>
-                    </p>
-                  </div>
                 </form>
-
-                {/* Switch to Register */}
-                <div className="mt-6 text-center text-sm">
-                  <span className="text-muted-foreground">Don't have an account? </span>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={onSwitchToRegister}
-                    className="px-0"
-                    disabled={isLoading}
-                  >
-                    Sign up
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </div>

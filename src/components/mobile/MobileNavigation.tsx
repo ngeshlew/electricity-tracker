@@ -23,7 +23,6 @@ interface MobileNavItem {
 
 const navigationItems: MobileNavItem[] = [
   { name: 'Dashboard', href: '/', iconName: 'home-house', current: true },
-  { name: 'Analytics', href: '/analytics', iconName: 'bar-chart', current: false },
   { name: 'Statements', href: '/statements', iconName: 'book-note-paper', current: false },
   { name: 'Notifications', href: '/notifications', iconName: 'notification-bell-alarm', current: false },
   { name: 'Settings', href: '/settings', iconName: 'adjust-settings-horizontal', current: false },
@@ -382,7 +381,7 @@ export const MobileNavigation: React.FC = () => {
 
       {/* Bottom Navigation (Alternative) */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t lg:hidden">
-        <div className="grid grid-cols-5 h-16">
+        <div className="grid grid-cols-4 h-16">
           {updatedNavigationItems.map((item) => {
             return (
               <a

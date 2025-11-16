@@ -13,10 +13,8 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-// Consolidated navigation: Insights and Analytics merged into Analytics
 const navigationItems = [
   { name: 'Dashboard', url: '/', iconName: 'home-house' },
-  { name: 'Analytics', url: '/analytics', iconName: 'bar-chart' },
   { name: 'Statements', url: '/statements', iconName: 'book-note-paper' },
   { name: 'Notifications', url: '/notifications', iconName: 'notification-bell-alarm' },
   { name: 'Settings', url: '/settings', iconName: 'adjust-settings-horizontal' },
@@ -43,8 +41,7 @@ export const AppSidebar: React.FC = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => {
-                const isActive = location.pathname === item.url || 
-                  (item.url === '/analytics' && location.pathname === '/insights');
+                const isActive = location.pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton asChild isActive={isActive} className="relative">

@@ -9,7 +9,6 @@ import { TwoColumnLoginPage } from './components/auth/TwoColumnLoginPage';
 import { useNavigate } from 'react-router-dom';
 import { SettingsLayout } from './components/settings/SettingsLayout';
 import { InsightsLayout } from './components/insights/InsightsLayout';
-import { AnalyticsLayout } from './components/analytics/AnalyticsLayout';
 import { StatementsLayout } from './components/statements/StatementsLayout';
 import { NotificationsLayout } from './components/notifications/NotificationsLayout';
 import { TariffLayout } from './components/tariff/TariffLayout';
@@ -87,7 +86,6 @@ function App() {
               <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/insights" element={<ProtectedRoute><InsightsLayout /></ProtectedRoute>} />
-              <Route path="/analytics" element={<ProtectedRoute><AnalyticsLayout /></ProtectedRoute>} />
               <Route path="/statements" element={<ProtectedRoute><StatementsLayout /></ProtectedRoute>} />
               <Route path="/notifications" element={<ProtectedRoute><NotificationsLayout /></ProtectedRoute>} />
               <Route path="/tariff" element={<ProtectedRoute><TariffLayout /></ProtectedRoute>} />

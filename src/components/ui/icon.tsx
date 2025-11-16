@@ -1,179 +1,239 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
+// Static imports for most commonly used icons
+import HomeHouseIcon from '../../icons/home-house 2.svg?react';
+import AccountUserPersonIcon from '../../icons/account-user-person 2.svg?react';
+import LightningEnergyIcon from '../../icons/lightning-energy 2.svg?react';
+import NotificationBellAlarmIcon from '../../icons/notification-bell-alarm 2.svg?react';
+import AdjustSettingsHorizontalIcon from '../../icons/adjust-settings-horizontal 2.svg?react';
+import ArrowUpIcon from '../../icons/arrow-up 2.svg?react';
+import ArrowDownIcon from '../../icons/arrow-down 2.svg?react';
+import ArrowLeftIcon from '../../icons/arrow-left 2.svg?react';
+import ArrowRightIcon from '../../icons/arrow-right 2.svg?react';
+import ArrowChevronDownIcon from '../../icons/arrow-chevron-down 2.svg?react';
+import ArrowChevronUpIcon from '../../icons/arrow-chevron-up 2.svg?react';
+import ArrowChevronLeftIcon from '../../icons/arrow-chevron-left 3.svg?react';
+import ArrowChevronRightIcon from '../../icons/arrow-chevron-right 2.svg?react';
+import XCloseDeleteIcon from '../../icons/x-close-delete.svg?react';
+import CalendarDateAppointmentIcon from '../../icons/calendar-date-appointment 2.svg?react';
+import CheckCircle2Icon from '../../icons/check-circle-2.svg?react';
+import CheckGoodIcon from '../../icons/check-good.svg?react';
+import EyePasswordIcon from '../../icons/eye-password.svg?react';
+import EyePasswordOffIcon from '../../icons/eye-password-off.svg?react';
+import LockPrivacyIcon from '../../icons/lock-privacy.svg?react';
+import MailEmailMessageInboxIcon from '../../icons/mail-email-message-inbox.svg?react';
+import LogoutExitIcon from '../../icons/logout-exit.svg?react';
+import EnterLogInArrowIcon from '../../icons/enter-log-in-arrow.svg?react';
+import BookNotePaperIcon from '../../icons/book-note-paper.svg?react';
+import ActivityGraphIcon from '../../icons/activity-graph 2.svg?react';
+import BarChartIcon from '../../icons/bar-chart.svg?react';
+import PieChartIcon from '../../icons/pie-chart.svg?react';
+import TargetIcon from '../../icons/target.svg?react';
+import TrendingUpIcon from '../../icons/trending-up.svg?react';
+import TrendingDownIcon from '../../icons/trending-down.svg?react';
+import AddNewPlusIcon from '../../icons/add-new-plus 2.svg?react';
+import EditWriteIcon from '../../icons/edit-write.svg?react';
+import TrashDeleteBin3Icon from '../../icons/trash-delete-bin-3.svg?react';
+import SaveIcon from '../../icons/save.svg?react';
+import DownloadIcon from '../../icons/download.svg?react';
+import UploadArrowUpIcon from '../../icons/upload-arrow-up.svg?react';
+import ClockTimeIcon from '../../icons/clock-time.svg?react';
+import ClockRefreshTimeArrowIcon from '../../icons/clock-refresh-time-arrow.svg?react';
+import InfoIcon from '../../icons/info.svg?react';
+import HelpQuestionMarkIcon from '../../icons/help-question-mark.svg?react';
+import BookOpenIcon from '../../icons/book-open.svg?react';
+import DesktopComputerMacIcon from '../../icons/desktop-computer-mac.svg?react';
+import MobilePhoneIcon from '../../icons/mobile-phone.svg?react';
+import MaximizeExpandIcon from '../../icons/maximize-expand.svg?react';
+import MoreHorizontalIcon from '../../icons/more-horizontal.svg?react';
+import SearchIcon from '../../icons/search.svg?react';
+import FilterIcon from '../../icons/filter.svg?react';
+import PanelLeftIcon from '../../icons/panel-left.svg?react';
+import CircleOvalIcon from '../../icons/circle-oval.svg?react';
+import SnowflakesWeatherColdIcon from '../../icons/snowflakes-weather-cold.svg?react';
+import DropletRainWeatherIcon from '../../icons/droplet-rain-weather 3.svg?react';
+import FlowerPlantIcon from '../../icons/flower-plant.svg?react';
+import SunDayIcon from '../../icons/sun-day.svg?react';
+import MoonNightIcon from '../../icons/moon-night.svg?react';
+import CalculatorComputeMathIcon from '../../icons/calculator-compute-math.svg?react';
+import DollarCurrencyIcon from '../../icons/dollar-currency.svg?react';
+import DollarSignIcon from '../../icons/dollar-sign.svg?react';
+import CommentSquareChatMessageIcon from '../../icons/comment-square-chat-message.svg?react';
+import SendMessageDmInboxIcon from '../../icons/send-message-dm-inbox.svg?react';
+import TablePanelWindowSidebarIcon from '../../icons/table-panel-window-sidebar.svg?react';
+import ZapLightEnergyIcon from '../../icons/zap-light-energy.svg?react';
+import AlertErrorIcon from '../../icons/alert-error 2.svg?react';
+import LoadingSpinnerIcon from '../../icons/loading-spinner.svg?react';
+import MenuHambugerIcon from '../../icons/menu-hambuger.svg?react';
+import CalendarMonthDateIcon from '../../icons/calendar-month-date.svg?react';
+import ChartUpArrowIcon from '../../icons/chart-up-arrow.svg?react';
+import ArrowBottomLeftIcon from '../../icons/arrow-bottom-left.svg?react';
+import ArrowBottomRightIcon from '../../icons/arrow-bottom-right.svg?react';
+
 /**
  * Basicons Icon Name Mapping
- * Maps our internal icon names to Basicons CSS classes
- * Basicons uses the format: <i class="bsc-{icon-name}"></i>
- * Documentation: https://basicons.xyz/
- * 
- * The mapping is based on SVG filenames in src/icons/ directory,
- * which match Basicons naming conventions.
+ * Maps our internal icon names to React SVG components
  */
-const basiconMap: Record<string, string> = {
+const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   // Authentication & User
-  'account-user-person': 'bsc-account-user-person',
-  'lightning-energy': 'bsc-lightning-energy',
-  'bolt': 'bsc-lightning-energy',
-  'mail-email-message-inbox': 'bsc-mail-email-message-inbox',
-  'lock-privacy': 'bsc-lock-privacy',
-  'eye-password': 'bsc-eye-password',
-  'eye-password-off': 'bsc-eye-password-off',
-  'alert-error': 'bsc-alert-error',
-  'loading-spinner': 'bsc-loading-spinner',
-  'logout-exit': 'bsc-logout-exit',
-  'enter-log-in-arrow': 'bsc-enter-log-in-arrow',
+  'account-user-person': AccountUserPersonIcon,
+  'lightning-energy': LightningEnergyIcon,
+  'bolt': LightningEnergyIcon,
+  'mail-email-message-inbox': MailEmailMessageInboxIcon,
+  'lock-privacy': LockPrivacyIcon,
+  'eye-password': EyePasswordIcon,
+  'eye-password-off': EyePasswordOffIcon,
+  'alert-error': AlertErrorIcon,
+  'loading-spinner': LoadingSpinnerIcon,
+  'logout-exit': LogoutExitIcon,
+  'enter-log-in-arrow': EnterLogInArrowIcon,
   
   // Navigation & UI
-  'home-house': 'bsc-home-house',
-  'book-note-paper': 'bsc-book-note-paper',
-  'notification-bell-alarm': 'bsc-notification-bell-alarm',
-  'adjust-settings-horizontal': 'bsc-adjust-settings-horizontal',
-  'menu-hambuger': 'bsc-menu',
-  'x-close-delete': 'bsc-x-close-delete',
-  'arrow-chevron-down': 'bsc-chevron-down',
-  'arrow-chevron-up': 'bsc-chevron-up',
-  'arrow-chevron-left': 'bsc-arrow-chevron-left',
-  'arrow-chevron-right': 'bsc-arrow-chevron-right',
-  'arrow-up': 'bsc-arrow-up',
-  'arrow-down': 'bsc-arrow-down',
-  'arrow-left': 'bsc-arrow-left',
-  'arrow-right': 'bsc-arrow-right',
-  'arrow-bottom-left': 'bsc-arrow-bottom-left',
-  'arrow-bottom-right': 'bsc-arrow-bottom-right',
+  'home-house': HomeHouseIcon,
+  'book-note-paper': BookNotePaperIcon,
+  'notification-bell-alarm': NotificationBellAlarmIcon,
+  'adjust-settings-horizontal': AdjustSettingsHorizontalIcon,
+  'menu-hambuger': MenuHambugerIcon,
+  'x-close-delete': XCloseDeleteIcon,
+  'arrow-chevron-down': ArrowChevronDownIcon,
+  'arrow-chevron-up': ArrowChevronUpIcon,
+  'arrow-chevron-left': ArrowChevronLeftIcon,
+  'arrow-chevron-right': ArrowChevronRightIcon,
+  'arrow-up': ArrowUpIcon,
+  'arrow-down': ArrowDownIcon,
+  'arrow-left': ArrowLeftIcon,
+  'arrow-right': ArrowRightIcon,
+  'arrow-bottom-left': ArrowBottomLeftIcon,
+  'arrow-bottom-right': ArrowBottomRightIcon,
   
   // Data & Analytics
-  'bar-chart': 'bsc-bar-chart',
-  'pie-chart': 'bsc-pie-chart',
-  'activity-graph': 'bsc-activity-graph',
-  'target': 'bsc-target',
-  'trending-up': 'bsc-trending-up',
-  'trending-down': 'bsc-trending-down',
-  'chart-up-arrow': 'bsc-chart-up-arrow',
+  'bar-chart': BarChartIcon,
+  'pie-chart': PieChartIcon,
+  'activity-graph': ActivityGraphIcon,
+  'target': TargetIcon,
+  'trending-up': TrendingUpIcon,
+  'trending-down': TrendingDownIcon,
+  'chart-up-arrow': ChartUpArrowIcon,
   
   // Actions
-  'add-new-plus': 'bsc-add-new-plus',
-  'edit-write': 'bsc-edit-write',
-  'trash-delete-bin-3': 'bsc-trash-delete-bin-3',
-  'save': 'bsc-save',
-  'download': 'bsc-download',
-  'upload-arrow-up': 'bsc-upload-arrow-up',
-  'check-circle-2': 'bsc-check-circle-2',
-  'check-good': 'bsc-check-good',
+  'add-new-plus': AddNewPlusIcon,
+  'edit-write': EditWriteIcon,
+  'trash-delete-bin-3': TrashDeleteBin3Icon,
+  'save': SaveIcon,
+  'download': DownloadIcon,
+  'upload-arrow-up': UploadArrowUpIcon,
+  'check-circle-2': CheckCircle2Icon,
+  'check-good': CheckGoodIcon,
   
   // Calendar & Time
-  'calendar-date-appointment': 'bsc-calendar-date-appointment',
-  'calendar-month-date': 'bsc-calendar-month-date',
-  'clock-time': 'bsc-clock-time',
-  'clock-refresh-time-arrow': 'bsc-clock-refresh-time-arrow',
+  'calendar-date-appointment': CalendarDateAppointmentIcon,
+  'calendar-month-date': CalendarMonthDateIcon,
+  'clock-time': ClockTimeIcon,
+  'clock-refresh-time-arrow': ClockRefreshTimeArrowIcon,
   
   // Information & Help
-  'info': 'bsc-info',
-  'help-question-mark': 'bsc-help-question-mark',
-  'book-open': 'bsc-book-open',
+  'info': InfoIcon,
+  'help-question-mark': HelpQuestionMarkIcon,
+  'book-open': BookOpenIcon,
   
   // Devices
-  'desktop-computer-mac': 'bsc-desktop-computer-mac',
-  'mobile-phone': 'bsc-mobile-phone',
+  'desktop-computer-mac': DesktopComputerMacIcon,
+  'mobile-phone': MobilePhoneIcon,
   
   // Other
-  'maximize-expand': 'bsc-maximize-expand',
-  'more-horizontal': 'bsc-more-horizontal',
-  'search': 'bsc-search',
-  'filter': 'bsc-filter',
-  'panel-left': 'bsc-panel-left',
-  'circle-oval': 'bsc-circle-oval',
-  'snowflakes-weather-cold': 'bsc-snowflakes-weather-cold',
-  'droplet-rain-weather': 'bsc-droplet-rain-weather',
-  'flower-plant': 'bsc-flower-plant',
-  'sun-day': 'bsc-sun-day',
-  'moon-night': 'bsc-moon-night',
-  'calculator-compute-math': 'bsc-calculator-compute-math',
-  'dollar-currency': 'bsc-dollar-currency',
-  'dollar-sign': 'bsc-dollar-sign',
-  'comment-square-chat-message': 'bsc-comment-square-chat-message',
-  'send-message-dm-inbox': 'bsc-send-message-dm-inbox',
-  'table-panel-window-sidebar': 'bsc-table-panel-window-sidebar',
-  'zap-light-energy': 'bsc-zap-light-energy',
+  'maximize-expand': MaximizeExpandIcon,
+  'more-horizontal': MoreHorizontalIcon,
+  'search': SearchIcon,
+  'filter': FilterIcon,
+  'panel-left': PanelLeftIcon,
+  'circle-oval': CircleOvalIcon,
+  'snowflakes-weather-cold': SnowflakesWeatherColdIcon,
+  'droplet-rain-weather': DropletRainWeatherIcon,
+  'flower-plant': FlowerPlantIcon,
+  'sun-day': SunDayIcon,
+  'moon-night': MoonNightIcon,
+  'calculator-compute-math': CalculatorComputeMathIcon,
+  'dollar-currency': DollarCurrencyIcon,
+  'dollar-sign': DollarSignIcon,
+  'comment-square-chat-message': CommentSquareChatMessageIcon,
+  'send-message-dm-inbox': SendMessageDmInboxIcon,
+  'table-panel-window-sidebar': TablePanelWindowSidebarIcon,
+  'zap-light-energy': ZapLightEnergyIcon,
 };
 
-export type IconName = keyof typeof basiconMap;
+export type IconName = keyof typeof iconMap;
 
-interface IconProps extends React.HTMLAttributes<HTMLElement> {
+interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, 'name'> {
   name: IconName | string;
   size?: number | string;
   className?: string;
-  color?: string;
 }
 
 /**
- * Icon Component (Basicons)
+ * Icon Component (Basicons - Local SVG)
  * 
- * Renders Basicons using CSS classes. Basicons are loaded via embed script in index.html.
+ * Renders Basicons using local SVG files from src/icons/ directory.
+ * SVGs are imported via vite-plugin-svgr and rendered as React components.
  * 
  * Features:
- * - Uses Basicons CSS classes (bsc-{icon-name})
+ * - Uses local Basicons SVG files
  * - Handles color via className="text-*" or color prop
  * - Supports size via size prop or className (h-* w-*)
  * - Graceful fallback for missing icons
- * - Production-ready error handling
- * - Development mode validation and warnings
  * 
  * Usage:
  * <Icon name="home-house" className="h-5 w-5 text-primary" />
- * 
- * Documentation: https://basicons.xyz/
- * React Package: https://github.com/PreciousME/react-basicons
  */
 export const Icon: React.FC<IconProps> = ({
   name,
   size = 24,
   className,
-  color,
   style,
   ...props
 }) => {
-  // Get Basicons class name from mapping
-  const basiconClass = basiconMap[name];
+  const IconComponent = iconMap[name];
 
-  if (!basiconClass) {
-    // In development, log warning with helpful information
+  if (!IconComponent) {
+    // Fallback: render a placeholder
     if (process.env.NODE_ENV === 'development') {
       console.warn(
-        `[Icon] Basicons icon "${name}" not found in basiconMap.`,
-        `Available icons: ${Object.keys(basiconMap).slice(0, 20).join(', ')}, ...`
+        `[Icon] Basicons icon "${name}" not found in iconMap.`,
+        `Available icons: ${Object.keys(iconMap).slice(0, 20).join(', ')}, ...`
       );
     }
     
-    // Fallback: render a placeholder
     if (process.env.NODE_ENV === 'production') {
       return null as unknown as JSX.Element;
     }
+    
+    // Render a simple placeholder square
     return (
-      <i
-        className={cn('bsc-help-question-mark text-muted-foreground', className)}
-        style={{
-          fontSize: typeof size === 'number' ? `${size}px` : size,
-          color,
-          ...style,
-        }}
+      <svg
+        className={cn('text-muted-foreground', className)}
+        width={typeof size === 'number' ? size : size}
+        height={typeof size === 'number' ? size : size}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={style}
         aria-hidden="true"
         {...props}
-      />
+      >
+        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+        <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      </svg>
     );
   }
 
-  // Render Basicons as <i> tag with CSS classes
-  // Basicons format: <i class="bsc-{icon-name}"></i>
+  // Render the SVG component
+  const sizeValue = typeof size === 'number' ? size : size;
   return (
-    <i
-      className={cn(basiconClass, className)}
-      style={{
-        fontSize: typeof size === 'number' ? `${size}px` : size,
-        color,
-        ...style,
-      }}
-      aria-hidden="true"
+    <IconComponent
+      className={cn(className)}
+      width={sizeValue}
+      height={sizeValue}
+      style={style}
       {...props}
     />
   );

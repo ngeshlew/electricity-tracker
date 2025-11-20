@@ -263,8 +263,8 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
 
   // Determine trend icons based on change direction
   const getTrendIcon = (change: number) => {
-    if (change > 0) return <Icon name="arrow-up" className="h-4 w-4" />;
-    if (change < 0) return <Icon name="arrow-down" className="h-4 w-4" />;
+    if (change > 0) return <Icon name="trending-up" className="h-4 w-4" />;
+    if (change < 0) return <Icon name="trending-down" className="h-4 w-4" />;
     return <Icon name="activity-graph" className="h-4 w-4" />;
   };
 
@@ -275,7 +275,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: kwhChange >= 0 ? 'Higher than last month' : 'Lower than last month',
       changeValue: `${kwhChange >= 0 ? '+' : ''}${kwhChange.toFixed(1)}%`,
       description: `Consumption for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
-      icon: <Icon name="arrow-up" className="h-3 w-3" />,
+      icon: <Icon name="trending-up" className="h-3 w-3" />,
       trendIcon: getTrendIcon(kwhChange)
     },
     {
@@ -284,7 +284,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: costChange >= 0 ? 'Higher than last month' : 'Lower than last month',
       changeValue: `${costChange >= 0 ? '+' : ''}${costChange.toFixed(1)}%`,
       description: `Spending for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
-      icon: costChange >= 0 ? <Icon name="arrow-up" className="h-3 w-3" /> : <Icon name="arrow-down" className="h-3 w-3" />,
+      icon: costChange >= 0 ? <Icon name="trending-up" className="h-3 w-3" /> : <Icon name="trending-down" className="h-3 w-3" />,
       trendIcon: getTrendIcon(costChange)
     },
     {
@@ -293,7 +293,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: averageTrend === 'increasing' ? 'Higher than last month' : averageTrend === 'decreasing' ? 'Lower than last month' : 'Same as last month',
       changeValue: `${averageDailyChange >= 0 ? '+' : ''}${averageDailyChange.toFixed(1)}%`,
       description: `Average daily usage`,
-      icon: averageTrend === 'increasing' ? <Icon name="arrow-up" className="h-3 w-3" /> : averageTrend === 'decreasing' ? <Icon name="arrow-down" className="h-3 w-3" /> : <Icon name="activity-graph" className="h-3 w-3" />,
+      icon: averageTrend === 'increasing' ? <Icon name="trending-up" className="h-3 w-3" /> : averageTrend === 'decreasing' ? <Icon name="trending-down" className="h-3 w-3" /> : <Icon name="activity-graph" className="h-3 w-3" />,
       trendIcon: getTrendIcon(averageDailyChange)
     },
     {
@@ -302,8 +302,8 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: averageDaily > 15 ? 'Above target' : averageDaily > 10 ? 'Near target' : 'Below target',
       changeValue: averageDaily > 15 ? '+15.2%' : averageDaily > 10 ? '+2.1%' : '-8.3%',
       description: 'Based on daily average consumption',
-      icon: averageDaily > 15 ? <Icon name="arrow-up" className="h-3 w-3" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-3 w-3" /> : <Icon name="arrow-down" className="h-3 w-3" />,
-      trendIcon: averageDaily > 15 ? <Icon name="arrow-up" className="h-4 w-4" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-4 w-4" /> : <Icon name="arrow-down" className="h-4 w-4" />
+      icon: averageDaily > 15 ? <Icon name="trending-up" className="h-3 w-3" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-3 w-3" /> : <Icon name="trending-down" className="h-3 w-3" />,
+      trendIcon: averageDaily > 15 ? <Icon name="trending-up" className="h-4 w-4" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-4 w-4" /> : <Icon name="trending-down" className="h-4 w-4" />
     },
     {
       title: 'vs UK Average',

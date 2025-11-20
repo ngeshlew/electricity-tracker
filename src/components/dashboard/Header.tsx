@@ -72,7 +72,7 @@ export const Header: FC = () => {
             {averageMessage && (
               <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 border border-dotted border-border rounded-full">
                 <Icon 
-                  name={averageMessage.includes('LESS') ? "arrow-down" : "arrow-up"} 
+                  name={averageMessage.includes('LESS') ? "trending-down" : "trending-up"} 
                   className="h-4 w-4 text-muted-foreground" 
                 />
                 <span className="text-xs uppercase tracking-normal text-muted-foreground font-mono">

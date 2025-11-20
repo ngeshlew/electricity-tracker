@@ -62,9 +62,9 @@ export const AnalyticsPage: React.FC = () => {
   // Get trend color and icon
   const getTrendData = (trend: number) => {
     if (trend > 5) {
-      return { color: 'text-red-500', iconName: 'arrow-up', label: 'Increasing' };
+      return { color: 'text-red-500', iconName: 'trending-up', label: 'Increasing' };
     } else if (trend < -5) {
-      return { color: 'text-green-500', iconName: 'arrow-down', label: 'Decreasing' };
+      return { color: 'text-green-500', iconName: 'trending-down', label: 'Decreasing' };
     } else {
       return { color: 'text-yellow-500', iconName: 'activity-graph', label: 'Stable' };
     }

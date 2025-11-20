@@ -271,8 +271,8 @@ export const SeasonalTracker: React.FC = () => {
       {/* Seasonal Breakdown Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {seasonalData.map((season) => {
-          const trendIconName = season.trend === 'up' ? 'arrow-up' : 
-                               season.trend === 'down' ? 'arrow-down' : 
+          const trendIconName = season.trend === 'up' ? 'trending-up' : 
+                               season.trend === 'down' ? 'trending-down' : 
                                'target';
           
           return (

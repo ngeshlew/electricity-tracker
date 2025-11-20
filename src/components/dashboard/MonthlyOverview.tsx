@@ -194,9 +194,9 @@ export const MonthlyOverview: React.FC<MonthlyOverviewProps> = ({ currentMonth }
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'increasing':
-        return <Icon name="arrow-up" className="h-5 w-5" />;
+        return <Icon name="trending-up" className="h-5 w-5" />;
       case 'decreasing':
-        return <Icon name="arrow-down" className="h-5 w-5" />;
+        return <Icon name="trending-down" className="h-5 w-5" />;
       default:
         return <Icon name="activity-graph" className="h-5 w-5" />;
     }

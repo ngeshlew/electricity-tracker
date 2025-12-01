@@ -5,12 +5,12 @@ import { UserMenu } from '../auth/UserMenu';
 import { AuthModal } from '../auth/AuthModal';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Icon } from "@/components/ui/icon";
-import { useFuelStore } from '@/store/useFuelStore';
+import { useElectricityStore } from '@/store/useElectricityStore';
 import { KeyboardShortcutsPopover } from '@/components/ui/keyboard-shortcuts-dialog';
 import { HelpPopover } from '@/components/ui/help-popover';
 
 export const Header: FC = () => {
-  const { toggleTopupPanel, chartData } = useFuelStore();
+  const { toggleMeterPanel, chartData } = useElectricityStore();
   const { isAuthenticated } = useAuthStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -18,10 +18,10 @@ export const Header: FC = () => {
   const averageMessage = useMemo(() => {
     if (chartData.length === 0) return null;
     
-    const totalConsumption = chartData.reduce((sum, point) => sum + point.litres, 0);
+    const totalConsumption = chartData.reduce((sum: number, point: { kwh: number }) => sum + point.kwh, 0);
     const days = chartData.length > 0 ? chartData.length : 1;
     const userAverageDaily = totalConsumption / days;
-    const ukAverageDaily = 2.5; // UK average (litres/day)
+    const ukAverageDaily = 8.5; // UK average (kWh/day)
     const comparisonToAverage = ((userAverageDaily - ukAverageDaily) / ukAverageDaily) * 100;
     
     if (Math.abs(comparisonToAverage) <= 1) return null;
@@ -44,17 +44,17 @@ export const Header: FC = () => {
         return;
       }
 
-      // 'A' key to open Add Topup panel
+      // 'A' key to open Add Reading panel
       if (e.key.toLowerCase() === 'a' && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault();
-        toggleTopupPanel(true);
+        toggleMeterPanel(true);
       }
       
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleTopupPanel]);
+  }, [toggleMeterPanel]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background">
@@ -106,14 +106,14 @@ export const Header: FC = () => {
               </Button>
             </KeyboardShortcutsPopover>
             
-            {/* Primary Action: Add Topup - Responsive sizing */}
+            {/* Primary Action: Add Reading - Responsive sizing */}
             <Button 
-              onClick={() => toggleTopupPanel(true)} 
+              onClick={() => toggleMeterPanel(true)} 
               size="lg"
               className="flex items-center gap-1.5 sm:gap-2 h-10 sm:h-12 px-3 sm:px-6 text-sm sm:text-base font-normal min-w-[100px] sm:min-w-[160px] flex-shrink-0"
             >
               <Icon name="add-new-plus" className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="hidden sm:inline">Add Topup</span>
+              <span className="hidden sm:inline">Add Reading</span>
               <span className="sm:hidden">Add</span>
             </Button>
             

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icon } from "@/components/ui/icon";
 import { HelpPopover } from '@/components/ui/help-popover';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useElectricityStore } from '../../store/useElectricityStore';
-import { useAuthStore } from '../../store/useAuthStore';
 
 interface MobileNavItem {
   name: string;
@@ -24,26 +23,10 @@ const navigationItems: MobileNavItem[] = [
 export const MobileNavigation: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const { toggleMeterPanel } = useElectricityStore();
-  const { user, logout, isAuthenticated } = useAuthStore();
 
   // Check if we're on Dashboard page
   const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
-  
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-  
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   // Update current page based on location
   const updatedNavigationItems = navigationItems.map(item => ({

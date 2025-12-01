@@ -9,23 +9,19 @@ import { ConsumptionBreakdown } from './ConsumptionBreakdown';
 import { AnnualProgressCards } from './AnnualProgressCards';
 import { SeasonalTracker } from './SeasonalTracker';
 import { MonthSelector } from './MonthSelector';
-import { FuelTopupPanel } from '../fuel-topup/FuelTopupPanel';
-import { FuelTopupsLog } from '../fuel-topup/FuelTopupsLog';
+import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
+import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
 import { MobileNavigation } from '../mobile/MobileNavigation';
-import { useFuelStore } from '@/store/useFuelStore';
-import { UKFuelPriceComparison } from './UKFuelPriceComparison';
-
-import { FuelTopup } from '@/types';
+import { useElectricityStore } from '@/store/useElectricityStore';
 
 export const Dashboard: FC = () => {
-  const { isTopupPanelOpen, toggleTopupPanel, loadFuelTopups } = useFuelStore();
+  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [topupToEdit, setTopupToEdit] = useState<FuelTopup | undefined>(undefined);
 
-  // Load fuel topups when component mounts
+  // Load meter readings when component mounts
   useEffect(() => {
-    loadFuelTopups();
-  }, [loadFuelTopups]);
+    loadMeterReadings();
+  }, [loadMeterReadings]);
 
   return (
     <>
@@ -53,7 +49,7 @@ export const Dashboard: FC = () => {
                     <div>
                       <h1 className="text-2xl font-normal tracking-tight uppercase">Dashboard</h1>
                       <p className="text-muted-foreground mt-1 text-sm">
-                        Track your fuel consumption and costs
+                        Track your electricity usage
                       </p>
                     </div>
                     <MonthSelector
@@ -73,7 +69,7 @@ export const Dashboard: FC = () => {
                   {/* Consumption Breakdown - Full width row */}
                   <ConsumptionBreakdown
                     currentMonth={currentMonth}
-                    viewMode="litres"
+                    viewMode="kwh"
                   />
                   
                   {/* Monthly Overview - Full width row */}
@@ -98,29 +94,18 @@ export const Dashboard: FC = () => {
                   {/* Seasonal Tracker */}
                   <SeasonalTracker />
 
-                  {/* UK Fuel Price Comparison */}
-                  <UKFuelPriceComparison />
                 </div>
 
-                {/* Recent Topups - Reduced spacing (2x less) */}
+                {/* Recent Readings - Reduced spacing (2x less) */}
                 <div className="mt-8" style={{ marginTop: 'var(--space-xl)' }}>
-                  <FuelTopupsLog 
-                    onEdit={(topup) => {
-                      setTopupToEdit(topup);
-                      toggleTopupPanel(true);
-                    }}
-                  />
+                  <MeterReadingsLog />
                 </div>
               </div>
             </div>
 
-            <FuelTopupPanel
-              isOpen={isTopupPanelOpen}
-              onClose={() => {
-                toggleTopupPanel(false);
-                setTopupToEdit(undefined);
-              }}
-              topupToEdit={topupToEdit}
+            <MeterReadingPanel
+              isOpen={isMeterPanelOpen}
+              onClose={() => toggleMeterPanel(false)}
             />
             
           </main>

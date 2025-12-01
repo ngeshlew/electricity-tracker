@@ -1,46 +1,45 @@
 import React, { useMemo, useState } from 'react';
 import { ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useFuelStore } from '@/store/useFuelStore';
+import { useElectricityStore } from '@/store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek, eachDayOfInterval, format } from 'date-fns';
+import type { ChartDataPoint } from '@/types';
 
 interface WeeklyData {
   week: number;
   name: string;
-  litres: number;
+  kwh: number;
   cost: number;
   percentage: number;
 }
 
 interface DailyData {
   date: string;
-  litres: number;
+  kwh: number;
   cost: number;
-  litresAdded: number;
 }
-
 
 interface ConsumptionBreakdownProps {
   currentMonth: Date;
-  viewMode: 'litres' | 'cost';
+  viewMode: 'kwh' | 'cost';
 }
 
 export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ currentMonth, viewMode }) => {
-  const { topups, preferences } = useFuelStore();
+  const { chartData } = useElectricityStore();
   const [activeTab, setActiveTab] = useState<'weekly' | 'daily'>('weekly');
 
   const weeklyData = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     
-    // Filter topups for current month
-    const monthTopups = topups.filter(topup => {
-      const topupDate = new Date(topup.date);
-      return topupDate >= monthStart && topupDate <= monthEnd && !topup.isFirstTopup;
+    // Filter chart data for current month
+    const monthPoints = chartData.filter((point: ChartDataPoint) => {
+      const pointDate = new Date(point.date);
+      return pointDate >= monthStart && pointDate <= monthEnd;
     });
 
-    if (monthTopups.length === 0) {
+    if (monthPoints.length === 0) {
       return [];
     }
 
@@ -49,50 +48,49 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
     const weeklyBreakdown: WeeklyData[] = weeks.map((weekStart, index) => {
       const weekEnd = endOfWeek(weekStart);
       
-      // Find topups that fall within this week
-      const weekTopups = monthTopups.filter(topup => {
-        const topupDate = new Date(topup.date);
-        return topupDate >= weekStart && topupDate <= weekEnd;
+      // Find points that fall within this week
+      const weekPoints = monthPoints.filter((point: ChartDataPoint) => {
+        const pointDate = new Date(point.date);
+        return pointDate >= weekStart && pointDate <= weekEnd;
       });
 
-      let weekLitres = 0;
+      let weekKwh = 0;
       let weekCost = 0;
       
-      // For fuel, consumption is the litres added in each topup
-      weekTopups.forEach(topup => {
-        weekLitres += topup.litres;
-        weekCost += topup.totalCost;
+      weekPoints.forEach((point: ChartDataPoint) => {
+        weekKwh += point.kwh;
+        weekCost += point.cost;
       });
 
       return {
         week: index + 1,
         name: `Week ${index + 1}`,
-        litres: Math.round(weekLitres * 100) / 100,
+        kwh: Math.round(weekKwh * 100) / 100,
         cost: Math.round(weekCost * 100) / 100,
         percentage: 0 // Will be calculated below
       };
     });
 
     // Calculate percentages
-    const total = weeklyBreakdown.reduce((sum, week) => sum + (viewMode === 'litres' ? week.litres : week.cost), 0);
-    weeklyBreakdown.forEach(week => {
-      week.percentage = total > 0 ? Math.round((viewMode === 'litres' ? week.litres : week.cost) / total * 100) : 0;
+    const total = weeklyBreakdown.reduce((sum: number, week: WeeklyData) => sum + (viewMode === 'kwh' ? week.kwh : week.cost), 0);
+    weeklyBreakdown.forEach((week: WeeklyData) => {
+      week.percentage = total > 0 ? Math.round((viewMode === 'kwh' ? week.kwh : week.cost) / total * 100) : 0;
     });
 
     return weeklyBreakdown;
-  }, [topups, currentMonth, viewMode]);
+  }, [chartData, currentMonth, viewMode]);
 
   const dailyData = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     
-    // Filter topups for current month
-    const monthTopups = topups.filter(topup => {
-      const topupDate = new Date(topup.date);
-      return topupDate >= monthStart && topupDate <= monthEnd && !topup.isFirstTopup;
+    // Filter chart data for current month
+    const monthPoints = chartData.filter((point: ChartDataPoint) => {
+      const pointDate = new Date(point.date);
+      return pointDate >= monthStart && pointDate <= monthEnd;
     });
 
-    if (monthTopups.length === 0) {
+    if (monthPoints.length === 0) {
       return [];
     }
 
@@ -100,43 +98,41 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
     const dailyBreakdown: DailyData[] = [];
 
-    // Group topups by day
-    const topupsByDay = new Map<string, typeof monthTopups>();
-    monthTopups.forEach(topup => {
-      const dateKey = format(new Date(topup.date), 'yyyy-MM-dd');
-      if (!topupsByDay.has(dateKey)) {
-        topupsByDay.set(dateKey, []);
+    // Group points by day
+    const pointsByDay = new Map<string, ChartDataPoint[]>();
+    monthPoints.forEach((point: ChartDataPoint) => {
+      const dateKey = format(new Date(point.date), 'yyyy-MM-dd');
+      if (!pointsByDay.has(dateKey)) {
+        pointsByDay.set(dateKey, []);
       }
-      topupsByDay.get(dateKey)!.push(topup);
+      pointsByDay.get(dateKey)!.push(point);
     });
     
     // Calculate consumption for each day
     days.forEach(day => {
       const dateKey = format(day, 'yyyy-MM-dd');
-      const dayTopups = topupsByDay.get(dateKey) || [];
+      const dayPoints = pointsByDay.get(dateKey) || [];
       
-      if (dayTopups.length > 0) {
-        const totalLitres = dayTopups.reduce((sum, topup) => sum + topup.litres, 0);
-        const totalCost = dayTopups.reduce((sum, topup) => sum + topup.totalCost, 0);
+      if (dayPoints.length > 0) {
+        const totalKwh = dayPoints.reduce((sum: number, point: ChartDataPoint) => sum + point.kwh, 0);
+        const totalCost = dayPoints.reduce((sum: number, point: ChartDataPoint) => sum + point.cost, 0);
         
         dailyBreakdown.push({
           date: format(day, 'MMM dd'),
-          litres: Math.round(totalLitres * 100) / 100,
-          cost: Math.round(totalCost * 100) / 100,
-          litresAdded: totalLitres
+          kwh: Math.round(totalKwh * 100) / 100,
+          cost: Math.round(totalCost * 100) / 100
         });
       } else {
         dailyBreakdown.push({
           date: format(day, 'MMM dd'),
-          litres: 0,
-          cost: 0,
-          litresAdded: 0
+          kwh: 0,
+          cost: 0
         });
       }
     });
 
     return dailyBreakdown;
-  }, [topups, currentMonth]);
+  }, [chartData, currentMonth]);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -145,7 +141,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
         <div className="bg-background/95 backdrop-blur-sm border border-border p-3 shadow-lg">
           <p className="">{data.name || data.date}</p>
           <p className="text-xs text-muted-foreground">
-            {viewMode === 'litres' ? `${data.litres} L` : `£${data.cost.toFixed(2)}`}
+            {viewMode === 'kwh' ? `${(data.kwh ?? 0).toFixed(2)} kWh` : `£${(data.cost ?? 0).toFixed(2)}`}
           </p>
           {data.percentage && (
             <p className="text-xs text-muted-foreground">
@@ -200,7 +196,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                     <Tooltip content={<CustomTooltip />} />
                     <Area 
                       type="monotone" 
-                      dataKey={viewMode === 'litres' ? 'litres' : 'cost'} 
+                      dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'} 
                       stroke="oklch(var(--primary))" 
                       strokeWidth={2}
                       fillOpacity={1}
@@ -240,7 +236,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                     <Tooltip content={<CustomTooltip />} />
                     <Area 
                       type="monotone" 
-                      dataKey={viewMode === 'litres' ? 'litres' : 'cost'} 
+                      dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'} 
                       stroke="oklch(var(--primary))" 
                       strokeWidth={2}
                       fillOpacity={1}

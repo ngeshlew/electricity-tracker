@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/card";
 import { LoadingCard } from "@/components/ui/skeleton";
 import { Icon } from "@/components/ui/icon";
-import { useElectricityStore } from '../../store/useElectricityStore';
+import { useFuelStore } from '@/store/useFuelStore';
 
 /**
  * SummaryCards Component
@@ -24,7 +24,7 @@ import { useElectricityStore } from '../../store/useElectricityStore';
 
 // Type definitions for component props
 export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly';
-export type ViewMode = 'kwh' | 'cost';
+export type ViewMode = 'litres' | 'cost';
 
 interface SummaryCardProps {
   title: string;        // Card title (e.g., "Total Consumption")
@@ -114,7 +114,7 @@ interface SummaryCardsProps {
  * Custom styling: Lewis-Linear design system
  */
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
-  const { chartData, isLoading } = useElectricityStore();
+  const { chartData, isLoading } = useFuelStore();
   
   // Show skeleton loading state
   if (isLoading && chartData.length === 0) {
@@ -173,9 +173,9 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   
   const currentPeriodData = getCurrentPeriodData();
   
-  const totalKwh = currentPeriodData.reduce((sum, point) => sum + point.kwh, 0);
+  const totalLitres = currentPeriodData.reduce((sum, point) => sum + point.litres, 0);
   const totalCost = currentPeriodData.reduce((sum, point) => sum + point.cost, 0);
-  const averageDaily = currentPeriodData.length > 0 ? totalKwh / currentPeriodData.length : 0;
+  const averageDaily = currentPeriodData.length > 0 ? totalLitres / currentPeriodData.length : 0;
   
   // Calculate previous period for comparison
   const getPreviousPeriodData = () => {
@@ -222,17 +222,17 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   };
   
   const previousPeriodData = getPreviousPeriodData();
-  const previousTotalKwh = previousPeriodData.reduce((sum, point) => sum + point.kwh, 0);
+  const previousTotalLitres = previousPeriodData.reduce((sum, point) => sum + point.litres, 0);
   const previousTotalCost = previousPeriodData.reduce((sum, point) => sum + point.cost, 0);
   
   // Calculate average daily for current and previous periods
   const currentPeriodDays = currentPeriodData.length > 0 ? currentPeriodData.length : 1;
   const previousPeriodDays = previousPeriodData.length > 0 ? previousPeriodData.length : 1;
-  const currentAverageDaily = totalKwh / currentPeriodDays;
-  const previousAverageDaily = previousTotalKwh / previousPeriodDays;
+  const currentAverageDaily = totalLitres / currentPeriodDays;
+  const previousAverageDaily = previousTotalLitres / previousPeriodDays;
   
   // Calculate percentage changes
-  const kwhChange = previousTotalKwh > 0 ? ((totalKwh - previousTotalKwh) / previousTotalKwh) * 100 : 0;
+  const litresChange = previousTotalLitres > 0 ? ((totalLitres - previousTotalLitres) / previousTotalLitres) * 100 : 0;
   const costChange = previousTotalCost > 0 ? ((totalCost - previousTotalCost) / previousTotalCost) * 100 : 0;
   const averageDailyChange = previousAverageDaily > 0 ? ((currentAverageDaily - previousAverageDaily) / previousAverageDaily) * 100 : 0;
   
@@ -245,7 +245,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   const averageTrend = getTrendFromChange(averageDailyChange);
 
   // Calculate UK Average comparison for current month
-  const ukAverageDaily = 8.5; // kWh/day (UK average from Ofgem)
+  const ukAverageDaily = 2.5; // litres/day (UK average fuel consumption)
   const currentMonthVsUK = ukAverageDaily > 0 
     ? ((currentAverageDaily - ukAverageDaily) / ukAverageDaily) * 100 
     : 0;
@@ -271,12 +271,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   const cards = [
     {
       title: 'Consumption',
-      value: `${totalKwh.toFixed(1)} KWH`,
-      change: kwhChange >= 0 ? 'Higher than last month' : 'Lower than last month',
-      changeValue: `${kwhChange >= 0 ? '+' : ''}${kwhChange.toFixed(1)}%`,
+      value: `${totalLitres.toFixed(1)} L`,
+      change: litresChange >= 0 ? 'Higher than last month' : 'Lower than last month',
+      changeValue: `${litresChange >= 0 ? '+' : ''}${litresChange.toFixed(1)}%`,
       description: `Consumption for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
       icon: <Icon name="trending-up" className="h-3 w-3" />,
-      trendIcon: getTrendIcon(kwhChange)
+      trendIcon: getTrendIcon(litresChange)
     },
     {
       title: 'Cost',
@@ -289,7 +289,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
     },
     {
       title: 'Daily Average',
-      value: `${currentAverageDaily.toFixed(2)} KWH`,
+      value: `${currentAverageDaily.toFixed(2)} L`,
       change: averageTrend === 'increasing' ? 'Higher than last month' : averageTrend === 'decreasing' ? 'Lower than last month' : 'Same as last month',
       changeValue: `${averageDailyChange >= 0 ? '+' : ''}${averageDailyChange.toFixed(1)}%`,
       description: `Average daily usage`,
@@ -310,7 +310,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       value: `${currentMonthVsUK >= 0 ? '+' : ''}${currentMonthVsUK.toFixed(0)}%`,
       change: currentMonthVsUK >= 0 ? 'Above UK average' : 'Below UK average',
       changeValue: `${ukComparisonChange >= 0 ? '+' : ''}${ukComparisonChange.toFixed(0)}%`,
-      description: 'Compared to UK household average (8.5 kWh/day)',
+      description: 'Compared to UK average (2.5 L/day)',
       icon: <Icon name="target" className="h-3 w-3" />,
       trendIcon: getTrendIcon(ukComparisonChange)
     }

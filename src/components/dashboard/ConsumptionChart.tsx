@@ -2,16 +2,17 @@ import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useElectricityStore } from '../../store/useElectricityStore';
+import { useFuelStore } from '@/store/useFuelStore';
 import { formatDateUK } from '../../utils/dateFormatters';
 import { buildDailyConsumptionSeries } from '../../utils/consumptionSeries';
 
 export const ConsumptionChart: React.FC = () => {
-  const { readings, isLoading, calculateReadingCost } = useElectricityStore();
+  const { topups, isLoading } = useFuelStore();
   
   const dailySeries = useMemo(() => {
-    return buildDailyConsumptionSeries(readings, calculateReadingCost);
-  }, [readings, calculateReadingCost]);
+    // Build series from topups - calculate cost per topup
+    return buildDailyConsumptionSeries(topups, (topup) => topup.totalCost);
+  }, [topups]);
   
   // Show skeleton loading state
   if (isLoading && dailySeries.length === 0) {
@@ -48,7 +49,7 @@ export const ConsumptionChart: React.FC = () => {
         <div className="bg-background/95 backdrop-blur-sm border border-border p-3 shadow-lg">
           <p className="">{formatDateUK(new Date(data.date), 'long')}</p>
           <p className="text-xs text-muted-foreground">
-            {data.consumption.toFixed(2)} kWh
+            {data.consumption.toFixed(2)} L
           </p>
         </div>
       );
@@ -65,7 +66,7 @@ export const ConsumptionChart: React.FC = () => {
         </p>
       </CardHeader>
       <CardContent className="pl-2 mt-8" style={{ marginTop: 'var(--space-2xl)' }}>
-        <ResponsiveContainer width="100%" height={350} aria-label="Electricity consumption over time">
+        <ResponsiveContainer width="100%" height={350} aria-label="Fuel consumption over time">
           <AreaChart data={chartDataFormatted} aria-label="Consumption chart">
             <CartesianGrid strokeDasharray="4 4" stroke="oklch(var(--border))" opacity={0.5} />
             <XAxis 
@@ -86,7 +87,7 @@ export const ConsumptionChart: React.FC = () => {
                 fontFamily: 'var(--font-mono)'
               }}
               label={{ 
-                value: 'kWh', 
+                value: 'L', 
                 angle: -90, 
                 position: 'insideLeft', 
                 fill: 'oklch(var(--muted-foreground))',

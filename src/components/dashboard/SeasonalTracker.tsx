@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import { Icon } from "@/components/ui/icon";
 import { getSeasonColor } from "@/utils/seasonalColors";
-import { useElectricityStore } from '../../store/useElectricityStore';
+import { useFuelStore } from '@/store/useFuelStore';
 
 interface SeasonalData {
   season: string;
@@ -42,7 +42,7 @@ interface SeasonalData {
  * Custom styling: Timezone-inspired design system
  */
 export const SeasonalTracker: React.FC = () => {
-  const { chartData, isLoading } = useElectricityStore();
+  const { chartData, isLoading } = useFuelStore();
 
   // Calculate seasonal data
   const getSeasonalData = (): SeasonalData[] => {
@@ -87,7 +87,7 @@ export const SeasonalTracker: React.FC = () => {
         };
       }
 
-      const totalConsumption = dataPoints.reduce((sum, point) => sum + point.kwh, 0);
+      const totalConsumption = dataPoints.reduce((sum, point) => sum + point.litres, 0);
       const totalCost = dataPoints.reduce((sum, point) => sum + point.cost, 0);
       const days = dataPoints.length;
       const avgDailyConsumption = totalConsumption / days;
@@ -148,7 +148,7 @@ export const SeasonalTracker: React.FC = () => {
 
     const otherAvg = otherSeasons.reduce((sum, dataPoints) => {
       if (dataPoints.length === 0) return sum;
-      const total = dataPoints.reduce((s, point) => s + point.kwh, 0);
+      const total = dataPoints.reduce((s, point) => s + point.litres, 0);
       return sum + (total / dataPoints.length);
     }, 0) / otherSeasons.length;
 
@@ -172,7 +172,7 @@ export const SeasonalTracker: React.FC = () => {
         <div className="bg-background/95 backdrop-blur-sm border border-border p-3 shadow-lg">
           <p className="">{data.season}</p>
           <p className="text-xs text-muted-foreground">
-            {data.consumption.toFixed(1)} kWh
+            {data.consumption.toFixed(1)} L
           </p>
           <p className="text-xs text-muted-foreground">
             {percentage.toFixed(1)}% of total
@@ -205,7 +205,7 @@ export const SeasonalTracker: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-lg font-normal uppercase tracking-wide">Seasonal Consumption Comparison</CardTitle>
             <CardDescription className="text-xs uppercase tracking-normal">
-              Compare your electricity usage across different seasons
+              Compare your fuel consumption across different seasons
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -229,7 +229,7 @@ export const SeasonalTracker: React.FC = () => {
             Seasonal Consumption Comparison
           </CardTitle>
           <CardDescription className="text-xs uppercase tracking-normal text-muted-foreground">
-            Compare your electricity usage across different seasons
+            Compare your fuel consumption across different seasons
           </CardDescription>
         </CardHeader>
         <CardContent className="px-0 pb-0 pt-6" style={{ paddingTop: 'var(--space-md)' }}>
@@ -246,7 +246,7 @@ export const SeasonalTracker: React.FC = () => {
                   tick={{ fontSize: 11, fontFamily: 'var(--font-mono)' }}
                   stroke="oklch(var(--foreground))"
                   label={{ 
-                    value: 'Consumption (kWh)', 
+                    value: 'Consumption (L)', 
                     angle: -90, 
                     position: 'insideLeft',
                     style: { fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }
@@ -309,7 +309,7 @@ export const SeasonalTracker: React.FC = () => {
                   <div className="text-2xl font-normal tabular-nums" style={{ fontSize: 'var(--text-2xl)', lineHeight: '1' }}>
                     {season.consumption.toFixed(1)}
                   </div>
-                  <div className="text-xs uppercase tracking-normal text-muted-foreground">Total kWh</div>
+                  <div className="text-xs uppercase tracking-normal text-muted-foreground">Total L</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -318,7 +318,7 @@ export const SeasonalTracker: React.FC = () => {
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="text-sm font-normal tabular-nums">{season.avgDailyConsumption.toFixed(1)} kWh/day</div>
+                  <div className="text-sm font-normal tabular-nums">{season.avgDailyConsumption.toFixed(1)} L/day</div>
                   <div className="text-xs uppercase tracking-normal text-muted-foreground">Daily Average</div>
                 </div>
                 

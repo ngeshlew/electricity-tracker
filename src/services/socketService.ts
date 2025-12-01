@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import type { MeterReading } from './api';
 
-const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'https://electricity-tracker-production.up.railway.app';
+const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'https://fuel-tracker.up.railway.app';
 
 class SocketService {
   private socket: Socket | null = null;

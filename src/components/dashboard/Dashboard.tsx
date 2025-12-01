@@ -9,25 +9,23 @@ import { ConsumptionBreakdown } from './ConsumptionBreakdown';
 import { AnnualProgressCards } from './AnnualProgressCards';
 import { SeasonalTracker } from './SeasonalTracker';
 import { MonthSelector } from './MonthSelector';
-import { UserGuide } from '../help/UserGuide';
-import { MeterReadingPanel } from '../meter-reading/MeterReadingPanel';
-import { MeterReadingsLog } from '../meter-reading/MeterReadingsLog';
+import { FuelTopupPanel } from '../fuel-topup/FuelTopupPanel';
+import { FuelTopupsLog } from '../fuel-topup/FuelTopupsLog';
 import { MobileNavigation } from '../mobile/MobileNavigation';
-import { useElectricityStore } from '../../store/useElectricityStore';
-import { CurrentTariffInfo } from '../tariff/CurrentTariffInfo';
-import { TariffHistoryTable } from '../tariff/TariffHistoryTable';
-import { UKPriceComparison } from '../tariff/UKPriceComparison';
-import { TariffFormDialog } from '../tariff/TariffFormDialog';
+import { useFuelStore } from '@/store/useFuelStore';
+import { UKFuelPriceComparison } from './UKFuelPriceComparison';
+
+import { FuelTopup } from '@/types';
 
 export const Dashboard: FC = () => {
-  const { isMeterPanelOpen, toggleMeterPanel, loadMeterReadings } = useElectricityStore();
+  const { isTopupPanelOpen, toggleTopupPanel, loadFuelTopups } = useFuelStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [isTariffDialogOpen, setIsTariffDialogOpen] = useState(false);
+  const [topupToEdit, setTopupToEdit] = useState<FuelTopup | undefined>(undefined);
 
-  // Load meter readings when component mounts
+  // Load fuel topups when component mounts
   useEffect(() => {
-    loadMeterReadings();
-  }, [loadMeterReadings]);
+    loadFuelTopups();
+  }, [loadFuelTopups]);
 
   return (
     <>
@@ -43,10 +41,8 @@ export const Dashboard: FC = () => {
           </div>
           
           <main className="flex-1 lg:ml-0">
-            {/* Header - Desktop only */}
-            <div className="hidden lg:block">
-              <Header />
-            </div>
+            {/* Header - show on all sizes so top nav actions are visible */}
+            <Header />
             
             {/* Dashboard Content - Responsive */}
             <div className="px-4 sm:px-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
@@ -57,7 +53,7 @@ export const Dashboard: FC = () => {
                     <div>
                       <h1 className="text-2xl font-normal tracking-tight uppercase">Dashboard</h1>
                       <p className="text-muted-foreground mt-1 text-sm">
-                        Track your electricity usage
+                        Track your fuel consumption and costs
                       </p>
                     </div>
                     <MonthSelector
@@ -77,7 +73,7 @@ export const Dashboard: FC = () => {
                   {/* Consumption Breakdown - Full width row */}
                   <ConsumptionBreakdown
                     currentMonth={currentMonth}
-                    viewMode="kwh"
+                    viewMode="litres"
                   />
                   
                   {/* Monthly Overview - Full width row */}
@@ -102,39 +98,31 @@ export const Dashboard: FC = () => {
                   {/* Seasonal Tracker */}
                   <SeasonalTracker />
 
-                  {/* Tariff Section */}
-                  <section className="space-y-6">
-                    <div className="border-t border-dotted pt-6" style={{ borderColor: 'var(--color-accent-red)' }}>
-                      <h2 className="text-2xl font-normal tracking-tight uppercase">Tariff</h2>
-                      <p className="text-muted-foreground mt-1 text-sm">
-                        Manage your energy tariff and track cost savings
-                      </p>
-                    </div>
-
-                    <CurrentTariffInfo />
-
-                    <TariffHistoryTable onAddTariff={() => setIsTariffDialogOpen(true)} />
-
-                    <UKPriceComparison />
-                  </section>
+                  {/* UK Fuel Price Comparison */}
+                  <UKFuelPriceComparison />
                 </div>
 
-                {/* Recent Readings - Reduced spacing (2x less) */}
+                {/* Recent Topups - Reduced spacing (2x less) */}
                 <div className="mt-8" style={{ marginTop: 'var(--space-xl)' }}>
-                  <MeterReadingsLog />
+                  <FuelTopupsLog 
+                    onEdit={(topup) => {
+                      setTopupToEdit(topup);
+                      toggleTopupPanel(true);
+                    }}
+                  />
                 </div>
               </div>
             </div>
 
-            <MeterReadingPanel
-              isOpen={isMeterPanelOpen}
-              onClose={() => toggleMeterPanel(false)}
+            <FuelTopupPanel
+              isOpen={isTopupPanelOpen}
+              onClose={() => {
+                toggleTopupPanel(false);
+                setTopupToEdit(undefined);
+              }}
+              topupToEdit={topupToEdit}
             />
-            <TariffFormDialog
-              open={isTariffDialogOpen}
-              onOpenChange={setIsTariffDialogOpen}
-            />
-            <UserGuide />
+            
           </main>
         </div>
       </SidebarProvider>

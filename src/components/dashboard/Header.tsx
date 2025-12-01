@@ -5,12 +5,12 @@ import { UserMenu } from '../auth/UserMenu';
 import { AuthModal } from '../auth/AuthModal';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Icon } from "@/components/ui/icon";
-import { useElectricityStore } from '../../store/useElectricityStore';
+import { useFuelStore } from '@/store/useFuelStore';
 import { KeyboardShortcutsPopover } from '@/components/ui/keyboard-shortcuts-dialog';
 import { HelpPopover } from '@/components/ui/help-popover';
 
 export const Header: FC = () => {
-  const { toggleMeterPanel, chartData } = useElectricityStore();
+  const { toggleTopupPanel, chartData } = useFuelStore();
   const { isAuthenticated } = useAuthStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -18,10 +18,10 @@ export const Header: FC = () => {
   const averageMessage = useMemo(() => {
     if (chartData.length === 0) return null;
     
-    const totalConsumption = chartData.reduce((sum, point) => sum + point.kwh, 0);
+    const totalConsumption = chartData.reduce((sum, point) => sum + point.litres, 0);
     const days = chartData.length > 0 ? chartData.length : 1;
     const userAverageDaily = totalConsumption / days;
-    const ukAverageDaily = 8.5; // UK average
+    const ukAverageDaily = 2.5; // UK average (litres/day)
     const comparisonToAverage = ((userAverageDaily - ukAverageDaily) / ukAverageDaily) * 100;
     
     if (Math.abs(comparisonToAverage) <= 1) return null;
@@ -44,17 +44,17 @@ export const Header: FC = () => {
         return;
       }
 
-      // 'A' key to open Add Reading panel
+      // 'A' key to open Add Topup panel
       if (e.key.toLowerCase() === 'a' && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault();
-        toggleMeterPanel(true);
+        toggleTopupPanel(true);
       }
       
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleMeterPanel]);
+  }, [toggleTopupPanel]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background">
@@ -71,7 +71,7 @@ export const Header: FC = () => {
             {averageMessage && (
               <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 border border-dotted border-border rounded-full">
                 <Icon 
-                  name={averageMessage.includes('LESS') ? "arrow-down" : "arrow-up"} 
+                  name={averageMessage.includes('LESS') ? "trending-down" : "trending-up"} 
                   className="h-4 w-4 text-muted-foreground" 
                 />
                 <span className="text-xs uppercase tracking-normal text-muted-foreground font-mono">
@@ -89,7 +89,7 @@ export const Header: FC = () => {
                 aria-label="Help and user guide"
                 title="Help"
               >
-                <Icon name="book-note-paper" className="h-4 w-4" />
+                <Icon name="book-open" className="h-4 w-4" />
               </Button>
             </HelpPopover>
             
@@ -100,19 +100,20 @@ export const Header: FC = () => {
                 size="sm"
                 className="h-10 sm:h-12 px-3 flex-shrink-0"
                 aria-label="Keyboard shortcuts"
+                title="Keyboard Shortcuts"
               >
                 <Icon name="info" className="h-4 w-4" />
               </Button>
             </KeyboardShortcutsPopover>
             
-            {/* Primary Action: Add Reading - Responsive sizing */}
+            {/* Primary Action: Add Topup - Responsive sizing */}
             <Button 
-              onClick={() => toggleMeterPanel(true)} 
+              onClick={() => toggleTopupPanel(true)} 
               size="lg"
               className="flex items-center gap-1.5 sm:gap-2 h-10 sm:h-12 px-3 sm:px-6 text-sm sm:text-base font-normal min-w-[100px] sm:min-w-[160px] flex-shrink-0"
             >
               <Icon name="add-new-plus" className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="hidden sm:inline">Add Reading</span>
+              <span className="hidden sm:inline">Add Topup</span>
               <span className="sm:hidden">Add</span>
             </Button>
             

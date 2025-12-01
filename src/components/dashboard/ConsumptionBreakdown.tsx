@@ -171,7 +171,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
         <CardHeader className="flex flex-col space-y-1.5 p-6">
           <div className="flex items-center justify-between">
             <div className="text-base uppercase tracking-wide">
-              Consumption Breakdown
+              CONSUMPTION BREAKDOWN
             </div>
             <TabsList>
               <TabsTrigger value="weekly">Weekly</TabsTrigger>

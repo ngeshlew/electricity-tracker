@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/card";
 import { LoadingCard } from "@/components/ui/skeleton";
 import { Icon } from "@/components/ui/icon";
-import { useFuelStore } from '@/store/useFuelStore';
+import { useElectricityStore } from '../../store/useElectricityStore';
 
 /**
  * SummaryCards Component
@@ -18,13 +18,13 @@ import { useFuelStore } from '@/store/useFuelStore';
  * - Real-time data updates
  * 
  * Uses Shadcn UI: Card, CardContent, CardHeader, CardTitle components
- * Uses Hexaicons: Local SVG icons via Icon component
+ * Uses Heroicons: BoltIcon, CurrencyPoundIcon, ChartBarIcon, ArrowTrendingUpIcon
  * Custom styling: Lewis-Linear design system
  */
 
 // Type definitions for component props
 export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly';
-export type ViewMode = 'litres' | 'cost';
+export type ViewMode = 'kwh' | 'cost';
 
 interface SummaryCardProps {
   title: string;        // Card title (e.g., "Total Consumption")
@@ -32,7 +32,7 @@ interface SummaryCardProps {
   change: string;       // Change indicator (e.g., "+5.2%")
   changeValue: string;  // Change percentage (e.g., "+12.5%")
   description: string;  // Description text
-  icon: React.ReactNode; // Hexaicon component
+  icon: React.ReactNode; // Heroicon component
   trendIcon: React.ReactNode; // Trend icon
 }
 
@@ -114,7 +114,7 @@ interface SummaryCardsProps {
  * Custom styling: Lewis-Linear design system
  */
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
-  const { chartData, isLoading } = useFuelStore();
+  const { chartData, isLoading } = useElectricityStore();
   
   // Show skeleton loading state
   if (isLoading && chartData.length === 0) {
@@ -173,9 +173,9 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   
   const currentPeriodData = getCurrentPeriodData();
   
-  const totalLitres = currentPeriodData.reduce((sum, point) => sum + point.litres, 0);
+  const totalKwh = currentPeriodData.reduce((sum, point) => sum + point.kwh, 0);
   const totalCost = currentPeriodData.reduce((sum, point) => sum + point.cost, 0);
-  const averageDaily = currentPeriodData.length > 0 ? totalLitres / currentPeriodData.length : 0;
+  const averageDaily = currentPeriodData.length > 0 ? totalKwh / currentPeriodData.length : 0;
   
   // Calculate previous period for comparison
   const getPreviousPeriodData = () => {
@@ -222,17 +222,17 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   };
   
   const previousPeriodData = getPreviousPeriodData();
-  const previousTotalLitres = previousPeriodData.reduce((sum, point) => sum + point.litres, 0);
+  const previousTotalKwh = previousPeriodData.reduce((sum, point) => sum + point.kwh, 0);
   const previousTotalCost = previousPeriodData.reduce((sum, point) => sum + point.cost, 0);
   
   // Calculate average daily for current and previous periods
   const currentPeriodDays = currentPeriodData.length > 0 ? currentPeriodData.length : 1;
   const previousPeriodDays = previousPeriodData.length > 0 ? previousPeriodData.length : 1;
-  const currentAverageDaily = totalLitres / currentPeriodDays;
-  const previousAverageDaily = previousTotalLitres / previousPeriodDays;
+  const currentAverageDaily = totalKwh / currentPeriodDays;
+  const previousAverageDaily = previousTotalKwh / previousPeriodDays;
   
   // Calculate percentage changes
-  const litresChange = previousTotalLitres > 0 ? ((totalLitres - previousTotalLitres) / previousTotalLitres) * 100 : 0;
+  const kwhChange = previousTotalKwh > 0 ? ((totalKwh - previousTotalKwh) / previousTotalKwh) * 100 : 0;
   const costChange = previousTotalCost > 0 ? ((totalCost - previousTotalCost) / previousTotalCost) * 100 : 0;
   const averageDailyChange = previousAverageDaily > 0 ? ((currentAverageDaily - previousAverageDaily) / previousAverageDaily) * 100 : 0;
   
@@ -245,7 +245,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
   const averageTrend = getTrendFromChange(averageDailyChange);
 
   // Calculate UK Average comparison for current month
-  const ukAverageDaily = 2.5; // litres/day (UK average fuel consumption)
+  const ukAverageDaily = 8.5; // kWh/day (UK average from Ofgem)
   const currentMonthVsUK = ukAverageDaily > 0 
     ? ((currentAverageDaily - ukAverageDaily) / ukAverageDaily) * 100 
     : 0;
@@ -263,20 +263,20 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
 
   // Determine trend icons based on change direction
   const getTrendIcon = (change: number) => {
-    if (change > 0) return <Icon name="trending-up" className="h-4 w-4" />;
-    if (change < 0) return <Icon name="trending-down" className="h-4 w-4" />;
+    if (change > 0) return <Icon name="arrow-up" className="h-4 w-4" />;
+    if (change < 0) return <Icon name="arrow-down" className="h-4 w-4" />;
     return <Icon name="activity-graph" className="h-4 w-4" />;
   };
-
+  
   const cards = [
     {
       title: 'Consumption',
-      value: `${totalLitres.toFixed(1)} L`,
-      change: litresChange >= 0 ? 'Higher than last month' : 'Lower than last month',
-      changeValue: `${litresChange >= 0 ? '+' : ''}${litresChange.toFixed(1)}%`,
+      value: `${totalKwh.toFixed(1)} KWH`,
+      change: kwhChange >= 0 ? 'Higher than last month' : 'Lower than last month',
+      changeValue: `${kwhChange >= 0 ? '+' : ''}${kwhChange.toFixed(1)}%`,
       description: `Consumption for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
-      icon: <Icon name="trending-up" className="h-3 w-3" />,
-      trendIcon: getTrendIcon(litresChange)
+      icon: <Icon name="arrow-up" className="h-3 w-3" />,
+      trendIcon: getTrendIcon(kwhChange)
     },
     {
       title: 'Cost',
@@ -284,16 +284,16 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: costChange >= 0 ? 'Higher than last month' : 'Lower than last month',
       changeValue: `${costChange >= 0 ? '+' : ''}${costChange.toFixed(1)}%`,
       description: `Spending for the last ${timePeriod === 'daily' ? 'day' : timePeriod}`,
-      icon: costChange >= 0 ? <Icon name="trending-up" className="h-3 w-3" /> : <Icon name="trending-down" className="h-3 w-3" />,
+      icon: costChange >= 0 ? <Icon name="arrow-up" className="h-3 w-3" /> : <Icon name="arrow-down" className="h-3 w-3" />,
       trendIcon: getTrendIcon(costChange)
     },
     {
       title: 'Daily Average',
-      value: `${currentAverageDaily.toFixed(2)} L`,
+      value: `${currentAverageDaily.toFixed(2)} KWH`,
       change: averageTrend === 'increasing' ? 'Higher than last month' : averageTrend === 'decreasing' ? 'Lower than last month' : 'Same as last month',
       changeValue: `${averageDailyChange >= 0 ? '+' : ''}${averageDailyChange.toFixed(1)}%`,
       description: `Average daily usage`,
-      icon: averageTrend === 'increasing' ? <Icon name="trending-up" className="h-3 w-3" /> : averageTrend === 'decreasing' ? <Icon name="trending-down" className="h-3 w-3" /> : <Icon name="activity-graph" className="h-3 w-3" />,
+      icon: averageTrend === 'increasing' ? <Icon name="arrow-up" className="h-3 w-3" /> : averageTrend === 'decreasing' ? <Icon name="arrow-down" className="h-3 w-3" /> : <Icon name="activity-graph" className="h-3 w-3" />, 
       trendIcon: getTrendIcon(averageDailyChange)
     },
     {
@@ -302,15 +302,15 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ currentMonth }) => {
       change: averageDaily > 15 ? 'Above target' : averageDaily > 10 ? 'Near target' : 'Below target',
       changeValue: averageDaily > 15 ? '+15.2%' : averageDaily > 10 ? '+2.1%' : '-8.3%',
       description: 'Based on daily average consumption',
-      icon: averageDaily > 15 ? <Icon name="trending-up" className="h-3 w-3" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-3 w-3" /> : <Icon name="trending-down" className="h-3 w-3" />,
-      trendIcon: averageDaily > 15 ? <Icon name="trending-up" className="h-4 w-4" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-4 w-4" /> : <Icon name="trending-down" className="h-4 w-4" />
+      icon: averageDaily > 15 ? <Icon name="arrow-up" className="h-3 w-3" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-3 w-3" /> : <Icon name="arrow-down" className="h-3 w-3" />, 
+      trendIcon: averageDaily > 15 ? <Icon name="arrow-up" className="h-4 w-4" /> : averageDaily > 10 ? <Icon name="activity-graph" className="h-4 w-4" /> : <Icon name="arrow-down" className="h-4 w-4" />
     },
     {
       title: 'vs UK Average',
       value: `${currentMonthVsUK >= 0 ? '+' : ''}${currentMonthVsUK.toFixed(0)}%`,
       change: currentMonthVsUK >= 0 ? 'Above UK average' : 'Below UK average',
       changeValue: `${ukComparisonChange >= 0 ? '+' : ''}${ukComparisonChange.toFixed(0)}%`,
-      description: 'Compared to UK average (2.5 L/day)',
+      description: 'Compared to UK household average (8.5 kWh/day)',
       icon: <Icon name="target" className="h-3 w-3" />,
       trendIcon: getTrendIcon(ukComparisonChange)
     }

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Icon } from "@/components/ui/icon";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useFuelStore } from '@/store/useFuelStore';
+import { useElectricityStore } from '../../store/useElectricityStore';
 
 /**
  * UKAverageComparison Component
@@ -19,14 +19,14 @@ import { useFuelStore } from '@/store/useFuelStore';
  * Custom styling: Timezone-inspired design system
  */
 export const UKAverageComparison: React.FC = () => {
-  const { chartData, isLoading } = useFuelStore();
+  const { chartData, isLoading } = useElectricityStore();
 
-  // UK average data (fuel consumption)
-  const ukAverageDaily = 2.5; // L/day (average UK fuel consumption)
-  const ukAverageCost = 3.50; // £/day (estimated average fuel cost)
+  // UK average data (from Ofgem statistics)
+  const ukAverageDaily = 8.5; // kWh/day
+  const ukAverageCost = 2.55; // £/day
 
   // Calculate user averages from chart data
-  const totalConsumption = chartData.reduce((sum, point) => sum + point.litres, 0);
+  const totalConsumption = chartData.reduce((sum, point) => sum + point.kwh, 0);
   const totalCost = chartData.reduce((sum, point) => sum + point.cost, 0);
   const days = chartData.length > 0 ? chartData.length : 1;
   const userAverageDaily = totalConsumption / days;
@@ -94,18 +94,18 @@ export const UKAverageComparison: React.FC = () => {
                     <Icon name="help-question-mark" className="h-3 w-3 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent className="text-xs">
-                    <p>UK average fuel consumption: 2.5 L/day based on average UK vehicle fuel usage statistics</p>
+                    <p>UK average data sourced from Ofgem's annual energy consumption statistics (8.5 kWh/day for average UK household)</p>
                   </TooltipContent>
                 </Tooltip>
               </h4>
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-xs uppercase tracking-normal">
                   <span className="text-muted-foreground">Your Average</span>
-                  <span className="font-normal tabular-nums">{userAverageDaily.toFixed(1)} L</span>
+                  <span className="font-normal tabular-nums">{userAverageDaily.toFixed(1)} kWh</span>
                 </div>
                 <div className="flex justify-between items-center text-xs uppercase tracking-normal">
                   <span className="text-muted-foreground">UK Average</span>
-                  <span className="font-normal tabular-nums">{ukAverageDaily} L</span>
+                  <span className="font-normal tabular-nums">{ukAverageDaily} kWh</span>
                 </div>
                 <div className="w-full">
                   <Progress 
@@ -125,7 +125,7 @@ export const UKAverageComparison: React.FC = () => {
                     <Icon name="help-question-mark" className="h-3 w-3 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent className="text-xs">
-                    <p>UK average fuel cost: £3.50/day based on average fuel prices and consumption</p>
+                    <p>UK average cost calculated using Ofgem's average unit rate (£0.30/kWh) × average consumption (8.5 kWh/day) = £2.55/day</p>
                   </TooltipContent>
                 </Tooltip>
               </h4>
@@ -152,4 +152,3 @@ export const UKAverageComparison: React.FC = () => {
     </TooltipProvider>
   );
 };
-

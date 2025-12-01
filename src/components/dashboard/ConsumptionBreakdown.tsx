@@ -2,45 +2,45 @@ import React, { useMemo, useState } from 'react';
 import { ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useFuelStore } from '@/store/useFuelStore';
+import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek, eachDayOfInterval, format } from 'date-fns';
 
 interface WeeklyData {
   week: number;
   name: string;
-  litres: number;
+  kwh: number;
   cost: number;
   percentage: number;
 }
 
 interface DailyData {
   date: string;
-  litres: number;
+  kwh: number;
   cost: number;
-  litresAdded: number;
+  reading: number;
 }
 
 
 interface ConsumptionBreakdownProps {
   currentMonth: Date;
-  viewMode: 'litres' | 'cost';
+  viewMode: 'kwh' | 'cost';
 }
 
 export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ currentMonth, viewMode }) => {
-  const { topups, preferences } = useFuelStore();
+  const { readings, preferences } = useElectricityStore();
   const [activeTab, setActiveTab] = useState<'weekly' | 'daily'>('weekly');
 
   const weeklyData = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     
-    // Filter topups for current month
-    const monthTopups = topups.filter(topup => {
-      const topupDate = new Date(topup.date);
-      return topupDate >= monthStart && topupDate <= monthEnd && !topup.isFirstTopup;
+    // Filter readings for current month
+    const monthReadings = readings.filter(reading => {
+      const readingDate = new Date(reading.date);
+      return readingDate >= monthStart && readingDate <= monthEnd;
     });
 
-    if (monthTopups.length === 0) {
+    if (monthReadings.length < 2) {
       return [];
     }
 
@@ -49,50 +49,79 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
     const weeklyBreakdown: WeeklyData[] = weeks.map((weekStart, index) => {
       const weekEnd = endOfWeek(weekStart);
       
-      // Find topups that fall within this week
-      const weekTopups = monthTopups.filter(topup => {
-        const topupDate = new Date(topup.date);
-        return topupDate >= weekStart && topupDate <= weekEnd;
+      // Find readings that fall within this week
+      const weekReadings = monthReadings.filter(reading => {
+        const readingDate = new Date(reading.date);
+        return readingDate >= weekStart && readingDate <= weekEnd;
       });
 
-      let weekLitres = 0;
+      let weekKwh = 0;
       let weekCost = 0;
       
-      // For fuel, consumption is the litres added in each topup
-      weekTopups.forEach(topup => {
-        weekLitres += topup.litres;
-        weekCost += topup.totalCost;
-      });
+      // Calculate consumption for this week
+      if (weekReadings.length > 0) {
+        // Sort readings by date
+        const sortedWeekReadings = [...weekReadings].sort((a, b) => 
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+        
+        // Calculate consumption between consecutive readings in this week
+        for (let i = 1; i < sortedWeekReadings.length; i++) {
+          const consumption = sortedWeekReadings[i].reading - sortedWeekReadings[i - 1].reading;
+          if (consumption > 0) {
+            weekKwh += consumption;
+            weekCost += consumption * preferences.unitRate;
+          }
+        }
+        
+        // If this is the first week and we have readings, we need to account for consumption
+        // from the previous reading (outside this week) to the first reading in this week
+        if (index === 0 && sortedWeekReadings.length > 0) {
+          const firstReadingInWeek = sortedWeekReadings[0];
+          const previousReading = monthReadings.find(reading => {
+            const readingDate = new Date(reading.date);
+            return readingDate < weekStart;
+          });
+          
+          if (previousReading) {
+            const consumption = firstReadingInWeek.reading - previousReading.reading;
+            if (consumption > 0) {
+              weekKwh += consumption;
+              weekCost += consumption * preferences.unitRate;
+            }
+          }
+        }
+      }
 
       return {
         week: index + 1,
         name: `Week ${index + 1}`,
-        litres: Math.round(weekLitres * 100) / 100,
+        kwh: Math.round(weekKwh * 100) / 100,
         cost: Math.round(weekCost * 100) / 100,
         percentage: 0 // Will be calculated below
       };
     });
 
     // Calculate percentages
-    const total = weeklyBreakdown.reduce((sum, week) => sum + (viewMode === 'litres' ? week.litres : week.cost), 0);
+    const total = weeklyBreakdown.reduce((sum, week) => sum + (viewMode === 'kwh' ? week.kwh : week.cost), 0);
     weeklyBreakdown.forEach(week => {
-      week.percentage = total > 0 ? Math.round((viewMode === 'litres' ? week.litres : week.cost) / total * 100) : 0;
+      week.percentage = total > 0 ? Math.round((viewMode === 'kwh' ? week.kwh : week.cost) / total * 100) : 0;
     });
 
     return weeklyBreakdown;
-  }, [topups, currentMonth, viewMode]);
+  }, [readings, currentMonth, preferences.unitRate, viewMode]);
 
   const dailyData = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     
-    // Filter topups for current month
-    const monthTopups = topups.filter(topup => {
-      const topupDate = new Date(topup.date);
-      return topupDate >= monthStart && topupDate <= monthEnd && !topup.isFirstTopup;
+    // Filter readings for current month
+    const monthReadings = readings.filter(reading => {
+      const readingDate = new Date(reading.date);
+      return readingDate >= monthStart && readingDate <= monthEnd;
     });
 
-    if (monthTopups.length === 0) {
+    if (monthReadings.length < 2) {
       return [];
     }
 
@@ -100,43 +129,37 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
     const dailyBreakdown: DailyData[] = [];
 
-    // Group topups by day
-    const topupsByDay = new Map<string, typeof monthTopups>();
-    monthTopups.forEach(topup => {
-      const dateKey = format(new Date(topup.date), 'yyyy-MM-dd');
-      if (!topupsByDay.has(dateKey)) {
-        topupsByDay.set(dateKey, []);
-      }
-      topupsByDay.get(dateKey)!.push(topup);
-    });
-    
+    // Sort readings by date
+    const sortedReadings = [...monthReadings].sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
     // Calculate consumption for each day
-    days.forEach(day => {
-      const dateKey = format(day, 'yyyy-MM-dd');
-      const dayTopups = topupsByDay.get(dateKey) || [];
+    for (let i = 1; i < sortedReadings.length; i++) {
+      const prevReading = sortedReadings[i - 1];
+      const currentReading = sortedReadings[i];
+      const consumption = currentReading.reading - prevReading.reading;
       
-      if (dayTopups.length > 0) {
-        const totalLitres = dayTopups.reduce((sum, topup) => sum + topup.litres, 0);
-        const totalCost = dayTopups.reduce((sum, topup) => sum + topup.totalCost, 0);
+      if (consumption > 0) {
+        const readingDate = new Date(currentReading.date);
+        const dayIndex = days.findIndex(day => 
+          day.getDate() === readingDate.getDate() && 
+          day.getMonth() === readingDate.getMonth()
+        );
         
-        dailyBreakdown.push({
-          date: format(day, 'MMM dd'),
-          litres: Math.round(totalLitres * 100) / 100,
-          cost: Math.round(totalCost * 100) / 100,
-          litresAdded: totalLitres
-        });
-      } else {
-        dailyBreakdown.push({
-          date: format(day, 'MMM dd'),
-          litres: 0,
-          cost: 0,
-          litresAdded: 0
-        });
+        if (dayIndex !== -1) {
+          dailyBreakdown.push({
+            date: format(readingDate, 'MMM dd'),
+            kwh: Math.round(consumption * 100) / 100,
+            cost: Math.round(consumption * preferences.unitRate * 100) / 100,
+            reading: currentReading.reading
+          });
+        }
       }
-    });
+    }
 
     return dailyBreakdown;
-  }, [topups, currentMonth]);
+  }, [readings, currentMonth, preferences.unitRate]);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -145,7 +168,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
         <div className="bg-background/95 backdrop-blur-sm border border-border p-3 shadow-lg">
           <p className="">{data.name || data.date}</p>
           <p className="text-xs text-muted-foreground">
-            {viewMode === 'litres' ? `${data.litres} L` : `£${data.cost.toFixed(2)}`}
+            {viewMode === 'kwh' ? `${data.kwh} kWh` : `£${data.cost.toFixed(2)}`}
           </p>
           {data.percentage && (
             <p className="text-xs text-muted-foreground">
@@ -160,27 +183,18 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
 
 
   return (
-    <Tabs
-      value={activeTab}
-      onValueChange={(value) => setActiveTab(value as 'weekly' | 'daily')}
-    >
-      <Card
-        className="border border-dotted text-card-foreground bg-transparent w-full"
-        style={{ padding: 'var(--space-md)' }}
-      >
-        <CardHeader className="flex flex-col space-y-1.5 p-6">
-          <div className="flex items-center justify-between">
-            <div className="text-base uppercase tracking-wide">
-              Consumption Breakdown
-            </div>
-            <TabsList>
-              <TabsTrigger value="weekly">Weekly</TabsTrigger>
-              <TabsTrigger value="daily">Daily</TabsTrigger>
-            </TabsList>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6 pt-0">
-          <TabsContent value="weekly" className="mt-4">
+    <Card className="bg-transparent w-full" style={{ padding: 'var(--space-md)' }}>
+      <CardHeader>
+        <CardTitle>Consumption Breakdown</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'weekly' | 'daily')}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="weekly">Weekly Breakdown</TabsTrigger>
+            <TabsTrigger value="daily">Daily Breakdown</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="weekly" className="mt-6">
             {weeklyData.length > 0 ? (
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -200,7 +214,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                     <Tooltip content={<CustomTooltip />} />
                     <Area 
                       type="monotone" 
-                      dataKey={viewMode === 'litres' ? 'litres' : 'cost'} 
+                      dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'} 
                       stroke="oklch(var(--primary))" 
                       strokeWidth={2}
                       fillOpacity={1}
@@ -211,13 +225,13 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="text-center py-8 text-sm text-muted-foreground">
-                No data for this month
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No weekly data available</p>
               </div>
             )}
           </TabsContent>
           
-          <TabsContent value="daily" className="mt-4">
+          <TabsContent value="daily" className="mt-6">
             {dailyData.length > 0 ? (
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -240,7 +254,7 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                     <Tooltip content={<CustomTooltip />} />
                     <Area 
                       type="monotone" 
-                      dataKey={viewMode === 'litres' ? 'litres' : 'cost'} 
+                      dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'} 
                       stroke="oklch(var(--primary))" 
                       strokeWidth={2}
                       fillOpacity={1}
@@ -251,13 +265,13 @@ export const ConsumptionBreakdown: React.FC<ConsumptionBreakdownProps> = ({ curr
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="text-center py-8 text-sm text-muted-foreground">
-                No data for this month
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No daily data available</p>
               </div>
             )}
           </TabsContent>
-        </CardContent>
-      </Card>
-    </Tabs>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 };

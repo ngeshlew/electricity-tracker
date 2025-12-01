@@ -2,35 +2,35 @@ import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from "@/components/ui/icon";
-import { useFuelStore } from '@/store/useFuelStore';
+import { useElectricityStore } from '../../store/useElectricityStore';
 import { startOfMonth, endOfMonth, eachDayOfInterval, format } from 'date-fns';
 
 interface DailyData {
   date: string;
-  litres: number;
+  kwh: number;
   cost: number;
-  litresAdded: number;
+  reading: number;
 }
 
 interface DailyBreakdownProps {
   currentMonth: Date;
-  viewMode: 'litres' | 'cost';
+  viewMode: 'kwh' | 'cost';
 }
 
 export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, viewMode }) => {
-  const { topups } = useFuelStore();
+  const { readings, preferences } = useElectricityStore();
 
   const dailyData = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     
-    // Filter topups for current month
-    const monthTopups = topups.filter(topup => {
-      const topupDate = new Date(topup.date);
-      return topupDate >= monthStart && topupDate <= monthEnd && !topup.isFirstTopup;
+    // Filter readings for current month
+    const monthReadings = readings.filter(reading => {
+      const readingDate = new Date(reading.date);
+      return readingDate >= monthStart && readingDate <= monthEnd;
     });
 
-    if (monthTopups.length === 0) {
+    if (monthReadings.length < 2) {
       return [];
     }
 
@@ -38,44 +38,48 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
     const dailyBreakdown: DailyData[] = [];
 
-    // Group topups by day
-    const topupsByDay = new Map<string, typeof monthTopups>();
-    monthTopups.forEach(topup => {
-      const dateKey = format(new Date(topup.date), 'yyyy-MM-dd');
-      if (!topupsByDay.has(dateKey)) {
-        topupsByDay.set(dateKey, []);
+    // Calculate consumption for each day
+    for (let i = 1; i < monthReadings.length; i++) {
+      const prevReading = monthReadings[i - 1];
+      const currentReading = monthReadings[i];
+      const consumption = currentReading.reading - prevReading.reading;
+      
+      if (consumption > 0) {
+        const readingDate = new Date(currentReading.date);
+        const dayIndex = days.findIndex(day => 
+          day.getDate() === readingDate.getDate() && 
+          day.getMonth() === readingDate.getMonth()
+        );
+        
+        if (dayIndex !== -1) {
+          dailyBreakdown[dayIndex] = {
+            date: format(readingDate, 'MMM d'),
+            kwh: Math.round(consumption * 100) / 100,
+            cost: Math.round(consumption * preferences.unitRate * 100) / 100,
+            reading: currentReading.reading
+          };
+        }
       }
-      topupsByDay.get(dateKey)!.push(topup);
-    });
+    }
 
-    // Filter out future dates and calculate daily values
+    // Filter out future dates and fill in missing days with zero values
     const today = new Date();
     today.setHours(23, 59, 59, 999); // End of today
     
     return days
       .filter(day => day <= today) // Only include days up to today
-      .map((day) => {
-        const dateKey = format(day, 'yyyy-MM-dd');
-        const dayTopups = topupsByDay.get(dateKey) || [];
-        
-        if (dayTopups.length > 0) {
-          const totalLitres = dayTopups.reduce((sum, topup) => sum + topup.litres, 0);
-          const totalCost = dayTopups.reduce((sum, topup) => sum + topup.totalCost, 0);
-          return {
-            date: format(day, 'MMM d'),
-            litres: Math.round(totalLitres * 100) / 100,
-            cost: Math.round(totalCost * 100) / 100,
-            litresAdded: totalLitres
-          };
+      .map((day, index) => {
+        if (dailyBreakdown[index]) {
+          return dailyBreakdown[index];
         }
         return {
           date: format(day, 'MMM d'),
-          litres: 0,
+          kwh: 0,
           cost: 0,
-          litresAdded: 0
+          reading: 0
         };
       });
-  }, [topups, currentMonth]);
+  }, [readings, currentMonth, preferences.unitRate]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -84,11 +88,11 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
         <div className="bg-background/95 backdrop-blur-sm border border-border  p-3 shadow-lg">
           <p className="">{label}</p>
           <p className="text-xs text-muted-foreground">
-            {viewMode === 'litres' ? `${data.litres} L` : `£${data.cost.toFixed(2)}`}
+            {viewMode === 'kwh' ? `${data.kwh} kWh` : `£${data.cost.toFixed(2)}`}
           </p>
           {data.reading > 0 && (
             <p className="text-xs text-muted-foreground">
-              Litres: {data.litresAdded.toLocaleString()}
+              Meter: {data.reading.toLocaleString()}
             </p>
           )}
         </div>
@@ -171,7 +175,7 @@ export const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ currentMonth, vi
               <Tooltip content={<CustomTooltip />} />
               <Line
                 type="monotone"
-                dataKey={viewMode === 'litres' ? 'litres' : 'cost'}
+                dataKey={viewMode === 'kwh' ? 'kwh' : 'cost'}
                 stroke="hsl(var(--electric-purple))"
                 strokeWidth={3}
                 dot={{

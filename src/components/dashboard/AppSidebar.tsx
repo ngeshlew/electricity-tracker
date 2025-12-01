@@ -15,8 +15,8 @@ import {
 
 const navigationItems = [
   { name: 'Dashboard', url: '/', iconName: 'home-house' },
-  { name: 'Statements', url: '/statements', iconName: 'book-note-paper' },
-  { name: 'Notifications', url: '/notifications', iconName: 'notification-bell-alarm' },
+  { name: 'Insights', url: '/insights', iconName: 'activity-graph' },
+  { name: 'Tariff', url: '/tariff', iconName: 'dollar-currency' },
   { name: 'Settings', url: '/settings', iconName: 'adjust-settings-horizontal' },
 ];
 

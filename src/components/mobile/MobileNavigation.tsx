@@ -23,13 +23,12 @@ interface MobileNavItem {
 
 const navigationItems: MobileNavItem[] = [
   { name: 'Dashboard', href: '/', iconName: 'home-house', current: true },
-  { name: 'Statements', href: '/statements', iconName: 'book-note-paper', current: false },
-  { name: 'Notifications', href: '/notifications', iconName: 'notification-bell-alarm', current: false },
+  { name: 'Insights', href: '/insights', iconName: 'activity-graph', current: false },
+  { name: 'Tariff', href: '/tariff', iconName: 'dollar-currency', current: false },
   { name: 'Settings', href: '/settings', iconName: 'adjust-settings-horizontal', current: false },
 ];
 
 export const MobileNavigation: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -86,11 +85,6 @@ export const MobileNavigation: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
-
   return (
     <>
       {/* Mobile Header */}
@@ -139,21 +133,44 @@ export const MobileNavigation: React.FC = () => {
                 </span>
               </Button>
             )}
-            
-            {/* Mobile Menu Button */}
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-9 w-9 p-0"
-                  aria-label="Open mobile menu"
-                >
-                  <Icon name="menu-hambuger" className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-            <SheetContent side="right" className="w-80 p-0 flex flex-col">
-              <div className="flex h-full flex-col">
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t lg:hidden">
+        <div className="grid grid-cols-4 h-16">
+          {updatedNavigationItems.map((item) => {
+            return (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`
+                  flex flex-col items-center justify-center space-y-1 px-2 py-2 text-xs font-normal
+                  transition-colors touch-manipulation
+                  ${item.current
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
+                  }
+                `}
+              >
+                <Icon
+                  name={item.iconName as any}
+                  className={`
+                    h-5 w-5
+                    ${item.current ? 'text-primary' : 'text-muted-foreground'}
+                  `}
+                />
+                <span className="truncate">{item.name}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+};
+
                 {/* User Profile Header */}
                 {isAuthenticated && user ? (
                   <div className="px-6 py-4 border-b">

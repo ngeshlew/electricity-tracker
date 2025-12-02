@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { Header } from '../dashboard/Header';
 import { AppSidebar } from '../dashboard/AppSidebar';
 import { MobileNavigation } from '../mobile/MobileNavigation';
@@ -17,18 +16,17 @@ export const TariffLayout: React.FC = () => {
       <MobileNavigation />
       
       {/* Responsive Layout */}
-      <SidebarProvider defaultOpen={false}>
-        <div className="lg:flex w-screen">
-          {/* Sidebar - Desktop only */}
+      <div className="lg:flex w-screen">
+        {/* Sidebar - Desktop only */}
+        <div className="hidden lg:block">
+          <AppSidebar />
+        </div>
+        
+        <main className="flex-1 lg:ml-0">
+          {/* Header - Desktop only */}
           <div className="hidden lg:block">
-            <AppSidebar />
+            <Header />
           </div>
-          
-          <main className="flex-1 lg:ml-0">
-            {/* Header - Desktop only */}
-            <div className="hidden lg:block">
-              <Header />
-            </div>
             
             {/* Tariff Content - Responsive */}
             <div className="px-4 sm:px-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
@@ -59,7 +57,6 @@ export const TariffLayout: React.FC = () => {
             </div>
           </main>
         </div>
-      </SidebarProvider>
 
       {/* Tariff Form Dialog */}
       <TariffFormDialog

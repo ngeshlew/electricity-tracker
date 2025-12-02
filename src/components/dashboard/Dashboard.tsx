@@ -1,5 +1,4 @@
 import { FC, useState, useEffect } from 'react';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { Header } from './Header';
 import { AppSidebar } from './AppSidebar';
 import { SummaryCards } from './SummaryCards';
@@ -29,16 +28,15 @@ export const Dashboard: FC = () => {
       <MobileNavigation />
       
       {/* Responsive Layout */}
-      <SidebarProvider defaultOpen={false}>
-        <div className="lg:flex w-screen">
-          {/* Sidebar - Desktop only */}
-          <div className="hidden lg:block">
-            <AppSidebar />
-          </div>
-          
-          <main className="flex-1 lg:ml-0">
-            {/* Header - show on all sizes so top nav actions are visible */}
-            <Header />
+      <div className="lg:flex w-screen">
+        {/* Sidebar - Desktop only */}
+        <div className="hidden lg:block">
+          <AppSidebar />
+        </div>
+        
+        <main className="flex-1 lg:ml-0">
+          {/* Header - show on all sizes so top nav actions are visible */}
+          <Header />
             
             {/* Dashboard Content - Responsive */}
             <div className="px-4 sm:px-6 pt-14 lg:pt-6 pb-20 lg:pb-6">
@@ -110,7 +108,6 @@ export const Dashboard: FC = () => {
             
           </main>
         </div>
-      </SidebarProvider>
     </>
   );
 };

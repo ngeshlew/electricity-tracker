@@ -13,6 +13,7 @@ import { TariffLayout } from './components/tariff/TariffLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { useElectricityStore } from './store/useElectricityStore';
+import { SidebarProvider } from '@/components/ui/animated-sidebar';
 import './index.css';
 
 function App() {
@@ -76,23 +77,26 @@ function App() {
   return (
     <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme">
       <ErrorBoundary>
-        <Router>
-          <div className="min-h-screen bg-background text-foreground">
-            <div>
-              <Routes>
-              <Route path="/login" element={<LoginRoute />} />
-              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/insights" element={<ProtectedRoute><InsightsLayout /></ProtectedRoute>} />
-              <Route path="/tariff" element={<ProtectedRoute><TariffLayout /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><SettingsLayout /></ProtectedRoute>} />
-              </Routes>
+        {/* CRITICAL: Provider at root level */}
+        <SidebarProvider>
+          <Router>
+            <div className="min-h-screen bg-background text-foreground">
+              <div>
+                <Routes>
+                <Route path="/login" element={<LoginRoute />} />
+                <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/insights" element={<ProtectedRoute><InsightsLayout /></ProtectedRoute>} />
+                <Route path="/tariff" element={<ProtectedRoute><TariffLayout /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><SettingsLayout /></ProtectedRoute>} />
+                </Routes>
+              </div>
             </div>
-          </div>
-        </Router>
-        <PWAInstallPrompt />
-        <Toaster />
-        <ToastContainer />
+          </Router>
+          <PWAInstallPrompt />
+          <Toaster />
+          <ToastContainer />
+        </SidebarProvider>
       </ErrorBoundary>
     </ThemeProvider>
   );

@@ -75,7 +75,7 @@ function App() {
   };
 
   return (
-    <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme">
+    <ThemeProvider defaultTheme="mono" storageKey="electricity-tracker-theme" resetToDefaultOnLoad>
       <ErrorBoundary>
         {/* CRITICAL: Provider at root level */}
         <SidebarProvider>

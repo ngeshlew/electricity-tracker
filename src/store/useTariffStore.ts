@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { TariffInfo, DEFAULT_TARIFF, HISTORICAL_TARIFFS } from '../services/ukElectricityApi';
+import { TariffInfo, DEFAULT_TARIFF, HISTORICAL_TARIFFS, LEGACY_SEED_TARIFF_IDS } from '../services/ukElectricityApi';
 
 interface TariffState {
   currentTariff: TariffInfo;
@@ -305,8 +305,8 @@ export const useTariffStore = create<TariffState>()(
     }),
     {
       name: 'tariff-store',
-      version: 2,
-      migrate: (persistedState: any) => {
+      version: 3,
+      migrate: (persistedState: any, version: number) => {
         // Recalculate estimated annual costs for existing tariffs
         const calculateAnnualCost = (unitRate: number, standingCharge: number, annualUsage: number): number => {
           const unitCost = (annualUsage * unitRate) / 100;
@@ -314,9 +314,22 @@ export const useTariffStore = create<TariffState>()(
           return Math.round((unitCost + standingCost) * 100) / 100;
         };
 
-        if (persistedState?.state) {
-          const state = persistedState.state;
-          
+        // Zustand passes the state itself; older code expected a { state } wrapper
+        const state = persistedState?.state ?? persistedState;
+
+        if (state && version < 3) {
+          // Replace seeded tariffs with the statement-verified history, keep user-added ones
+          if (!state.currentTariff || LEGACY_SEED_TARIFF_IDS.includes(state.currentTariff.id)) {
+            state.currentTariff = DEFAULT_TARIFF;
+          }
+          const userTariffs = (Array.isArray(state.historicalTariffs) ? state.historicalTariffs : [])
+            .filter((tariff: TariffInfo) => !LEGACY_SEED_TARIFF_IDS.includes(tariff.id))
+            .filter((tariff: TariffInfo) => !HISTORICAL_TARIFFS.some(seed => seed.id === tariff.id));
+          state.historicalTariffs = [...HISTORICAL_TARIFFS, ...userTariffs];
+        }
+
+        if (state) {
+
           // Recalculate current tariff
           if (state.currentTariff) {
             state.currentTariff.estimatedAnnualCost = calculateAnnualCost(

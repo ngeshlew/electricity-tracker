@@ -55,7 +55,12 @@ export const NotificationBell: React.FC = () => {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="relative"
+          aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+        >
           <Icon name="notification-bell-alarm" className="h-4 w-4" />
           {unreadCount > 0 && (
             <Badge 

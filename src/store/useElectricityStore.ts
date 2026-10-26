@@ -4,6 +4,7 @@ import { Decimal } from 'decimal.js';
 import { apiService } from '../services/api';
 import { socketService } from '../services/socketService';
 import { useTariffStore } from './useTariffStore';
+import { getVatRateForDate } from '../services/ukElectricityApi';
 import { useToastStore } from './useToastStore';
 import type { 
   MeterReading, 
@@ -913,9 +914,10 @@ export const useElectricityStore = create<ElectricityState>()(
 
         calculateReadingCost: (kwh, date?: Date) => {
           // Calculate cost for a meter reading including standing charge and VAT
-          // Formula: ((consumption * unitRate / 100) + (1 day * standingCharge / 100)) * 1.05 (VAT)
+          // Formula: ((consumption * unitRate / 100) + (1 day * standingCharge / 100)) * (1 + VAT rate for the date)
           const tariffStore = useTariffStore.getState();
           const tariff = tariffStore.getTariffForDate(date || new Date());
+          const vatMultiplier = 1 + getVatRateForDate(date || new Date());
           
           if (tariff) {
             // Unit cost: consumption * unitRate (convert pence to pounds)
@@ -927,8 +929,8 @@ export const useElectricityStore = create<ElectricityState>()(
             // Total before VAT
             const totalBeforeVAT = unitCost.plus(standingCost);
             
-            // Apply VAT (5% = multiply by 1.05)
-            const totalWithVAT = totalBeforeVAT.times(1.05);
+            // Apply VAT (5% until 30 Sep 2026, 0% from 1 Oct 2026)
+            const totalWithVAT = totalBeforeVAT.times(vatMultiplier);
             
             return totalWithVAT.toNumber();
           }
@@ -937,7 +939,7 @@ export const useElectricityStore = create<ElectricityState>()(
           const { preferences } = get();
           const unitCost = new Decimal(kwh).times(preferences.unitRate);
           const standingCost = new Decimal(preferences.standingCharge || 0);
-          return unitCost.plus(standingCost).times(1.05).toNumber();
+          return unitCost.plus(standingCost).times(vatMultiplier).toNumber();
         },
 
         recalculateCosts: () => {

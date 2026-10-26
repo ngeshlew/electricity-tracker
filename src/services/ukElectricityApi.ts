@@ -204,6 +204,18 @@ export const DEFAULT_TARIFF: TariffInfo = {
   meterNumber: 'E17UP00823',
 };
 
+// Domestic electricity VAT, most recent first.
+// 5% to 0% from 1 Oct 2026 (temporary UK Government cut). Source: Octopus statement 457363936
+const VAT_RATES: { from: string; rate: number }[] = [
+  { from: '2026-10-01', rate: 0 },
+  { from: '1970-01-01', rate: 0.05 },
+];
+
+export const getVatRateForDate = (date: Date): number => {
+  const match = VAT_RATES.find(({ from }) => date >= new Date(from));
+  return match ? match.rate : 0.05;
+};
+
 // Seed ids from earlier versions, replaced on store migration
 export const LEGACY_SEED_TARIFF_IDS = ['octopus-12m-fixed-aug-2025-v3'];
 

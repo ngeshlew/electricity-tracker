@@ -186,25 +186,63 @@ const calculateAnnualCost = (unitRate: number, standingCharge: number, annualUsa
 };
 
 // Default tariff information based on user's Octopus Energy details
+// Source: Octopus statement 447574137 (9 Aug 2026)
 export const DEFAULT_TARIFF: TariffInfo = {
-  id: 'octopus-12m-fixed-aug-2025-v3',
+  id: 'octopus-12m-fixed-lsc-jul-2026-v5',
   provider: 'Octopus Energy',
-  tariffName: 'Octopus 12M Fixed August 2025 v3',
+  tariffName: 'Octopus 12M Fixed Low Standing Charge July 2026 v5',
   productType: 'Fixed',
-  unitRate: 23.96, // p/kWh
-  standingCharge: 42.21, // p/day
-  startDate: '2025-08-08',
-  endDate: '2026-08-08',
+  unitRate: 29.23, // p/kWh
+  standingCharge: 31.76, // p/day
+  startDate: '2026-08-07',
+  endDate: '2027-08-07',
   paymentMethod: 'Direct Debit',
-  earlyExitFee: 0,
-  estimatedAnnualUsage: 1180.1, // kWh
-  estimatedAnnualCost: calculateAnnualCost(23.96, 42.21, 1180.1), // Calculated: ~436.82
+  earlyExitFee: 50,
+  estimatedAnnualUsage: 1216.4, // kWh
+  estimatedAnnualCost: calculateAnnualCost(29.23, 31.76, 1216.4), // Calculated: ~471.47
   accountNumber: 'A-9F8AC8B3',
   meterNumber: 'E17UP00823',
 };
 
+// Seed ids from earlier versions, replaced on store migration
+export const LEGACY_SEED_TARIFF_IDS = ['octopus-12m-fixed-aug-2025-v3'];
+
 // Historical tariff information
 export const HISTORICAL_TARIFFS: TariffInfo[] = [
+  {
+    id: 'octopus-12m-fixed-aug-2025-v3-pre-apr-2026',
+    provider: 'Octopus Energy',
+    tariffName: 'Octopus 12M Fixed August 2025 v3',
+    productType: 'Fixed',
+    unitRate: 23.96, // p/kWh
+    standingCharge: 42.21, // p/day
+    startDate: '2025-08-08',
+    endDate: '2026-03-31',
+    paymentMethod: 'Direct Debit',
+    earlyExitFee: 0,
+    estimatedAnnualUsage: 1180.1,
+    estimatedAnnualCost: calculateAnnualCost(23.96, 42.21, 1180.1), // Calculated: ~436.82
+    accountNumber: 'A-9F8AC8B3',
+    meterNumber: 'E17UP00823',
+  },
+  {
+    // Same contract, unit rate cut from 1 April 2026 (UK Budget 2025 bill discount).
+    // Source: Octopus statements 434390252 to 447574137 (Jun to Aug 2026)
+    id: 'octopus-12m-fixed-aug-2025-v3-from-apr-2026',
+    provider: 'Octopus Energy',
+    tariffName: 'Octopus 12M Fixed August 2025 v3',
+    productType: 'Fixed',
+    unitRate: 20.62, // p/kWh
+    standingCharge: 42.21, // p/day
+    startDate: '2026-04-01',
+    endDate: '2026-08-06',
+    paymentMethod: 'Direct Debit',
+    earlyExitFee: 0,
+    estimatedAnnualUsage: 1216.4,
+    estimatedAnnualCost: calculateAnnualCost(20.62, 42.21, 1216.4), // Calculated: ~404.89
+    accountNumber: 'A-9F8AC8B3',
+    meterNumber: 'E17UP00823',
+  },
   {
     id: 'octopus-flexible-1',
     provider: 'Octopus Energy',

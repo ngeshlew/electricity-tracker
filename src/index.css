@@ -77,35 +77,46 @@
 
 @layer base {
   :root {
-    --primary: oklch(0.677 0.203 40.381);
-    --accent: oklch(0.968 0.007 247.896);
-    --border: oklch(0.929 0.013 255.508);
-    --card-foreground: oklch(0.282 0.087 267.935);
-    --foreground: oklch(0.282 0.087 267.935);
-    --input: oklch(0.929 0.013 255.508);
-    --muted: oklch(0.984 0.003 247.858);
-    --popover-foreground: oklch(0.282 0.087 267.935);
-    --primary-foreground: oklch(1.000 0.000 0.000);
-    --ring: oklch(0.677 0.203 40.381 / 0.1);
-    --secondary: oklch(0.981 0.009 258.335);
-    --secondary-foreground: oklch(0.282 0.087 267.935);
-    --muted-foreground: oklch(0.450 0.054 272.586); /* Improved contrast: ~4.8:1 ratio for WCAG AA */
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
+    --primary: 24 100% 38%; /* white text on it measures 4.8:1; 58% measured 2.6:1 */
+    --accent: 240 5% 96%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --border: 214.3 32% 91.4%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --input: 214.3 32% 91.4%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 24 100% 38%; /* focus ring needs 3:1 against white */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --radius: 0.5rem;
     --color-text-tertiary: #777777; /* Was #999999 - Now 4.7:1 contrast - passes AA */
-    --chart-1: oklch(0.677 0.203 40.381);
-    --sidebar-foreground: oklch(0.282 0.087 267.935);
-    --sidebar: oklch(0.984 0.003 247.858);
-    --sidebar-primary: oklch(0.282 0.087 267.935);
-    --sidebar-primary-foreground: oklch(1.000 0.000 0.000);
-    --sidebar-accent: oklch(0.968 0.007 247.896);
-    --sidebar-accent-foreground: oklch(0.282 0.087 267.935);
-    --sidebar-border: oklch(0.929 0.013 255.508);
-    --sidebar-ring: oklch(0.929 0.013 255.508);
-    --shadow-2xs: 0 1px 0 0 oklch(0.554 0.041 257.417 / 0.05);
-    --shadow-xs: 0 1px 2px 0 oklch(0.554 0.041 257.417 / 0.05);
-    --shadow-sm: 0 1px 3px 0 oklch(0.554 0.041 257.417 / 0.1), 0 1px 2px -1px oklch(0.554 0.041 257.417 / 0.1);
-    --shadow-md: 0 4px 6px -1px oklch(0.554 0.041 257.417 / 0.1), 0 2px 4px -2px oklch(0.554 0.041 257.417 / 0.1);
-    --shadow-xl: 0 20px 25px -5px oklch(0.000 0.000 0.000 / 0.1), 0 8px 10px -6px oklch(0.554 0.041 257.417 / 0.1);
-    --shadow-2xl: 0 25px 50px -12px oklch(0.554 0.041 257.417 / 0.15);
+    --chart-1: 24 100% 58%;
+    --chart-2: 162 47% 45%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 270 60% 55%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222.2 47.4% 11.2%;
+    --sidebar-primary: 222.2 47.4% 11.2%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+    --sidebar-border: 214.3 32% 91.4%;
+    --sidebar-ring: 24 100% 38%;
+    --shadow-2xs: 0 1px 0 0 rgba(220, 220, 220, 0.05);
+    --shadow-xs: 0 1px 2px 0 rgba(220, 220, 220, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(220, 220, 220, 0.1), 0 1px 2px -1px rgba(220, 220, 220, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(220, 220, 220, 0.1), 0 2px 4px -2px rgba(220, 220, 220, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(220, 220, 220, 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgba(220, 220, 220, 0.15);
 
     /* Design System Variables - Timezone-inspired */
     /* Typography */
@@ -144,10 +155,11 @@
     --transition-slow: 300ms ease-in-out;
 
     /* Accent Colors */
-    --color-accent-red: #FF0000;
-    --color-success: #00AA00;
-    --color-warning: #FF6600;
-    --color-error: #FF0000;
+    /* Status text on white must reach 4.5:1. #FF0000 measured 4.0:1, #00AA00 3.1:1, #FF6600 2.9:1. */
+    --color-accent-red: #CC0000; /* 5.9:1 */
+    --color-success: #007A00; /* 5.6:1 */
+    --color-warning: #C2410C; /* 5.2:1 */
+    --color-error: #CC0000; /* 5.9:1 */
 
     /* Seasonal Colors */
     --color-season-winter: #3B82F6; /* Blue */
@@ -293,9 +305,9 @@
   .skeleton {
     background: linear-gradient(
       90deg,
-      oklch(var(--muted)) 0%,
-      oklch(var(--muted) / 0.5) 50%,
-      oklch(var(--muted)) 100%
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted) / 0.5) 50%,
+      hsl(var(--muted)) 100%
     );
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.5s ease-in-out infinite;
@@ -360,5 +372,27 @@
   /* Font-normal uses weight 300 */
   .font-normal {
     font-weight: 300 !important;
+  }
+}
+/*
+ * Reduced motion: keep fades, drop movement. tailwindcss-animate composes
+ * enter/exit from these variables, so zeroing translate, scale and rotate
+ * turns every slide or zoom (dialogs, sheets, menus, toasts) into a plain fade.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-enter-scale: 1 !important;
+    --tw-enter-rotate: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-exit-rotate: 0 !important;
+    scroll-behavior: auto !important;
+  }
+
+  .skeleton {
+    animation: none;
   }
 }

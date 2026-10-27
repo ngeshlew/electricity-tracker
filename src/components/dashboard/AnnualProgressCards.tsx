@@ -114,7 +114,7 @@ export const AnnualProgressCards: React.FC = () => {
             <span className="text-muted-foreground">Progress</span>
             <span className="font-normal tabular-nums">{annualUsageProgress.toFixed(1)}%</span>
           </div>
-          <Progress value={Math.min(annualUsageProgress, 100)} className="h-2" />
+          <Progress value={Math.min(annualUsageProgress, 100)} className="h-2" aria-label="Annual usage progress" />
           <div className="flex justify-between items-center text-xs uppercase tracking-normal text-muted-foreground pt-2">
             <span>Target: {annualUsageTarget.toFixed(1)} kWh</span>
             <span className={annualUsageProgress > 100 ? 'text-[var(--color-accent-red)]' : 'text-[var(--color-success)]'}>
@@ -139,6 +139,7 @@ export const AnnualProgressCards: React.FC = () => {
               <Progress 
                 value={Math.min(consumptionRatio * 50, 100)} 
                 className="h-2" 
+                aria-label="Your daily average compared with the UK average"
               />
             </div>
           </div>
@@ -163,7 +164,7 @@ export const AnnualProgressCards: React.FC = () => {
             <span className="text-muted-foreground">Progress</span>
             <span className="font-normal tabular-nums">{annualCostProgress.toFixed(1)}%</span>
           </div>
-          <Progress value={Math.min(annualCostProgress, 100)} className="h-2" />
+          <Progress value={Math.min(annualCostProgress, 100)} className="h-2" aria-label="Annual cost progress" />
           <div className="flex justify-between items-center text-xs uppercase tracking-normal text-muted-foreground pt-2">
             <span>Target: £{annualCostTarget.toFixed(2)}</span>
             <span className={annualCostProgress > 100 ? 'text-[var(--color-accent-red)]' : 'text-[var(--color-success)]'}>
@@ -188,6 +189,7 @@ export const AnnualProgressCards: React.FC = () => {
               <Progress 
                 value={Math.min(costRatio * 50, 100)} 
                 className="h-2" 
+                aria-label="Your daily cost compared with the UK average"
               />
             </div>
           </div>
